@@ -6,6 +6,7 @@
 
   var PAGES = [
     { group: "Start here" },
+    { file: "lecture.html", num: "L", title: "Lecture (24 min)" },
     { file: "index.html", num: "0", title: "Overview & how to read this" },
     { file: "01-how-it-works.html", num: "1", title: "How voice cloning works" },
     { group: "The landscape" },
