@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Watch this first · 24 minutes</div>
+<h1>Your voice, synthesised</h1>
+<p class="lead">A narrated lecture through this field guide. It adds the acoustics, and the language-model and image-model analogies, so the later pages connect. The voice you hear is a stock neural voice. A clone is what it is explaining. Scope: <b>your own voice, for teaching</b>, in English and Mandarin.</p>
+
+<video id="lecture" class="lecture-player" controls preload="metadata" poster="media/lecture-poster.jpg">
+  <source src="media/lecture.mp4" type="video/mp4">
+  <track kind="captions" src="media/lecture.vtt" srclang="en" label="English" default>
+  Your browser cannot play this video. The file is <a href="media/lecture.mp4">media/lecture.mp4</a>.
+</video>
+<p class="small muted">Captions are on by default. The file also has 32 chapters for players that read them. Prices, licences, and legal dates are from the guide’s check on <b>17 October 2026</b>.</p>
+
+<h2>Jump to a section</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Start</th><th>Section</th><th>Leave able to</th></tr></thead>
+<tbody>
+<tr><td><a href="#lecture" data-seek="0">0:00</a></td><td>The job</td><td>Tell a demo clip from a course you could maintain.</td></tr>
+<tr><td><a href="#lecture" data-seek="83">1:23</a></td><td>What a voice is</td><td>Separate words, timbre, and delivery, and see why a Mandarin tone is part of the word.</td></tr>
+<tr><td><a href="#lecture" data-seek="206">3:26</a></td><td>How a clone works</td><td>Sort a model as a prompt or a fine-tune, and as tokens, a flow, or a split between language and timbre.</td></tr>
+<tr><td><a href="#lecture" data-seek="591">9:51</a></td><td>The landscape</td><td>Read a price, a licence, and a listener board as three different instruments.</td></tr>
+<tr><td><a href="#lecture" data-seek="809">13:29</a></td><td>Making a course</td><td>Record a master, gate a chunk, and treat the script as source code.</td></tr>
+<tr><td><a href="#lecture" data-seek="1117">18:37</a></td><td>Choosing</td><td>Disclose it, protect the files, and run one afternoon of tests on your own voice.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Then read the guide</h2>
+<p>The lecture is the path. These pages are the evidence, the tables, and the decision tools.</p>
+<div class="cards">
+<a class="card a" href="01-how-it-works.html"><h4>1 · How it works</h4><p>The same mechanisms, with the paper links and the diagrams.</p></a>
+<a class="card b" href="02-cloud.html"><h4>2 · Cloud services</h4><p>Who will take an individual, and what an hour costs.</p></a>
+<a class="card b" href="03-open-source.html"><h4>3 · Open-source models</h4><p>Which licences survive a paid course.</p></a>
+<a class="card c" href="09-legal.html"><h4>9 · Legal &amp; safety</h4><p>Disclosure, vendor terms, and what not to do.</p></a>
+<a class="card d" href="10-decide.html"><h4>10 · Decide</h4><p>Three paths and the cost calculator.</p></a>
+<a class="card d" href="11-hands-on.html"><h4>11 · Hands-on</h4><p>The comparison the lecture ends on.</p></a>
+</div>
+<p>Full map: <a href="index.html">Overview</a>.</p>
+
+<p class="page-meta">Lecture recorded for this guide. Not legal advice. Re-read prices and terms before you pay or publish.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+<script>
+(function () {
+  var video = document.getElementById("lecture");
+  if (!video) return;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-seek]"), function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      video.currentTime = Number(link.getAttribute("data-seek"));
+      var play = video.play();
+      if (play && play.catch) play.catch(function () {});
+      video.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+})();
+</script>
+</body>
+</html>
