@@ -8,12 +8,21 @@ This is about your own voice, for teaching. It is not a guide to cloning anyone 
 
 ## Watch and read
 
-Published from `main` with GitHub Pages:
+Open these now:
 
-- [Lecture (24 min)](https://connect-world-1985-ai.github.io/2026-10-17-ai-voice-cloning/lecture.html)
-- [Field guide](https://connect-world-1985-ai.github.io/2026-10-17-ai-voice-cloning/)
+- [Lecture (24 min)](https://your-voice-synthesised-557d.surge.sh/lecture.html)
+- [Field guide](https://your-voice-synthesised-557d.surge.sh/)
+
+That copy is the `site/` folder, including the video. Surge sent a verification message to **raymond.shen@medavis.com**. Open it so the address stays up. The password was set from this publish; use “forgot password” on [surge.sh](https://surge.sh) if you want to manage the account.
 
 The same pages work from a checkout, with no server and no build. Open `site/index.html` or `site/lecture.html`. The video is `site/media/lecture.mp4` (about 42 MB), with English captions in `site/media/lecture.vtt`.
+
+GitHub Pages is set up to publish that same `site/` folder from `main` (`.github/workflows/pages.yml`). These addresses are the ones that workflow deploys to:
+
+- [Lecture on GitHub Pages](https://connect-world-1985-ai.github.io/2026-10-17-ai-voice-cloning/lecture.html)
+- [Field guide on GitHub Pages](https://connect-world-1985-ai.github.io/2026-10-17-ai-voice-cloning/)
+
+GitHub does not let the Actions token create the Pages site. The workflow is on `main` and stops at that check until the source is GitHub Actions: repository **Settings → Pages → Build and deployment → Source → GitHub Actions**. Then re-run **Deploy GitHub Pages**. After that, the github.io links above serve the lecture and the guide.
 
 ## What is where
 
