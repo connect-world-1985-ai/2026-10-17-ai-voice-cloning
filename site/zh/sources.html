@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>来源与方法 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">参考</div>
+<h1>来源与方法</h1>
+<p class="lead">研究是怎么做的，关键说法靠哪些来源，来源在哪里打架，还缺什么。中文页译自同一份研究，链接和数字没有改。</p>
+
+<h2>方法</h2>
+<ol>
+<li><b>2026-10-17 的新研究。</b>五个研究助手分别整理了云服务、开源模型、声音转换与录音、评测与流水线、法律的事实表。主代理读了每一份，把最重要的说法重新对着一手来源核对，做了全部判断，写了每一页。</li>
+<li><b>先一手来源</b>：供应商文档、价格页和条款；许可证文件；法律文本和监管说明；arXiv 论文（29 个论文编号对着 arXiv API 核对过）；GitHub 仓库数据走 GitHub API（星标、许可证、最后推送、是否归档）。二手来源（博客、新闻、搜索摘要）会标出来。</li>
+<li><b>Hugging Face</b> 从研究机器上连不上；模型卡上的许可证标签是通过 Hugging Face API 的公开镜像（hf-mirror.com）读的，返回的是同一份 JSON。</li>
+<li><b>不编数字。</b>找不到的值写成「未说明」或「未核实」。每小时价格是用标明的假设，从按字标价算出来的。</li>
+<li><b>基准</b>通常是模型作者自己报的，标成「按发表」。</li>
+</ol>
+
+<h3>主代理亲自复核过的说法</h3>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>说法</th><th>来源</th><th>结果</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs API 价格：v4 每千字 0.08 美元，v4 Turbo 0.04 美元；Voice Changer 每分钟 0.12 美元</td><td><a href="https://elevenlabs.io/pricing/api">ElevenLabs API 价格</a></td><td>已确认</td></tr>
+<tr><td>Gemini 声音复刻：10–30 秒加同意片段，以及存储和保留规则</td><td><a href="https://ai.google.dev/gemini-api/docs/voice-replication">Gemini API 文档</a></td><td>已确认</td></tr>
+<tr><td>第 2、3、5 页用的克隆音色竞技场名次和 Elo</td><td><a href="https://artificialanalysis.ai/text-to-speech/leaderboard/controlled-voice">Artificial Analysis Controlled Voice</a></td><td>已确认（取了两次）</td></tr>
+<tr><td>YouTube：用自己的克隆声音做配音不必声明</td><td><a href="https://support.google.com/youtube/answer/14328491?hl=en">YouTube 帮助</a></td><td>已确认</td></tr>
+<tr><td>欧盟人工智能法第 50 条的日期、职业使用标准、部署者义务</td><td><a href="https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act">欧盟委员会问答</a></td><td>已确认</td></tr>
+<tr><td>F5-TTS 权重 CC-BY-NC；VoxCPM Apache-2.0「可免费商用」；VibeVoice TTS 代码已移除</td><td>经 GitHub API 读的 README</td><td>已确认</td></tr>
+<tr><td>IndexTTS 许可门槛；Fish 代码许可 50 万美元；Fish S2-Pro「没有商用权利」；XTTS-v2 许可覆盖输出</td><td>许可证原文</td><td>已确认</td></tr>
+<tr><td>CosyVoice 3、Qwen3-TTS、VoxCPM2 权重 Apache-2.0；F5-TTS cc-by-nc-4.0</td><td>Hugging Face API（镜像）</td><td>已确认</td></tr>
+<tr><td>OmniVoice 权重非商用（助手的说法）</td><td>OmniVoice README</td><td><b>未确认</b>：没找到这样的句子；标成不清楚</td></tr>
+<tr><td>GPU 租价（RTX 3090 每小时 0.50 美元，L4 0.59，RTX 4090 0.89）</td><td><a href="https://www.runpod.io/pricing">RunPod 价格</a></td><td>已确认</td></tr>
+<tr><td>34 个仓库的星标、许可证、最后推送</td><td>GitHub API</td><td>直接采集</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>按题目分的主要来源</h2>
+<p>这里是选录；每一页自己的来源写在正文链接里。访问日期都是 2026-10-17。</p>
+<p><button class="chip" data-toggle-all="sources-all" type="button">全部展开 / 全部折叠</button></p>
+<div id="sources-all">
+<details open><summary><b>基础与论文</b></summary>
+<ul>
+<li>Seed-TTS（基准协议和人类基线）：<a href="https://arxiv.org/abs/2406.02430">arXiv 2406.02430</a>；<a href="https://github.com/BytedanceSpeech/seed-tts-eval">seed-tts-eval</a></li>
+<li>VALL-E <a href="https://arxiv.org/abs/2301.02111">2301.02111</a>；VALL-E 2 <a href="https://arxiv.org/abs/2406.05370">2406.05370</a>；Voicebox <a href="https://arxiv.org/abs/2306.15687">2306.15687</a>；Flow Matching <a href="https://arxiv.org/abs/2210.02747">2210.02747</a>；E2 TTS <a href="https://arxiv.org/abs/2406.18009">2406.18009</a>；F5-TTS <a href="https://arxiv.org/abs/2410.06885">2410.06885</a></li>
+<li>CosyVoice <a href="https://arxiv.org/abs/2407.05407">2407.05407</a>，CosyVoice 2 <a href="https://arxiv.org/abs/2412.10117">2412.10117</a>，CosyVoice 3 <a href="https://arxiv.org/abs/2505.17589">2505.17589</a>；IndexTTS <a href="https://arxiv.org/abs/2502.05512">2502.05512</a>，IndexTTS2 <a href="https://arxiv.org/abs/2506.21619">2506.21619</a>；MaskGCT <a href="https://arxiv.org/abs/2409.00750">2409.00750</a>；Spark-TTS <a href="https://arxiv.org/abs/2503.01710">2503.01710</a>；Llasa <a href="https://arxiv.org/abs/2502.04128">2502.04128</a>；Fish-Speech <a href="https://arxiv.org/abs/2411.01156">2411.01156</a>；XTTS <a href="https://arxiv.org/abs/2406.04904">2406.04904</a></li>
+<li>编解码器与声码器：SoundStream <a href="https://arxiv.org/abs/2107.03312">2107.03312</a>；EnCodec <a href="https://arxiv.org/abs/2210.13438">2210.13438</a>；DAC <a href="https://arxiv.org/abs/2306.06546">2306.06546</a>；HiFi-GAN <a href="https://arxiv.org/abs/2010.05646">2010.05646</a>；WaveNet <a href="https://arxiv.org/abs/1609.03499">1609.03499</a></li>
+<li>经典神经语音合成：Tacotron 2 <a href="https://arxiv.org/abs/1712.05884">1712.05884</a>；FastSpeech 2 <a href="https://arxiv.org/abs/2006.04558">2006.04558</a>；VITS <a href="https://arxiv.org/abs/2106.06103">2106.06103</a>；Tortoise <a href="https://arxiv.org/abs/2305.07243">2305.07243</a></li>
+<li>说话人嵌入：GE2E <a href="https://arxiv.org/abs/1710.10467">1710.10467</a>；ECAPA-TDNN <a href="https://arxiv.org/abs/2005.07143">2005.07143</a>；WavLM <a href="https://arxiv.org/abs/2110.13900">2110.13900</a>；Seed-VC <a href="https://arxiv.org/abs/2411.09943">2411.09943</a></li>
+</ul></details>
+<details><summary><b>云服务</b></summary>
+<ul>
+<li>ElevenLabs：<a href="https://elevenlabs.io/docs/models">模型</a>，<a href="https://elevenlabs.io/pricing/api">API 价格</a>，<a href="https://elevenlabs.io/blog/eleven-v4">Eleven v4 发布</a>，<a href="https://elevenlabs.io/terms-of-use">使用条款（2026年10月9日）</a>，<a href="https://elevenlabs.io/use-policy">禁止使用政策</a></li>
+<li>Google：<a href="https://ai.google.dev/gemini-api/docs/voice-replication">Gemini 声音复刻</a>，<a href="https://cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice">Chirp 3 Instant Custom Voice</a></li>
+<li>Microsoft：<a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/personal-voice-overview">Personal Voice</a>，<a href="https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/speech-service/text-to-speech/data-privacy-security">数据、隐私与安全</a></li>
+<li><a href="https://platform.minimax.io/docs/guides/speech-voice-clone">MiniMax</a> · <a href="https://docs.fish.audio/features/voice-cloning">Fish Audio</a> · <a href="https://docs.cartesia.ai/build-with-cartesia/capability-guides/clone-voices">Cartesia</a> · <a href="https://inworld.ai/voice-cloning">Inworld</a> · <a href="https://www.alibabacloud.com/help/en/model-studio/voice-cloning-user-guide">阿里云百炼</a> · <a href="https://developers.openai.com/api/docs/guides/custom-voices">OpenAI 自定义声音</a></li>
+<li>独立排名：<a href="https://artificialanalysis.ai/text-to-speech/leaderboard/controlled-voice">Artificial Analysis 受控声音竞技场</a></li>
+</ul></details>
+<details><summary><b>开源模型</b></summary>
+<ul>
+<li><a href="https://github.com/OpenBMB/VoxCPM">VoxCPM</a> · <a href="https://github.com/QwenAudio/CosyVoice">CosyVoice</a> · <a href="https://github.com/QwenLM/Qwen3-TTS">Qwen3-TTS</a> · <a href="https://github.com/RVC-Boss/GPT-SoVITS">GPT-SoVITS</a> · <a href="https://github.com/index-tts/index-tts">IndexTTS</a> · <a href="https://github.com/resemble-ai/chatterbox">Chatterbox</a></li>
+<li><a href="https://github.com/fishaudio/fish-speech">Fish Speech</a> · <a href="https://github.com/SWivid/F5-TTS">F5-TTS</a> · <a href="https://github.com/k2-fsa/OmniVoice">OmniVoice</a> · <a href="https://github.com/boson-ai/higgs-audio">Higgs Audio</a> · <a href="https://github.com/microsoft/VibeVoice">VibeVoice</a> · <a href="https://github.com/idiap/coqui-ai-TTS">coqui-tts（idiap）</a></li>
+<li><a href="https://huggingface.co/blog/open-tts-leaderboard">Hugging Face 开源语音合成排行榜博客（2026-09-30）</a></li>
+</ul></details>
+<details><summary><b>声音转换与录音</b></summary>
+<ul>
+<li><a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">RVC</a> · <a href="https://github.com/IAHispano/Applio">Applio</a> · <a href="https://github.com/ASLP-lab/MeanVC2">MeanVC2</a> · <a href="https://github.com/Plachtaa/seed-vc">Seed-VC</a></li>
+<li><a href="https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning">ElevenLabs 声音克隆指南</a> · <a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/record-custom-voice-samples">Azure 录音指南</a> · <a href="https://cloud.google.com/text-to-speech/custom-voice/docs/training-data">Google 定制声音训练数据</a></li>
+</ul></details>
+<details><summary><b>评测与流水线</b></summary>
+<ul>
+<li><a href="https://github.com/sarulab-speech/UTMOSv2">UTMOSv2</a> · <a href="https://github.com/SYSTRAN/faster-whisper">faster-whisper</a> · <a href="https://github.com/modelscope/FunASR">FunASR</a> · <a href="https://github.com/wenet-e2e/WeTextProcessing">WeTextProcessing</a> · <a href="https://github.com/MahmoudAshraf97/ctc-forced-aligner">ctc-forced-aligner</a></li>
+<li>ElevenLabs <a href="https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices">最佳实践</a>，<a href="https://elevenlabs.io/docs/developers/guides/cookbooks/text-to-speech/request-stitching">请求拼接</a>，<a href="https://elevenlabs.io/docs/api-reference/forced-alignment/create">强制对齐</a></li>
+<li>Azure <a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-pronunciation">SSML 发音与词典</a> · <a href="https://tech.ebu.ch/publications/r128">EBU R128</a> · <a href="https://partnerhelp.netflixstudios.com/hc/en-us/articles/215986007-Chinese-Simplified-Timed-Text-Style-Guide">Netflix 简体中文定时文本指南</a> · <a href="https://github.com/remotion-dev/remotion/blob/main/LICENSE.md">Remotion 许可证</a></li>
+</ul></details>
+<details><summary><b>法律、政策与安全</b></summary>
+<ul>
+<li>欧盟：<a href="https://artificialintelligenceact.eu/article/50/">人工智能法第 50 条</a>，<a href="https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act">委员会问答</a>，<a href="https://digital-strategy.ec.europa.eu/en/policies/code-practice-ai-generated-content">实践准则</a>，<a href="https://www.edpb.europa.eu/system/files/2021-07/edpb_guidelines_202102_on_vva_v2.0_adopted_en.pdf">EDPB 语音助手指南</a></li>
+<li>中国：<a href="https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm">人工智能生成合成内容标识办法</a>，<a href="https://www.gov.cn/zhengce/zhengceku/2022-12/12/content_5731431.htm">深度合成规定</a>，<a href="https://english.bjinternetcourt.gov.cn/2024-04/24/c_706.htm">北京互联网法院人工智能声音案</a></li>
+<li>德国：<a href="https://www.gesetze-im-internet.de/bdsg_2018/__26.html">联邦数据保护法第 26 条</a>，<a href="https://www.bmjv.de/SharedDocs/Pressemitteilungen/DE/2026/1007_Digitale_Gewalt.html">司法部关于刑法草案第 201b 条的新闻稿</a>。美国：<a href="https://publications.tnsosfiles.com/acts/113/pub/pc0588.pdf">ELVIS 法</a>，<a href="https://www.congress.gov/bill/119th-congress/senate-bill/4591">NO FAKES 法案（S. 4591）</a></li>
+<li>平台：<a href="https://support.google.com/youtube/answer/14328491?hl=en">YouTube</a>，<a href="https://support.tiktok.com/en/using-tiktok/creating-videos/ai-generated-content">TikTok</a>，<a href="https://support.udemy.com/hc/en-us/articles/30999984483607-Course-Quality-Checklist-Use-of-AI">Udemy</a></li>
+<li>水印：<a href="https://github.com/facebookresearch/audioseal">AudioSeal</a>，<a href="https://arxiv.org/abs/2503.19176">音频水印稳健性综述</a>，<a href="https://arxiv.org/abs/2505.19663">RAW-Bench</a>。声纹风险：<a href="https://www.vice.com/en/article/how-i-broke-into-a-bank-account-with-an-ai-generated-voice/">Vice 2023</a>，<a href="https://www.federalreserve.gov/mediacenter/files/capital-framework-conference-fireside-chat-transcript.pdf">美联储 2025 年文字记录</a></li>
+</ul></details>
+</div>
+
+<h2 id="conflicts">来源在哪里打架</h2>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>题目</th><th>矛盾</th><th>本站怎么处理</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs 跨语言口音</td><td>v4 发布稿说每种语言都是母语口音；更早的专业克隆指南警告源语言口音会带过去。</td><td>两句都写了；你自己测（第 12 页，方向 4）。</td></tr>
+<tr><td>ElevenLabs Creator 额度</td><td>价格页：12.1 万积分；API 价格页：「含 27.5 万字 v4 语音合成」。</td><td>计算器里不用这个数。</td></tr>
+<tr><td>Fish Audio 免费档</td><td>服务条款：非商用；价格页：「允许商用」。</td><td>标成有条件。</td></tr>
+<tr><td>Fish 权重许可</td><td>README 暗示社区许可覆盖权重；S2-Pro 和 Drama 3 的许可文件写的是仅研究。</td><td>信许可文件：非商用。</td></tr>
+<tr><td>IndexTTS 商用</td><td>许可正文：门槛以下免版税；README：「商用请联系」。</td><td>标成有条件；上线前发邮件。</td></tr>
+<tr><td>OmniVoice 权重</td><td>助手报告 README 里有 CC-BY-NC；当前 README 没有；Hugging Face 卡片没有标签。</td><td>标成不清楚。</td></tr>
+<tr><td>Qwen3-TTS 基准</td><td>它自己的 README 是 0.77 / 1.24；VoxCPM 的表是 1.22 / 1.23。</td><td>用汇总表，并注明冲突。</td></tr>
+<tr><td>Google Chirp 3 HD 的 SSML</td><td>一页说预览里支持，另一页说不支持。</td><td>标成未核实。</td></tr>
+<tr><td>普通话克隆音色排名</td><td>只有二手报道说 Artificial Analysis 有普通话榜（快照日期不明）。</td><td>标成未核实；不拿来做推荐。</td></tr>
+<tr><td>Resemble 的所有权条款</td><td>首席执行官 2024 年证词：「用户拥有全部权利」；现行条款没有这一句（二手综述）。</td><td>已无实际意义：托管产品停了。</td></tr>
+<tr><td>YouTube 响度目标</td><td>「−14 LUFS」被广泛引用；没找到 YouTube 官方页面。</td><td>改推荐 −16 LUFS。</td></tr>
+<tr><td>克隆自己的声音算不算深度伪造</td><td>欧盟指南里的播客例子倾向于算；虚构旁白的例子说，如果没有欺骗就不算。</td><td>做声明：两种读法都盖住了。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="gaps">已知缺口</h2>
+<ul>
+<li><b>没有动手跑模型。</b>没有安装或运行任何模型；音质说法来自基准、竞技场和文档。CosyVoice 3、Fish、Chatterbox 等在 Windows 上好不好用，实践中未核实。</li>
+<li><b>没有独立的「你自己的声音」基准</b>覆盖英语加普通话，或跨语言相似度；CV3 的跨语言表是一个模型团队编的。</li>
+<li><b>显存和速度</b>只有少数模型有官方数字；其余是二手或缺失。</li>
+<li><b>演示页上的样音许可证</b>没有写明，所以不内嵌音频，只给链接。</li>
+<li><b>供应商条款</b>：Inworld、阿里、火山引擎和 OpenAI 语音合成补充条款没有读完；Fish 和 Cartesia 的条款可能是旧版本。</li>
+<li><b>没有深入查</b>：HeyGen Voice（克隆榜第一）、StepAudio、Voxtral TTS、Breeze TTS 2、Supertone、Maya1、Magpie TTS、LongCat-Audio-DiT。</li>
+<li><b>法律</b>：还没有任何机关裁定过，一个人按第 50 条克隆<i>自己的</i>声音算什么；德国判决只通过二手摘要读过。</li>
+</ul>
+
+<p class="page-meta">研究笔记和进度表在本站旁边的 docs/memory/ 里，工作可以接着做。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

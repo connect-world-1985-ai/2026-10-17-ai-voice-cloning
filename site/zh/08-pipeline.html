@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>智能体旁白流程 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 8 页 · 把它做好</div>
+<h1>一条由智能体来跑的旁白流水线</h1>
+<p class="lead">一门课，而不是一段演示，工作就变成一条构建流水线：稿子进去，检查过的音频、字幕和按时间排好的视频出来。编程智能体可以写并跑几乎全部。这一页讲阶段、每个阶段的工具和设置，以及你仍然必须听的地方。</p>
+
+<div class="callout key"><span class="title">结论</span>
+<ul>
+<li>把旁白当成<b>编译出来的产物</b>：稿子是源；其余一切由它加上一份钉死的设置文件重新生成。<span class="ev p">实践</span></li>
+<li>核心循环是<b>规范化 → 切块 → 合成 → 语音识别检查 → 重做失败的 → 组装</b>。每一块按哈希缓存，所以一处修改只碰那一块。<span class="ev p">实践</span></li>
+<li><b>按幻灯片生成音频</b>。于是每张幻灯片的时长就是它的音频长度，大部分同步工作消失了。<span class="ev i">推断</span></li>
+<li><b>钉死模型编号。</b>ElevenLabs 在 2026-07-09 移除了 v1 模型；用「最新」录的课，以后没法一致地打补丁。<span class="ev v">已核实</span>（ElevenLabs 更新日志）</li>
+</ul></div>
+
+<h2>整条流水线一眼看完</h2>
+<figure class="diagram">
+<svg viewBox="0 0 900 300" role="img" aria-label="带检查和重生成循环的旁白流水线">
+  <defs>
+    <marker id="p8a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>
+    <marker id="p8l" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-loop"/></marker>
+  </defs>
+  <rect x="10" y="20" width="120" height="56" rx="8" class="box-a"/><text x="22" y="44" class="t-title">稿子</text><text x="22" y="64" class="t-muted">显示文本</text>
+  <rect x="160" y="20" width="120" height="56" rx="8" class="box-a"/><text x="172" y="44" class="t-title">1 规范化</text><text x="172" y="64" class="t-muted">口播文本</text>
+  <rect x="310" y="20" width="120" height="56" rx="8" class="box-a"/><text x="322" y="44" class="t-title">2 切块</text><text x="322" y="64" class="t-muted">一到三句</text>
+  <rect x="460" y="20" width="130" height="56" rx="8" class="box-b"/><text x="472" y="44" class="t-title">3 合成</text><text x="472" y="64" class="t-muted">按哈希缓存</text>
+  <rect x="620" y="20" width="130" height="56" rx="8" class="box-b"/><text x="632" y="44" class="t-title">4 检查</text><text x="632" y="64" class="t-muted">识别、时长、相似度</text>
+  <rect x="780" y="20" width="110" height="56" rx="8" class="box-warn"/><text x="792" y="44" class="t-title">人</text><text x="792" y="64" class="t-muted">标记加一成</text>
+  <path d="M130,48 L157,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M280,48 L307,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M430,48 L457,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M590,48 L617,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M750,48 L777,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M685,76 C685,120 525,120 525,80" class="line-loop" marker-end="url(#p8l)"/>
+  <text x="540" y="128" class="t-muted">失败 → 换种子（最多 3 次）→ 改写 / 词典</text>
+  <rect x="10" y="170" width="150" height="56" rx="8" class="box-c"/><text x="22" y="194" class="t-title">5 组装</text><text x="22" y="214" class="t-muted">停顿、淡化</text>
+  <rect x="190" y="170" width="150" height="56" rx="8" class="box-c"/><text x="202" y="194" class="t-title">6 响度</text><text x="202" y="214" class="t-muted">−16 LUFS</text>
+  <rect x="370" y="170" width="150" height="56" rx="8" class="box-c"/><text x="382" y="194" class="t-title">7 对齐</text><text x="382" y="214" class="t-muted">词的时间戳</text>
+  <rect x="550" y="170" width="150" height="56" rx="8" class="box-d"/><text x="562" y="194" class="t-title">8 字幕</text><text x="562" y="214" class="t-muted">SRT / VTT</text>
+  <rect x="730" y="170" width="160" height="56" rx="8" class="box-d"/><text x="742" y="194" class="t-title">9 视频</text><text x="742" y="214" class="t-muted">幻灯片 / 屏幕</text>
+  <path d="M160,198 L187,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M340,198 L367,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M520,198 L547,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M700,198 L727,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M835,76 C835,140 85,130 85,167" class="line" marker-end="url(#p8a)"/>
+  <text x="10" y="262" class="t-muted">一切都是纯函数：稿子 + settings.yaml（钉死的模型、声音、词典版本、参考哈希）+ 清单（缓存键、请求编号、费用）。</text>
+</svg>
+</figure>
+
+<h2>1. 规范化：从显示稿到口播稿</h2>
+<ul>
+<li>展开数字、版本、单位、货币和日期；缩写按你怎么说来拼；代码换成能念的转述。两个版本都存；字幕用显示文本。<span class="ev p">实践</span></li>
+<li>工具：普通话和英语用 <b>WeTextProcessing</b>（Apache-2.0），英语用 <b>NeMo text processing</b>（Apache-2.0）或 <b>num2words</b>（LGPL-2.1），再加一次带明确规则的大语言模型处理。<span class="ev v">已核实</span>（许可，2026-10-17）</li>
+<li>留一份<b>项目词典</b>（仓库里的 YAML）。智能体把它编译成 ElevenLabs 发音词典（有版本）、Azure PLS 词典，或开源模型的行内拼音 / 国际音标。细节在<a href="07-quality-control.html">第 7 页</a>。</li>
+<li>混合语言的句子（「我们用 <code>kubectl</code> 部署」）在双语教学里是正常的。每个工具都早点测；有的模型会在句中换口音。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>2. 切块</h2>
+<ul>
+<li>一块 = 1–3 句（约 100–400 字），绝不跨过 <code>&lt;!-- slide 3 --&gt;</code> 这样的幻灯片标记。<span class="ev p">实践</span></li>
+<li>把块写进 <code>chunks.jsonl</code>：幻灯片号、语言、口播文本、显示文本。</li>
+<li>要遵守的供应商上限：Eleven v4 每次请求 10000 字，v3 是 5000；Gemini TTS 每次请求 8192 个输入词元。<span class="ev v">已核实</span></li>
+</ul>
+
+<h2>3. 合成</h2>
+<ul>
+<li><b>缓存键</b> = 哈希（口播文本 + 模型编号 + 声音编号 + 设置 + 词典版本 + 种子 + 参考片段哈希）。文件已在就跳过调用。<span class="ev p">实践</span></li>
+<li><b>ElevenLabs</b>：传 <code>previous_request_ids</code> / <code>next_request_ids</code>（各最多 3 个，不超过 2 小时，v3 上没有）或 <code>previous_text</code> / <code>next_text</code> 来保持连贯。要重做中间一块，传入邻居的请求编号。把响应头 <code>request-id</code> 和 <code>character-cost</code> 存进清单。<span class="ev v">已核实</span></li>
+<li><b>开源模型</b>：每一块用同一段黄金参考和同一份文稿；按块生成，不要依赖模型自己的长文本模式。<span class="ev p">实践</span></li>
+<li>全程生成同一采样率的 WAV（PCM），例如 48 kHz 单声道；最后再编码一次。<span class="ev p">实践</span></li>
+</ul>
+
+<h2>4. 检查并重做</h2>
+<p>每一块按这个顺序（先做便宜的）：</p>
+<ol class="stepper">
+<li><b>信号检查</b>：时长比在预期的 0.7–1.4，没有削波，首尾静音在限度内。</li>
+<li><b>语音识别</b>：英语 faster-whisper large-v3，中文 Paraformer-zh / SenseVoice；规范化后英语词错率 ≤ 5%，中文字错率 ≤ 3%；每个受保护术语都在。</li>
+<li><b>相似度</b>：SIM ≥ 你的基线 − 0.10（和基线同一个嵌入模型）。</li>
+<li><b>分诊分数</b>：UTMOSv2，用来排你先听哪一块。</li>
+<li><b>失败时</b>：换种子，最多 3 次；然后改写句子或加词典条目；再标出来给你。</li>
+</ol>
+<p class="small muted">所有门槛都是从基准里的人类基线推出来的建议（第 7 页），不是标准。<span class="ev i">推断</span></p>
+
+<h2>5. 组装</h2>
+<ul>
+<li>先剪掉每一块自己的首尾静音（ffmpeg <code>silenceremove</code> 或 pydub <code>detect_leading_silence</code>），再插入受控停顿：句间约 300 毫秒，段间约 800 毫秒，换幻灯片约 1.5 秒。<span class="ev p">实践</span>（经验法则）</li>
+<li>每个切口 5–10 毫秒淡化，避免咔嗒；交叉淡化（10–30 毫秒）只用于连续段落内部。<span class="ev p">实践</span></li>
+<li><b>pydub</b>（MIT）是做这个最简单的库；ffmpeg 的 concat 解复用器要求格式完全相同。<span class="ev v">已核实</span>（许可）</li>
+</ul>
+
+<h2>6. 响度</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>目标</th><th>数值</th><th>状态</th></tr></thead>
+<tbody>
+<tr><td>EBU R128（广播）</td><td>综合 −23 LUFS，−1 dBTP</td><td><span class="ev v">已核实</span></td></tr>
+<tr><td>AES TD1008（流媒体语音）</td><td>语音 / 谈话 −18 LUFS</td><td><span class="ev u">未核实</span>（AES 页面只在搜索摘要里见过）</td></tr>
+<tr><td>Apple 播客</td><td>−16 LUFS ±1，−1 dBTP</td><td><span class="ev u">未核实</span>（二手）</td></tr>
+<tr><td>Spotify 播放归一</td><td>−14 LUFS（普通模式）</td><td><span class="ev v">已核实</span>（Spotify for Artists）</td></tr>
+<tr><td>YouTube</td><td>「−14 LUFS」被广泛引用；没找到 YouTube 官方页面</td><td><span class="ev u">未核实</span></td></tr>
+</tbody>
+</table>
+</div>
+<p><b>课程的实用选择：综合 −16 LUFS，真峰值 −1.5 dBTP。</b>只把过响内容调低的平台上，略安静的母带是安全的。用两遍 ffmpeg <code>loudnorm</code>（或 <code>ffmpeg-normalize</code> 包装），并用 <code>pyloudnorm</code>（MIT）测量，写进质检报告。<span class="ev i">推断</span></p>
+
+<h2 id="word-timestamps">7. 词的时间戳（强制对齐）</h2>
+<p>你已经确切知道说了什么，所以<b>把音频对齐到口播稿</b>，而不是依赖语音识别的时间戳，那些没那么准。<span class="ev p">实践</span></p>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>工具</th><th>输出</th><th>备注（2026-10-17）</th></tr></thead>
+<tbody>
+<tr><td><b>ElevenLabs 强制对齐 API</b></td><td>字符和词的起止，外加每个词的 <code>loss</code>（置信度）</td><td>任何音频都能用，包括别的供应商和本地输出。每个词的 loss 同时当发音检查。<span class="ev v">已核实</span></td></tr>
+<tr><td>带时间戳的 ElevenLabs 语音合成</td><td>生成音频的字符级对齐</td><td>v4 在这个端点上是否可用：<span class="ev u">未核实</span></td></tr>
+<tr><td>Azure <code>WordBoundary</code> 事件</td><td>词、标点和句子偏移</td><td>语音 SDK 原生。<span class="ev v">已核实</span></td></tr>
+<tr><td>MiniMax 异步语音合成</td><td>词级字幕</td><td><span class="ev v">已核实</span>（文档）</td></tr>
+<tr><td><b>ctc-forced-aligner</b></td><td>把你的稿子对齐到音频；1100 多种语言；中文用 <code>--romanize</code></td><td>BSD-2。默认模型基于 MMS；商用前查那个模型的许可。<span class="ev v">已核实</span>（仓库）· 模型许可<span class="ev u">未核实</span></td></tr>
+<tr><td>Montreal Forced Aligner</td><td>词级和音素级</td><td>MIT；需要声学模型和词典（有普通话模型）。<span class="ev p">实践</span></td></tr>
+<tr><td>WhisperX / faster-whisper</td><td>语音识别加对齐 / 交叉注意力时间戳</td><td>没有稿子时够用，例如带现场讲话的屏幕录制。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>8. 字幕</h2>
+<ul>
+<li>按标点、最大字数和最大时长把词组成一条条字幕；每条结束在最后一个词的结束再加不超过 200 毫秒，绝不和下一条重叠。<span class="ev p">实践</span></li>
+<li>Netflix 风格指南的行限：<b>简体中文每行 16 字</b>（例外 18），最多 2 行，成人最多每秒 9 字；大多数其他语言大约<b>每行 42 个字符</b>。<span class="ev v">已核实</span></li>
+<li>字幕文字来自<i>显示</i>稿（数字、代码格式），时间来自口播稿的对齐，按词的下标映射。</li>
+<li>双语课程：每种语言单独的字幕文件；只有平台不能挂边车 VTT 时才烧进画面。<span class="ev p">实践</span></li>
+</ul>
+
+<h2>9. 和幻灯片、屏幕录制同步</h2>
+<div data-tabs>
+<div class="tabs"><button data-tab="slides">幻灯片</button><button data-tab="screen">屏幕录制</button><button data-tab="tools">渲染工具</button></div>
+<div class="tab-panel" data-panel="slides">
+<p><b>每张幻灯片一段音频。</b>在稿子里写 <code>&lt;!-- slide 3 --&gt;</code> 或 <code>[[click]]</code> 这样的标记。每张幻灯片的时长 = 它的音频 + 留白。不需要对齐，重做一张只改那一张。幻灯片内部的逐步出现（项目符号），用每个项目第一条的词时间戳。<span class="ev i">推断</span></p>
+</div>
+<div class="tab-panel" data-panel="screen">
+<ul>
+<li><b>先音频</b>：先生成旁白，再把录屏剪或重定时去配合（ffmpeg <code>setpts</code> 加速，<code>tpad</code> 冻住一帧）。适合你可以便宜重录的教程。</li>
+<li><b>先视频</b>：列出录屏里的事件（点击、场景变化，例如用 PySceneDetect），再把旁白块填进空隙，轻微调速（ElevenLabs <code>speed</code>，IndexTTS 的时长因子）。任何需要超过 ±10% 变速的块，标出来改写。<span class="ev i">推断</span></li>
+</ul>
+</div>
+<div class="tab-panel" data-panel="tools">
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>工具</th><th>同步怎么做</th><th>许可（2026-10-17）</th></tr></thead>
+<tbody>
+<tr><td>Remotion（React → MP4）</td><td>每张幻灯片是一个 <code>&lt;Sequence from={frame}&gt;</code>；帧数 = 秒 × 帧率，来自音频时间。</td><td class="lic-cond">自定义：个人和不超过 3 名雇员的公司免费；超过要公司许可</td></tr>
+<tr><td>MoviePy（Python）</td><td><code>ImageClip(slide).with_duration(d)</code> + <code>AudioFileClip</code>，再拼接。</td><td class="lic-ok">MIT</td></tr>
+<tr><td>只用 ffmpeg</td><td>每张幻灯片一张 PNG，在 concat 列表里写 <code>duration</code>，再混入音频。</td><td class="lic-cond">LGPL/GPL，看构建</td></tr>
+<tr><td>Marp CLI</td><td>Markdown → PNG 幻灯片；再用 MoviePy 或 ffmpeg。</td><td class="lic-ok">MIT</td></tr>
+<tr><td>reveal.js</td><td>HTML 幻灯片；旁白用插件或无头浏览器采集。</td><td class="lic-ok">MIT</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<h2>一门长课上的一致</h2>
+<ul>
+<li>在 <code>settings.yaml</code> 里<b>钉死一切</b>：供应商、确切的 <code>model_id</code>（例如 <code>eleven_v4</code>，绝不是 “latest”）、声音编号、声音设置、词典编号<i>和</i>版本、参考片段哈希、种子策略、输出格式、响度目标；开源模型还要 git 提交和检查点哈希。<span class="ev p">实践</span></li>
+<li><b>供应商会弃用模型。</b>ElevenLabs 在 2026-07-09 移除了 <code>eleven_monolingual_v1</code>、<code>eleven_multilingual_v1</code> 和 <code>scribe_v1</code>；并且说「我们所有的默认声音将在 2026年12月31日过期」（对你的克隆无关，如果你用库存声音当后备就有关）。<span class="ev v">已核实</span>（更新日志，帮助中心经研究助手）</li>
+<li><b>留住已发布内容的母带 WAV</b>，旧课就不必重新生成。换模型之后，整课重做，不要单块重做，这样一课里不会混两个模型版本。<span class="ev p">实践</span></li>
+<li>每隔几个月录一段新的真人样本。你真实的声音也会变，基线相似度告诉你克隆还像不像你。<span class="ev i">推断</span></li>
+<li>画出一课里每一块的相似度、语速和响度；离群点就是重做的候选。<span class="ev p">实践</span></li>
+</ul>
+
+<h2>建议的仓库布局</h2>
+<pre><code>course/
+  settings.yaml            # 钉死的供应商、model_id、voice_id、设置、词典版本、参考哈希
+  lexicon.yaml             # 术语 -&gt; 别名 / 国际音标 / 拼音，按语言
+  refs/                    # 黄金参考和文稿（加密，不进 git）
+  lessons/07-docker/
+    script.md              # 显示文本，带幻灯片标记和语言标签
+    build/
+      spoken.txt
+      chunks.jsonl
+      wav/&lt;哈希&gt;.wav
+      qc.csv               # 词错率/字错率、时长比、相似度、UTMOS、尝试次数、是否标记
+      lesson.wav           # 组装后，-16 LUFS
+      words.json           # 强制对齐
+      lesson.zh.vtt / lesson.en.vtt
+      lesson.mp4
+  manifest.sqlite          # 缓存键、请求编号、字符费用</code></pre>
+<p>一段可以直接贴给编程智能体、让它正好搭出这个的提示，在<a href="11-hands-on.html#agent-prompt">第 11 页</a>。</p>
+
+<h2>智能体自动化什么，你做什么</h2>
+<div class="cards">
+<div class="card b"><h4>智能体</h4><p>规范化、编译词典、切块、API 调用、缓存、费用跟踪、语音识别 / 时长 / 相似度检查、重试、组装、响度、对齐、字幕、渲染、质检报告。</p></div>
+<div class="card c"><h4>你</h4><p>批准新的词典条目；听每一个被标出的块，再加随机 10%；判断重音和语气；把第一节成片从头看到尾；<code>settings.yaml</code> 里任何东西变了就做盲听 A/B。</p></div>
+</div>
+
+<h2 id="avatar">关于对口型数字人</h2>
+<p>旁白一旦是合成的，你的说话人头视频也可以是。可选；幻灯片加声音是更简单的基线。</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>选项</th><th>它做什么</th><th>事实（2026-10-17）</th><th>许可 / 同意</th></tr></thead>
+<tbody>
+<tr><td>LatentSync（字节跳动）</td><td>把你已有的视频按新音频重新对口型</td><td>v1.5（中文更好）约 8 GB 显存；v1.6（512×512）约 18 GB；最后推送 2025-06</td><td class="lic-ok">Apache-2.0</td></tr>
+<tr><td>MuseTalk（腾讯音乐）</td><td>实时对口型</td><td>v1.5，2025-03</td><td class="lic-cond">MIT 许可文件；查捆绑模型的许可</td></tr>
+<tr><td>Wav2Lip</td><td>经典对口型</td><td>没有许可文件</td><td class="lic-no">非商用 / 仅研究（README）</td></tr>
+<tr><td>HeyGen</td><td>托管数字分身</td><td>Creator 每月 29 美元；API Avatar IV 约每秒 0.05 美元</td><td>同意流程 <span class="ev u">未核实</span></td></tr>
+<tr><td>Synthesia</td><td>托管个人虚拟形象</td><td>个人虚拟形象从 Starter 起；1–5 分钟一镜到底的素材</td><td>现场同意视频，屏幕上有口令；不能上传</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">来自评测与流水线研究笔记；供应商价格经搜索找到的官方页面。除非另标，<span class="ev v">已核实</span>。你的合成视频在欧盟人工智能法下很有可能是深度伪造；见<a href="09-legal.html#eu-ai-act">第 9 页</a>。</p>
+
+<p class="page-meta">研究笔记：r4-eval-pipeline.md（2026-10-17）。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

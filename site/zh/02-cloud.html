@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>云服务 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 2 页 · 市面上有什么</div>
+<h1>云端声音克隆服务</h1>
+<p class="lead">托管服务是到好结果最快的路：上传几分钟你自己，调一个 API，拿到语音。对你要紧的差别是：谁让个人进来，普通话好不好，他们拿你的声音数据做什么，以及一小时旁白要多少钱。</p>
+
+<div class="callout key"><span class="title">结论（2026-10-17 的状态）</span>
+<ul>
+<li><b>ElevenLabs</b> 是个人能自助用的最完整选项：6 美元的 Starter 就能做即时克隆，22 美元的 Creator 起可以做专业克隆（仅限本人声音），Eleven v4 有普通话和英语，API 好。API 标价大约<b>英语每小时 4–5 美元</b>，<b>普通话每小时大约 1.20 美元</b>。<span class="ev v">已核实</span>（价格页、文档）</li>
+<li><b>Google Gemini 3.8 Flash TTS</b> 现在可以自助复刻声音：10–30 秒，外加一句口播的同意，任何语言大约<b>每音频小时 0.82 美元</b>（2027-01-01 起价格加倍）。便宜很多，在独立克隆音色竞技场上排名更低。<span class="ev v">已核实</span>（Google 文档）· <span class="ev x">实验性</span>（预览）</li>
+<li><b>要审批，或已经没了</b>：Azure Personal Voice 和 Google Chirp 3 定制声音要批准；OpenAI 自定义声音只走销售；Resemble 的托管平台、LMNT 和 PlayHT 不再是选项。<span class="ev v">已核实</span></li>
+<li>没有排行榜量过克隆有多像<i>你</i>。必须用你自己的声音测（<a href="11-hands-on.html">第 11 页</a>）。<span class="ev i">推断</span></li>
+</ul></div>
+
+<h2>怎么读「每小时」这一列</h2>
+<p>所有「每小时」都是<b>一小时成片旁白</b>的标价，不含税和一次性声音费，用这些假设算的：</p>
+<ul>
+<li><b>英语</b>：大约 9000 词 ≈ 每小时 5 万到 6 万个计费字符。Artificial Analysis 用 49500；ElevenLabs 自己的计算器假定 1000 字符 ≈ 1 分钟。<span class="ev i">推断</span></li>
+<li><b>普通话</b>：正常语速大约每分钟 240 个字（音节），所以含标点每小时大约 15000 个计费字符。讲课往往更慢。<span class="ev u">未核实</span>（关于语速的中文二手来源）</li>
+<li>供应商是否把一个汉字当成一个计费字符，并不总有文档；普通话数字按 1:1 假设。Fish Audio 按 UTF-8 字节计费（一个汉字 3 字节）。Gemini 按音频时长计费，所以语言不影响价格。<span class="ev u">未核实</span>（大多数供应商）</li>
+</ul>
+<p>用你自己的数字去<a href="10-decide.html#cost-calculator">费用计算器</a>里试。</p>
+
+<h2>对照</h2>
+<div class="toolbar"><input type="search" placeholder="筛选服务…（例如 普通话、审批、时间戳）" data-filter-for="cloud" aria-label="筛选云服务"></div>
+<div class="table-wrap">
+<table id="cloud" data-sortable class="compact">
+<thead><tr><th>服务</th><th>克隆类型和你的音频</th><th>谁能用</th><th>普通话 / 跨语言</th><th>标价（2026-10-17）</th><th>英 $/时</th><th>中 $/时</th><th data-nosort>智能体 / API</th></tr></thead>
+<tbody>
+<tr><td><b><a href="https://elevenlabs.io/docs/models">ElevenLabs</a></b><br><small>Eleven v4、v4 Turbo、v3、Multilingual v2</small></td><td>即时：建议 1–2 分钟（v4 博客称 10 秒）。专业：最少 30 分钟，建议 1–3 小时，训练 3–6 小时。</td><td>自助。即时从 Starter（每月 6 美元）起。专业从 Creator（每月 22 美元）起，仅限本人声音，有声音验证码。</td><td>有（普通话，v4 还有粤语）。v4 声称跨语言是母语口音；更早的专业克隆指南警告源语言口音。</td><td>API：v4 每千字 0.08 美元；v4 Turbo 0.04 美元 <span class="ev v">已核实</span></td><td data-v="4.4">4.00–4.80<br><small>Turbo 2.00–2.40</small></td><td data-v="1.2">1.20<br><small>Turbo 0.60</small></td><td>很好：REST 和 SDK、字符时间戳、强制对齐接口、发音词典、请求拼接，v4 每次请求 10000 字。</td></tr>
+<tr><td><b><a href="https://ai.google.dev/gemini-api/docs/voice-replication">Google Gemini 3.8 Flash TTS</a></b><br><small>声音复刻，预览</small></td><td>10–30 秒参考，加同一说话人朗读固定句子的同意录音。</td><td>自助（Gemini API、AI Studio、Vertex）。Vertex 上预正式版条款允许商用。</td><td>有（130 种语言；同意句有简体中文）。跨语言质量：<span class="ev u">未核实</span>。</td><td>到 2026-12-31：每百万文本词元输入 0.50 美元 + 每百万音频词元输出 9.00 美元（每秒 25 个词元）；2027-01-01 加倍；批量一半 <span class="ev v">已核实</span></td><td data-v="0.82">约 0.82<br><small>2027：约 1.64</small></td><td data-v="0.82">约 0.82</td><td>好：google-genai SDK、REST、批量 API；每项目 200 个存储声音，保留 1 年，或 7 天无状态密钥。词级时间戳：<span class="ev u">未核实</span>。免费档数据「用来改进我们的产品」。</td></tr>
+<tr><td><b><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/personal-voice-overview">Azure Personal Voice</a></b></td><td>5–90 秒，加录下的同意声明。</td><td><b>受限访问</b>：申请并批准；发布内容只允许列出的用途（商业内容、媒体配音、视频翻译……）。</td><td>有；一个声音说大约 100 种语言，自动检测语言。</td><td>每百万字 24 美元（Azure 零售价格 API）<span class="ev v">已核实</span></td><td data-v="1.32">1.20–1.44</td><td data-v="0.36">0.36</td><td>SSML 和词典支持最好，有词边界和视位事件；输出带水印。个人教师能否获批：<span class="ev u">未核实</span>。</td></tr>
+<tr><td><b>Azure 定制神经声音</b><br><small>专业声音</small></td><td>300–2000 句录音棚语句；训练 20–40 计算小时。</td><td>只有微软客户团队管理的客户。</td><td>有；中英双语训练；「跨语言」方法已于 2026-08-25 停用。</td><td>每百万字 24 美元 + 训练每小时 52 美元 + 托管每小时 4.032 美元</td><td data-v="99">1.20–1.44 + 托管</td><td data-v="99">0.36 + 托管</td><td>对个人不现实。</td></tr>
+<tr><td><b><a href="https://cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice">Google Chirp 3 Instant Custom Voice</a></b></td><td>最长 10 秒，加同意片段。</td><td><b>销售白名单</b>。</td><td>普通话有，但<b>不能把英语克隆带进中文</b>（en-US 只到德/西/法/葡）。</td><td>每百万字 60 美元</td><td data-v="3.3">3.00–3.60</td><td data-v="0.9">0.90</td><td>API 好；要审批。</td></tr>
+<tr><td><b><a href="https://platform.minimax.io/docs/guides/speech-voice-clone">MiniMax</a></b><br><small>speech-2.8-hd / turbo</small></td><td>10 秒到 5 分钟的文件，外加可选提示片段。</td><td>自助（国际平台）。没有文档记载同意录音。</td><td>有（中国厂商）。跨语言靠 <code>language_boost</code>：质量<span class="ev u">未核实</span>。</td><td>hd 每百万字 100 美元；turbo 60 美元；每个克隆声音 1.50 美元</td><td data-v="5.5">5.00–6.00<br><small>turbo 3.00–3.60</small></td><td data-v="1.5">1.50<br><small>turbo 0.90</small></td><td>好：异步任务最长 100 万字，<b>词级字幕</b>，发音词典。</td></tr>
+<tr><td><b><a href="https://docs.fish.audio/features/voice-cloning">Fish Audio</a></b><br><small>S2.1-Pro</small></td><td>每段至少 10 秒，1–2 分钟更好；网页应用里有专业克隆。</td><td>自助。</td><td>有（83 种语言）。跨语言：<span class="ev u">未核实</span>。</td><td>每百万 UTF-8 字节 15 美元</td><td data-v="0.83">0.75–0.90</td><td data-v="0.68">约 0.68</td><td>REST 和 Python SDK，情绪标签。服务条款允许用你的内容训练；免费档能不能商用，页面之间冲突。</td></tr>
+<tr><td><b><a href="https://docs.cartesia.ai/build-with-cartesia/capability-guides/clone-voices">Cartesia</a></b><br><small>Sonic 3.6</small></td><td>即时 10–60 秒；专业 30 分钟以上。</td><td>自助。即时从 5 美元的 Pro 起；专业从 49 美元的 Startup 起。</td><td>有；先用你自己的语言克隆，再用 “Add Voice Accents” 加别的语言。</td><td>积分：每字 1 分；Startup 49 美元 / 125 万</td><td data-v="2.15">约 1.96–2.35</td><td data-v="0.59">约 0.59</td><td>API / WebSocket 好。除非退出，否则用输入和输出训练；克隆没有零保留。</td></tr>
+<tr><td><b><a href="https://inworld.ai/voice-cloning">Inworld</a></b><br><small>Realtime TTS-2</small></td><td>即时 3–30 秒；专业（测试）10 分钟以上。</td><td>自助；专业档的资格，页面之间互相冲突。</td><td>有。据报在 Artificial Analysis 普通话克隆榜第一 <span class="ev u">未核实</span>（二手）。</td><td>按需每百万字 25 美元；克隆免费</td><td data-v="1.38">1.25–1.50</td><td data-v="0.38">0.38</td><td>API 加门户；条款没查。</td></tr>
+<tr><td><b><a href="https://www.alibabacloud.com/help/en/model-studio/voice-cloning-user-guide">阿里云百炼</a></b><br><small>Qwen-Audio-TTS / CosyVoice</small></td><td>建议 10–20 秒，最长 60 秒。</td><td>自助；国际区是 3.0 模型，排行榜上的 3.1 在中国区。</td><td>普通话加 20 种方言；克隆覆盖 17 种语言。</td><td>国际区 3.0-plus 每万字 0.20 美元</td><td data-v="1.1">1.00–1.20</td><td data-v="0.3">0.30</td><td>DashScope REST / WebSocket；声音绑定一个模型，一年不用就删除。</td></tr>
+<tr><td><b>火山引擎豆包声音复刻 2.0</b><br><small>字节跳动，中国</small></td><td>「5 秒」录音。</td><td>中国账号；很可能要实名。</td><td>有；宣传只说中文的说话人可以出英语/日语。</td><td>每万字 3 元，外加每个声音 138 元</td><td data-v="2.3">约 2.3</td><td data-v="0.63">约 0.63</td><td>只有中文文档和控制台。</td></tr>
+<tr><td><b>腾讯云一句话克隆</b></td><td>「一句话」。</td><td>实名认证的腾讯云账号。</td><td>有。</td><td>每万字 8 元，外加每个声音 39 元</td><td data-v="99">-</td><td data-v="1.7">约 1.7</td><td>只有中文。</td></tr>
+<tr><td><b><a href="https://developers.openai.com/api/docs/guides/custom-voices">OpenAI 自定义声音</a></b></td><td>10–30 秒，加一句精确的同意语。</td><td><b>只有合格客户，经销售。</b>普通组织得到的是「没有权限」（社区报道）。</td><td>同意语有中文；自定义声音可以说别的语言。</td><td>gpt-4o-mini-tts：每百万文本输入 0.60 美元 + 每百万音频输出 12 美元</td><td data-v="99">-</td><td data-v="99">-</td><td>API 好，今天个人用不了。OpenAI 条款：客户拥有全部输出。</td></tr>
+<tr><td class="status-dead">Resemble AI（托管）</td><td colspan="7">托管声音平台「不再作为商业付费产品提供」；它的开源 Chatterbox 仍是 MIT（第 3 页）。<span class="ev v">已核实</span></td></tr>
+<tr><td class="status-dead">LMNT</td><td colspan="7">「LMNT 已关闭」（价格页）。<span class="ev v">已核实</span></td></tr>
+<tr><td class="status-dead">PlayHT</td><td colspan="7">2025 年团队加入 Meta 后关闭。<span class="ev u">未核实</span>（二手，没有复核）</td></tr>
+<tr><td>Murf · Speechify · WellSaid · Hume</td><td colspan="7">Murf 克隆只有企业版；Speechify 克隆要每年 5000 美元的承诺；WellSaid 没有自助克隆；Hume 的价格页现在卖的是评测平台，Octave 的状态不清楚。部分<span class="ev u">未核实</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">「-」或排序值 99 表示没有可比较的每小时数字。价格来自各家价格页或文档，研究助手读于 2026-10-17；ElevenLabs 和 Gemini 声音复刻文档由主代理当天复核。人民币按 1 美元 7.1 元假设。</p>
+
+<h2>独立的质量证据</h2>
+<p><a href="https://artificialanalysis.ai/text-to-speech/leaderboard/controlled-voice">Artificial Analysis 的受控声音竞技场</a>是最接近独立克隆基准的东西：每个模型克隆<i>同一</i>八个专业录制的声音（4 个美国英语、4 个英国英语），付费听者盲听哪一段更自然。它<b>不</b>量克隆和原说话人有多像。<span class="ev v">已核实</span>（方法页）</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>名次</th><th>模型</th><th>Elo（±95%）</th><th>厂商 API 美元/百万字</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>HeyGen Voice</td><td data-v="1198">1198 ±15</td><td data-v="30">30.0</td></tr>
+<tr><td>2</td><td>Qwen-Audio-3.1-TTS-Plus（阿里）</td><td data-v="1186">1186 ±14</td><td data-v="19.3">19.3</td></tr>
+<tr><td>3</td><td>Eleven v4 Turbo</td><td data-v="1162">1162 ±14</td><td data-v="40">40.0</td></tr>
+<tr><td>4</td><td>Eleven v4</td><td data-v="1159">1159 ±14</td><td data-v="80">80.0</td></tr>
+<tr><td>5</td><td>Cartesia Sonic 3.6</td><td data-v="1149">1149 ±14</td><td data-v="49">49.0</td></tr>
+<tr><td>6</td><td>Inworld Realtime TTS-2</td><td data-v="1144">1144 ±13</td><td data-v="20.8">20.8</td></tr>
+<tr><td>14</td><td>Fish Audio Drama 3 预览</td><td data-v="1059">1059 ±15</td><td data-v="15">15.0</td></tr>
+<tr><td>18</td><td>Gemini 3.8 Flash TTS</td><td data-v="1050">1050 ±13</td><td data-v="16.5">16.5</td></tr>
+<tr><td>21</td><td>MiniMax Speech 2.8 HD</td><td data-v="1020">1020 ±13</td><td data-v="100">100.0</td></tr>
+<tr><td>34</td><td>Higgs Audio V3 TTS</td><td data-v="960">960 ±14</td><td data-v="15">15.0</td></tr>
+<tr><td>39</td><td>Chatterbox（开源）</td><td data-v="930">930 ±14</td><td data-v="25">25.0</td></tr>
+<tr><td>42</td><td>XTTS v2（开源）</td><td data-v="830">830 ±17</td><td data-v="40.4">40.4</td></tr>
+<tr><td>43</td><td>OpenVoice v2（开源）</td><td data-v="807">807 ±18</td><td data-v="8.3">8.3</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">主代理读于 2026-10-17。43 行里的选录。价格列是 Artificial Analysis 的「模型创建者 API」价格；开源模型那一列是托管 API，不是你自己跑的成本。榜以 OpenAudio S1 = 1000 为锚。<span class="ev v">已核实</span></p>
+<ul>
+<li><b>两张不同的榜。</b>ElevenLabs 宣传 v4 是 “Artificial Analysis 第一”。那是<i>预设声音</i>榜。在克隆声音榜上 v4 是第 3–4，和 v4 Turbo、Sonic 3.6 在统计上打平。<span class="ev v">已核实</span></li>
+<li><b>只有英语。</b>这张榜用英语参考声音。存在一张普通话克隆榜；二手报道把前三写成 Inworld TTS-2、Cartesia Sonic 3.6 和 StepAudio 2.5，但表取不下来，而且多半早于 Eleven v4。<span class="ev u">未核实</span></li>
+<li><b>10–20 的 Elo 差距落在置信区间里。</b>把前六名当成同一档，再用你自己的耳朵、普通话质量、条款和价格来决定。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>分服务的备注</h2>
+<h3>ElevenLabs</h3>
+<ul>
+<li><b>模型</b>（文档，2026-10-17）：<code>eleven_v4</code>（90 多种语言，含普通话和粤语，每次请求 10000 字），<code>eleven_v4_turbo</code>（延迟约 100 毫秒），<code>eleven_v3</code>（5000 字），<code>eleven_multilingual_v2</code>，<code>eleven_flash_v2_5</code>。v4 发布于 2026-09-28。<span class="ev v">已核实</span></li>
+<li><b>即时克隆</b>：勾选「权利和同意」；1–2 分钟最好；超过 3 分钟「甚至可能有害」。<span class="ev v">已核实</span></li>
+<li><b>专业克隆</b>：「目前我们只允许你克隆自己的声音」；你朗读几行通过声音验证码；最少 30 分钟，理想 2–3 小时。名额：Creator/Pro 1 个，Scale 3 个，Business 10 个。<span class="ev v">已核实</span></li>
+<li><b>商用</b>：免费档非商用，发布内容标题里要有 “elevenlabs.io” 或 “11.ai”；任何付费档含商用许可，取消订阅后，订阅期间做的内容仍然有效。<span class="ev v">已核实</span>（帮助中心）</li>
+<li><b>方案</b>（月付）：免费 1 万积分，Starter 6 美元 / 3 万，Creator 22 美元 / 12.1 万，Pro 99 美元 / 60 万，Scale 299 美元 / 180 万，Business 990 美元 / 600 万。API 价格页写 Creator「含 27.5 万字 v4 语音合成」，和 12.1 万积分冲突。<span class="ev v">已核实</span>，冲突未解</li>
+<li><b>数据</b>：你保留输出的权利；你授予 ElevenLabs 永久许可，用你的声音改进和开发服务，并承诺不「未经允许把你的声音作为独立产品商业化」；设置里可退出训练（不追溯）。细节在<a href="09-legal.html#vendor-terms">第 9 页</a>。<span class="ev v">已核实</span>（使用条款，2026年10月9日）</li>
+<li><b>听</b>：<a href="https://elevenlabs.io/blog/eleven-v4">Eleven v4 发布稿</a>里有真人声音和 v4 克隆的对照。</li>
+</ul>
+
+<h3>Google：两个不同的产品</h3>
+<ul>
+<li><b>Gemini 3.8 Flash TTS 声音复刻</b>（文档最后更新 2026-09-24）：<code>POST /v1beta/voices</code>，10–30 秒参考，加同一成年人朗读固定句子的同意片段（中文版：「我是此声音的拥有者并授权谷歌使用此声音创建语音合成模型」）。同意文稿对不上，Google 会拒绝。建议格式 24 kHz 单声道 16 位 WAV。<span class="ev v">已核实</span>（主代理读过文档）</li>
+<li>价格档关系到隐私：Gemini API <b>免费档</b>上，内容「用来改进我们的产品」；付费档不用。不要在免费档上克隆你的声音。<span class="ev v">已核实</span>（助手，Gemini 价格页）</li>
+<li><b>Chirp 3 Instant Custom Voice</b> 是另一个 Cloud TTS 产品：白名单，每百万字 60 美元，不能把英语克隆带进中文。<span class="ev v">已核实</span></li>
+<li><b>听 / 试</b>：Google AI Studio 有交互式 “Voice Replication” 页，你可以录自己并试听。</li>
+</ul>
+
+<h3>微软 Azure</h3>
+<ul>
+<li>Personal Voice 在技术上很理想（5–90 秒，大约 100 种语言，每百万字 24 美元，输出带水印），但它是<b>受限访问</b>，为「让自己的用户克隆自己」的应用而做，发布内容只允许列出的用途，例如商业内容和媒体配音。个人的 YouTube 课程算不算，取决于微软批不批。<span class="ev v">已核实</span>（透明度说明）· 资格<span class="ev u">未核实</span></li>
+<li>微软声明，客户训练数据「不被微软用来训练或改进任何微软文本转语音声音模型」。<span class="ev v">已核实</span></li>
+</ul>
+
+<h3>中国厂商</h3>
+<ul>
+<li><b>MiniMax</b> 普通话口碑强，长文本 API 也最适合自动化（每个异步任务 100 万字，词级字幕），但按字最贵，并且没有文档记载同意步骤。中文条款把输出知识产权给你，但基础许可是非商用，除非付费条款另说。<span class="ev v">已核实</span> · 付费商用条款<span class="ev u">未核实</span></li>
+<li><b>阿里</b>的 Qwen-Audio-3.1 在英语克隆榜上第二，但国际区只有 3.0 模型。依赖这个名次之前先看区域。<span class="ev v">已核实</span></li>
+<li><b>火山引擎</b>（字节跳动）和<b>腾讯</b>便宜、普通话原生，但要中国实名账号，文档是中文。<span class="ev v">已核实</span>（腾讯）；<span class="ev u">未核实</span>（火山实名）</li>
+<li>在中国平台发布的内容，自 2025年9月1日起必须带人工智能标识（<a href="09-legal.html#china">第 9 页</a>）。</li>
+</ul>
+
+<h3>OpenAI 对自定义声音的政策</h3>
+<p>OpenAI 在 2024 年预览了 “Voice Engine”，并推迟了广泛发布。到 2026年10月，API 有自定义声音端点（<code>/v1/audio/voice_consents</code>、<code>/v1/audio/voices</code>），可用于 gpt-4o-mini-tts 和 Realtime，但「由录音创建的自定义声音仅限合格客户。请联系销售。」最多 30 秒样本和一句精确同意语；每个组织最多 20 个这样的声音。普通开发者组织报告「没有权限」。<span class="ev v">已核实</span>（OpenAI 自定义声音指南）· 权限报道<span class="ev u">未核实</span>（社区论坛）</p>
+
+<h2>同意和数据使用一览</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>服务</th><th>身份 / 同意核验</th><th>输出归属和商用</th><th>用你的声音训练</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs</td><td>即时：勾选框。专业：声音验证码，仅限本人。</td><td>你保留输出权利；只有付费档可以商用。</td><td>永久许可用来改进服务；可以退出，不追溯。</td></tr>
+<tr><td>Azure</td><td>录下的同意声明、说话人匹配、受限访问批准。</td><td>你对模型有排他使用权。</td><td>不用来训练微软的声音。</td></tr>
+<tr><td>Google Gemini</td><td>固定句子的同意片段，和对上说话人。</td><td>Vertex 预正式版条款允许商用。</td><td>免费档：会。付费档：不会。</td></tr>
+<tr><td>MiniMax</td><td>没有文档记载。</td><td>你拥有输出知识产权；基础许可非商用，除非付费条款另说。</td><td>许可用来改进产品并做品牌推广。</td></tr>
+<tr><td>Fish Audio</td><td>专业克隆「已核验」（方法不清楚）。</td><td>付费：商用。免费：页面冲突。</td><td>条款允许用内容训练。</td></tr>
+<tr><td>Cartesia</td><td>「只克隆你自己的声音，或你有明确许可去克隆的声音。」</td><td>Cartesia 声称不拥有输出。</td><td>默认会；有退出表单；克隆没有零保留。</td></tr>
+<tr><td>OpenAI</td><td>精确同意语的录音。</td><td>客户拥有输出。</td><td><span class="ev u">未核实</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">供应商条款读于 2026-10-17。条款会变；注册前再读一遍。<span class="ev v">已核实</span>，除非另标。</p>
+
+<p class="page-meta">研究笔记：r1-cloud.md 和 r5-legal.md（2026-10-17）。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

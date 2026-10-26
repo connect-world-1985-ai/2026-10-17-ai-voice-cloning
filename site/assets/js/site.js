@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  var PAGES = [
+  var PAGES_EN = [
     { group: "Start here" },
     { file: "lecture.html", num: "L", title: "Lecture (24 min)" },
     { file: "index.html", num: "0", title: "Overview & how to read this" },
@@ -27,9 +27,40 @@
     { file: "glossary.html", num: "G", title: "Glossary" },
     { file: "sources.html", num: "S", title: "Sources & method" }
   ];
+  var PAGES_ZH = [
+    { group: "从这里开始" },
+    { file: "lecture.html", num: "讲", title: "讲座（中文旁白，31 分钟）" },
+    { file: "index.html", num: "0", title: "概览，以及怎么读" },
+    { file: "01-how-it-works.html", num: "1", title: "声音克隆怎么工作" },
+    { group: "市面上有什么" },
+    { file: "02-cloud.html", num: "2", title: "云服务" },
+    { file: "03-open-source.html", num: "3", title: "开源与本地模型" },
+    { file: "04-voice-conversion.html", num: "4", title: "声音转换（语音到语音）" },
+    { file: "05-explorer.html", num: "5", title: "工具表（可排序）" },
+    { group: "把它做好" },
+    { file: "06-recording.html", num: "6", title: "录音与清理" },
+    { file: "07-quality-control.html", num: "7", title: "质量、评测与控制" },
+    { file: "08-pipeline.html", num: "8", title: "智能体旁白流程" },
+    { file: "09-legal.html", num: "9", title: "法律、伦理与安全" },
+    { group: "做决定并开始" },
+    { file: "10-decide.html", num: "10", title: "决策框架与费用计算" },
+    { file: "11-hands-on.html", num: "11", title: "动手实验与智能体提示" },
+    { file: "12-next.html", num: "12", title: "下次讨论的方向" },
+    { group: "参考" },
+    { file: "glossary.html", num: "词", title: "术语" },
+    { file: "sources.html", num: "源", title: "来源与方法" }
+  ];
+  var ZH = document.documentElement.lang === "zh-CN";
+  var PAGES = ZH ? PAGES_ZH : PAGES_EN;
   window.SITE_PAGES = PAGES;
 
-  var EV_TITLES = {
+  var EV_TITLES = ZH ? {
+    v: "已核实：对照过一手来源（官方文档、价格页、仓库、许可证、论文）。",
+    p: "实践：从业者广泛使用的做法。是靠得住的建议，不是单条出处的事实。",
+    i: "推断：作者根据证据做的推理，不是一条有出处的事实。",
+    u: "未核实：有人这样说或这样宣传（常常是供应商自己或二手来源），没有独立确认。",
+    x: "实验性：演示或研究里能工作，生产里还不可靠。"
+  } : {
     v: "Verified fact: checked against a primary source (official docs, pricing page, repository, licence file, paper).",
     p: "Practice: widely documented way practitioners work; sound advice, not a single sourced fact.",
     i: "Inference: the author's reasoning from the evidence, not a sourced fact.",
@@ -51,7 +82,10 @@
     return f || "index.html";
   }
   function slug(s) {
-    return s.toLowerCase().replace(/<[^>]+>/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+    var t = s.toLowerCase().replace(/<[^>]+>/g, "").trim();
+    var ascii = t.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+    if (ascii) return ascii;
+    return t.replace(/\s+/g, "-").replace(/[^\u4e00-\u9fff0-9a-z-]+/gi, "").slice(0, 40) || "s";
   }
 
   /* ---------- theme ---------- */
@@ -71,16 +105,20 @@
     if (!main) return;
 
     var top = el("header", { "class": "topbar" });
+    var langHref = (ZH ? "../" : "zh/") + cur;
+    var langLabel = ZH ? "EN" : "中文";
     top.innerHTML =
-      '<button class="icon-btn" id="menu-btn" aria-label="Open navigation">☰</button>' +
-      '<a class="brand" href="index.html">Your Voice, Synthesised <small>voice cloning for teaching · field guide · Oct 2026</small></a>' +
+      '<button class="icon-btn" id="menu-btn" aria-label="' + (ZH ? "打开导航" : "Open navigation") + '">☰</button>' +
+      '<a class="brand" href="index.html">' + (ZH ? "你的声音，被合成出来" : "Your Voice, Synthesised") +
+      ' <small>' + (ZH ? "用自己的声音教书 · 指南 · 2026年10月" : "voice cloning for teaching · field guide · Oct 2026") + '</small></a>' +
       '<span class="spacer"></span>' +
-      '<button class="icon-btn" id="ev-btn" title="Evidence label legend">Labels</button>' +
-      '<button class="icon-btn" id="theme-btn" aria-label="Toggle dark mode"></button>';
+      '<a class="icon-btn" href="' + langHref + '">' + langLabel + '</a>' +
+      '<button class="icon-btn" id="ev-btn" title="' + (ZH ? "证据标签说明" : "Evidence label legend") + '">' + (ZH ? "标签" : "Labels") + '</button>' +
+      '<button class="icon-btn" id="theme-btn" aria-label="' + (ZH ? "切换深色模式" : "Toggle dark mode") + '"></button>';
     body.insertBefore(top, body.firstChild);
 
     var layout = el("div", { "class": "layout" });
-    var side = el("nav", { "class": "sidebar", "aria-label": "Pages" });
+    var side = el("nav", { "class": "sidebar", "aria-label": ZH ? "页面" : "Pages" });
     var html = "";
     PAGES.forEach(function (p) {
       if (p.group) { html += '<div class="group">' + p.group + "</div>"; return; }
@@ -88,7 +126,7 @@
         '><span class="num">' + p.num + "</span><span>" + p.title + "</span></a>";
     });
     side.innerHTML = html;
-    var toc = el("aside", { "class": "toc", "aria-label": "On this page" });
+    var toc = el("aside", { "class": "toc", "aria-label": ZH ? "本页目录" : "On this page" });
     main.parentNode.insertBefore(layout, main);
     layout.appendChild(side);
     layout.appendChild(main);
@@ -99,18 +137,18 @@
     list.forEach(function (p, i) { if (p.file === cur) idx = i; });
     var content = main.querySelector(".content") || main;
     if (idx >= 0) {
-      var pager = el("nav", { "class": "pager", "aria-label": "Previous and next page" });
+      var pager = el("nav", { "class": "pager", "aria-label": ZH ? "上一页和下一页" : "Previous and next page" });
       var ph = "";
-      if (idx > 0) ph += '<a class="prev" href="' + list[idx - 1].file + '"><small>← Previous</small>' + list[idx - 1].title + "</a>";
+      if (idx > 0) ph += '<a class="prev" href="' + list[idx - 1].file + '"><small>' + (ZH ? "← 上一页" : "← Previous") + '</small>' + list[idx - 1].title + "</a>";
       else ph += "<span></span>";
-      if (idx < list.length - 1) ph += '<a class="next" href="' + list[idx + 1].file + '"><small>Next →</small>' + list[idx + 1].title + "</a>";
+      if (idx < list.length - 1) ph += '<a class="next" href="' + list[idx + 1].file + '"><small>' + (ZH ? "下一页 →" : "Next →") + '</small>' + list[idx + 1].title + "</a>";
       pager.innerHTML = ph;
       content.appendChild(pager);
     }
 
     var heads = content.querySelectorAll("h2, h3");
     var used = {};
-    var th = '<div class="label">On this page</div>';
+    var th = '<div class="label">' + (ZH ? "本页" : "On this page") + '</div>';
     Array.prototype.forEach.call(heads, function (h) {
       if (h.closest && (h.closest("details") || h.closest(".no-toc"))) return;
       if (!h.id) {
@@ -119,7 +157,7 @@
         h.id = id;
       }
       used[h.id] = true;
-      var a = el("a", { "class": "anchor", href: "#" + h.id, "aria-label": "Link to this section" }, "#");
+      var a = el("a", { "class": "anchor", href: "#" + h.id, "aria-label": ZH ? "链到这一节" : "Link to this section" }, "#");
       h.appendChild(a);
       var text = h.textContent.replace(/#$/, "");
       th += '<a class="' + h.tagName.toLowerCase() + '" href="#' + h.id + '">' + text + "</a>";
@@ -141,7 +179,10 @@
     }
 
     var tb = document.getElementById("theme-btn");
-    function paint() { tb.textContent = effectiveTheme() === "dark" ? "☀ Light" : "☾ Dark"; }
+    function paint() {
+      if (ZH) tb.textContent = effectiveTheme() === "dark" ? "☀ 浅色" : "☾ 深色";
+      else tb.textContent = effectiveTheme() === "dark" ? "☀ Light" : "☾ Dark";
+    }
     paint();
     tb.addEventListener("click", function () {
       var next = effectiveTheme() === "dark" ? "light" : "dark";
@@ -157,13 +198,13 @@
       var ex = document.getElementById("ev-legend");
       if (ex) { ex.parentNode.removeChild(ex); return; }
       var box = el("div", { id: "ev-legend", "class": "callout", style: "position:fixed;right:16px;top:64px;z-index:40;max-width:min(420px,92vw);box-shadow:0 6px 24px rgba(0,0,0,.18)" });
-      box.innerHTML = '<span class="title">Evidence labels used on every page</span>' +
-        '<p><span class="ev v">Verified</span> ' + EV_TITLES.v + '</p>' +
-        '<p><span class="ev p">Practice</span> ' + EV_TITLES.p + '</p>' +
-        '<p><span class="ev i">Inference</span> ' + EV_TITLES.i + '</p>' +
-        '<p><span class="ev u">Unverified</span> ' + EV_TITLES.u + '</p>' +
-        '<p><span class="ev x">Experimental</span> ' + EV_TITLES.x + '</p>' +
-        '<p class="small muted">Click "Labels" again to close.</p>';
+      box.innerHTML = '<span class="title">' + (ZH ? "每页使用的证据标签" : "Evidence labels used on every page") + '</span>' +
+        '<p><span class="ev v">' + (ZH ? "已核实" : "Verified") + '</span> ' + EV_TITLES.v + '</p>' +
+        '<p><span class="ev p">' + (ZH ? "实践" : "Practice") + '</span> ' + EV_TITLES.p + '</p>' +
+        '<p><span class="ev i">' + (ZH ? "推断" : "Inference") + '</span> ' + EV_TITLES.i + '</p>' +
+        '<p><span class="ev u">' + (ZH ? "未核实" : "Unverified") + '</span> ' + EV_TITLES.u + '</p>' +
+        '<p><span class="ev x">' + (ZH ? "实验" : "Experimental") + '</span> ' + EV_TITLES.x + '</p>' +
+        '<p class="small muted">' + (ZH ? "再点一次“标签”关闭。" : 'Click "Labels" again to close.') + '</p>';
       body.appendChild(box);
     });
   }
@@ -253,7 +294,7 @@
         var ds = c.querySelectorAll("details");
         var anyClosed = Array.prototype.some.call(ds, function (d) { return !d.open; });
         Array.prototype.forEach.call(ds, function (d) { d.open = anyClosed; });
-        b.textContent = anyClosed ? "Collapse all" : "Expand all";
+        b.textContent = anyClosed ? (ZH ? "全部折叠" : "Collapse all") : (ZH ? "全部展开" : "Expand all");
       });
     });
   }
@@ -265,7 +306,10 @@
         var src = document.getElementById(b.getAttribute("data-copy"));
         if (!src) return;
         var text = src.textContent;
-        function done(ok) { b.textContent = ok ? "Copied" : "Select and copy manually"; setTimeout(function () { b.textContent = "Copy"; }, 1800); }
+        function done(ok) {
+          b.textContent = ok ? (ZH ? "已复制" : "Copied") : (ZH ? "请手动选择并复制" : "Select and copy manually");
+          setTimeout(function () { b.textContent = ZH ? "复制" : "Copy"; }, 1800);
+        }
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallback()); });
         } else { done(fallback()); }

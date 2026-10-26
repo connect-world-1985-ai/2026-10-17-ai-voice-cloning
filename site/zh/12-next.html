@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>下次讨论的方向 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 12 页 · 做决定并开始</div>
+<h1>下次讨论的五个方向</h1>
+<p class="lead">这次研究回答的是「现在有什么、它怎么工作」。下一步取决于只有你能做的选择。下面每个方向都写了：需要你决定什么、我们会做什么、我们会学到什么。</p>
+
+<div class="cards">
+<a class="card a" href="#d1"><h4>1 · 用你的声音做一次对比</h4><p>信息量最大的下一步。</p></a>
+<a class="card b" href="#d2"><h4>2 · 定下商用和供应商许可</h4><p>决定哪些工具还能留在名单上。</p></a>
+<a class="card c" href="#d3"><h4>3 · 给一节真课搭流水线</h4><p>把整条工作流从头跑通。</p></a>
+<a class="card d" href="#d4"><h4>4 · 解决跨语言</h4><p>你的声音，说你录得比较少的那门语言。</p></a>
+<a class="card a" href="#d5"><h4>5 · 硬件：买、租，还是只用云</h4><p>只有本地模型在对比里赢了，这件事才重要。</p></a>
+</div>
+
+<h2 id="d1">1. 用你自己的声音做对比</h2>
+<ul>
+<li><b>为什么先做</b>：本站所有排行榜用的都是别人的声音，主要的独立榜还只测英语。像不像<i>你</i>，以及<i>你的</i>声音说普通话好不好，只能用你的录音来量。<span class="ev i">推断</span></li>
+<li><b>需要决定</b>：选哪 3–4 个工具；你愿不愿意把一两分钟自己的声音上传给一两家云厂商（先读<a href="09-legal.html#vendor-terms">第 9 页</a>的许可）。</li>
+<li><b>我们会做</b>：按<a href="11-hands-on.html">第 11 页</a>的实验：同一三段（英语、普通话、夹技术词），同一段参考，自动分数加上一次盲听 A/B。</li>
+<li><b>我们会学到</b>：一份你耳朵认可的短名单，以及你的技术词汇在每一块上真实的失败率。</li>
+</ul>
+
+<h2 id="d2">2. 定下商用和供应商许可</h2>
+<ul>
+<li><b>为什么</b>：「也许会商用」让所有选项都开着，但开源权重就变得浑浊；好几个强模型的权重是非商用或有收入上限的（<a href="03-open-source.html">第 3 页</a>）。云端这边，问题是你接不接受供应商对你的声音拿走永久许可（ElevenLabs、Cartesia、Fish），还是更想选一个不拿它去训练的厂商。<span class="ev v">已核实</span>（许可证原文）</li>
+<li><b>需要决定</b>：这是个人的、雇主的，还是你自己的付费产品？内容归谁？供应商对你的声音的永久许可，你在不在意？</li>
+<li><b>我们会做</b>：每个工具一页决策记录（许可证、条款位置、风险）；如果是公司内容，再起草一份你和雇主之间的短协议：范围、删除、谁可以用这个克隆来生成。</li>
+</ul>
+
+<h2 id="d3">3. 给一节真课搭流水线</h2>
+<ul>
+<li><b>为什么</b>：一段好听的演示，和一节十五分钟、有幻灯片、字幕、节奏稳定的课之间，才是大部分工作（<a href="08-pipeline.html">第 8 页</a>）。</li>
+<li><b>需要决定</b>：哪一课（最好带技术词、数字和一些普通话），用什么做幻灯片（Marp、reveal.js、PowerPoint 导出），对比里用哪一个语音合成。</li>
+<li><b>我们会做</b>：把<a href="11-hands-on.html#agent-prompt">第 11 页</a>的提示交给编程智能体，然后一起看质量报告：每项检查的失败率、听的时间、每分钟成片的成本。</li>
+<li><b>我们会学到</b>：「每分钟成片要花多少人的分钟」的真实数字。这个数字决定四十节课现不现实。</li>
+</ul>
+
+<h2 id="d4">4. 解决跨语言</h2>
+<ul>
+<li><b>为什么</b>：你想用你的声音说你录得比较少的那门语言。供应商对这件事好不好用说法不一（ElevenLabs 的 v4 发布稿说每种语言都是母语口音；它自己更早的专业克隆指南警告源语言口音会带过去；Google Chirp 3 根本不能把英语克隆带进中文）。没有找到独立的跨语言相似度基准。<span class="ev v">已核实</span>（供应商文档）· 基准缺口<span class="ev u">未核实</span></li>
+<li><b>需要决定</b>：「你」说另一门语言时，要自己的自然口音，还是要母语口音。</li>
+<li><b>我们会做</b>：每个工具三种参考（英语参考、普通话参考、混合参考），母语听者评口音，相似度分数评身份。</li>
+<li><b>也值得试</b>：你自己尽你所能把目标语言的稿子读一遍，再用声音转换（<a href="04-voice-conversion.html">第 4 页</a>）只修音色，保留你真实的韵律。</li>
+</ul>
+
+<h2 id="d5">5. 硬件：买、租，还是只用云</h2>
+<ul>
+<li><b>为什么</b>：你现在的电脑是 Intel UHD 核显、64 GB 内存。只能慢慢跑 CPU 模型；吃显卡的模型不实用。<span class="ev i">推断</span></li>
+<li><b>选项</b>：（a）只用云端语音合成；（b）按小时租 GPU 做批量渲染（2026-10-17，RunPod 列出 RTX 3090 每小时 0.50 美元，RTX 4090 每小时 0.89 美元）<span class="ev v">已核实</span>；（c）买一块 16–24 GB 的 NVIDIA 显卡。</li>
+<li><b>需要决定</b>：等对比做完再定。如果云工具在音质上赢了，硬件就无关；如果本地模型赢了，<a href="10-decide.html#cost-calculator">费用计算器</a>会告诉你多少小时旁白才值得买卡。</li>
+</ul>
+
+<div class="callout think"><span class="title">顺便记着的小问题</span>
+<ul>
+<li>要不要一个对口型的自己的数字人，还是幻灯片加声音就够（<a href="08-pipeline.html#avatar">第 8 页</a>）？</li>
+<li>课会发到哪些平台？这决定声明怎么写（Udemy 的那句原话、中国的标识；<a href="09-legal.html#platforms">第 9 页</a>）。</li>
+<li>更好的模型出来以后，旧课要重新生成，还是按发布时的版本冻住？</li>
+</ul></div>
+
+<p class="page-meta">2026-10-17 由主代理根据全部研究写成。中文页由同一份研究译出，数字与链接未改。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

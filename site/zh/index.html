@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你的声音，被合成出来 · 概览</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">从这里开始</div>
+<h1>你的声音，被合成出来</h1>
+<p class="lead">一份不偏向任何供应商、尽量拿证据说话的指南：让人工智能用<b>你自己的声音</b>来讲课、做教程、配解说，英语和普通话都可以，也包括你录得比较少的那一门语言。写给刚接触语音人工智能的软件工程师。领域现状的核对日期：<b>2026年10月17日</b>。</p>
+
+<div class="callout key"><span class="title">先看讲座</span>
+<p>中文旁白，把声学补上，后面这些页面才能连得起来。<a href="lecture.html">播放中文讲座</a>。下面的页面是它在讲的实地指南。英文版在顶栏切换。</p></div>
+
+<h2>十条结论</h2>
+<ol>
+<li><b>它能用，而且很快。</b>一两分钟干净录音，主流云服务就能做出能用的即时克隆；三十分钟到三小时可以做专业克隆。开源模型常常三到十五秒就能克隆。<span class="ev v">已核实</span>（供应商文档、README）</li>
+<li><b>个人能买到的云端上限</b>：ElevenLabs Eleven v4、阿里 Qwen-Audio 3.1、Cartesia Sonic 3.6 处在独立克隆音色评测的第一档（只测了英语声音）。<span class="ev v">已核实</span>（<a href="02-cloud.html">第 2 页</a>）</li>
+<li><b>每小时旁白的价格</b>，英语大约从 <b>0.82 美元</b>（Gemini 3.8 Flash TTS）到大约 <b>4–6 美元</b>（Eleven v4、MiniMax HD）；按字计费时，普通话每小时往往便宜三到四倍。<span class="ev v">已核实</span>价格 · 每小时折算<span class="ev i">推断</span></li>
+<li><b>开源模型在论文数字上并不差。</b>VoxCPM2、Fun-CosyVoice 3、Qwen3-TTS（都是 Apache-2.0）报告的说话人相似度，接近或高于同一个人两段真实录音在标准基准上的水平。<span class="ev v">已核实</span>（作者自报，<a href="03-open-source.html">第 3 页</a>）</li>
+<li><b>许可证比音质更能决定能不能用。</b>F5-TTS、XTTS-v2、Fish Audio S2-Pro 等的权重是非商用的。代码许可证和权重许可证经常不是同一份。<span class="ev v">已核实</span></li>
+<li><b>跨语言克隆会损失相似度。</b>基准上，参考音频和输出语言不同时，相似度大约低 10 个点。每种语言都录一段参考。<span class="ev v">已核实</span> · 建议<span class="ev i">推断</span></li>
+<li><b>普通话必须能管住读音。</b>主要翻车点是多音字（行 háng / xíng）和声调。IndexTTS 和 CosyVoice 接受拼音覆盖；ElevenLabs v4 接受词典和行内国际音标，但不接受 SSML 停顿。<span class="ev v">已核实</span>（<a href="07-quality-control.html">第 7 页</a>）</li>
+<li><b>一门课是一条流水线，不是一段演示。</b>规范化、切块、合成、用语音识别核对、重生成、拼接、对齐、字幕。智能体可以自动化几乎全部；被标出来的块和重音，还是要耳朵听。<span class="ev p">实践</span>（<a href="08-pipeline.html">第 8 页</a>）</li>
+<li><b>要声明。</b>欧盟《人工智能法》第 50 条自 2026 年 8 月 2 日起适用；用克隆声音做的教程，很大概率算深度伪造。YouTube 豁免你自己的克隆配音，但 Udemy、TikTok 和中国规则要求标注。<span class="ev v">已核实</span>规则 · 如何适用<span class="ev i">推断</span>（<a href="09-legal.html">第 9 页</a>）</li>
+<li><b>先保护自己。</b>关掉银行的声纹登录；供应商常常对你的录音拿走很宽、往往永久的许可；水印是可以被去掉的。<span class="ev v">已核实</span></li>
+</ol>
+
+<div class="callout key"><span class="title">如果只读一处</span>
+用 <a href="11-hands-on.html">第 11 页</a> 的对比，跑一遍 ElevenLabs v4、Gemini 声音复刻，再加一个 Apache 许可的本地模型（VoxCPM2 或 Fun-CosyVoice 3）。没有任何基准量过克隆在普通话里有多像<i>你</i>；只有你自己的测试能回答。<span class="ev i">推断</span></div>
+
+<h2>本站怎么标证据</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>标签</th><th>意思</th></tr></thead>
+<tbody>
+<tr><td><span class="ev v">已核实</span></td><td>在 2026-10-17 当天或前后，读过一手来源（官方文档、许可证原文、价格页、法律文本、论文、GitHub API）。标成「按发表」的基准数字，核实的是它<i>被发表过</i>；通常是作者自己报的。</td></tr>
+<tr><td><span class="ev p">实践</span></td><td>这一行里常见的做法或经验法则，很多地方都写过，但不是单一权威出处。</td></tr>
+<tr><td><span class="ev i">推断</span></td><td>作者根据证据做的推理：建议、门槛、解释。</td></tr>
+<tr><td><span class="ev u">未核实</span></td><td>只有二手来源、来源互相矛盾，或这次研究期间核对不到。</td></tr>
+<tr><td><span class="ev x">实验性</span></td><td>预览、测试版，或刚发布、可能很快就变的软件。</td></tr>
+</tbody>
+</table>
+</div>
+<p>每个价格和统计都带着日期。来源打架的地方，页面会写出来。完整方法和矛盾清单在<a href="sources.html">来源与方法</a>。</p>
+
+<h2>这里假定的你的情况</h2>
+<dl class="kv">
+<dt>目标</dt><dd>用你自己的声音给教学内容配旁白，英语和普通话，包括跨语言。</dd>
+<dt>硬件</dt><dd>本地路径假定一块 8–24 GB 的 NVIDIA 显卡；也写了你现在这台电脑（Intel UHD 核显、64 GB 内存，只能用 CPU）和按小时租的云 GPU。</dd>
+<dt>商用</dt><dd>还没定，所以每个工具都标了能不能商用，非商用的会标出来。</dd>
+<dt>系统</dt><dd>Windows 11。</dd>
+</dl>
+
+<h2>站点地图</h2>
+<div class="cards">
+<a class="card a" href="01-how-it-works.html"><h4>1 · 怎么工作</h4><p>经典语音合成和神经语音合成、零样本和微调、说话人嵌入、编解码语言模型、流匹配、声音转换、漂移。七张图。</p></a>
+<a class="card b" href="02-cloud.html"><h4>2 · 云服务</h4><p>ElevenLabs、Google、Azure、MiniMax、Fish、Cartesia、中国厂商、OpenAI 的政策；每小时价格。</p></a>
+<a class="card b" href="03-open-source.html"><h4>3 · 开源模型</h4><p>VoxCPM2、CosyVoice 3、Qwen3-TTS、GPT-SoVITS、IndexTTS、F5-TTS 等；许可证和硬件。</p></a>
+<a class="card b" href="04-voice-conversion.html"><h4>4 · 声音转换</h4><p>RVC、Applio、MeanVC2、Seed-VC：自己读一遍，再换成你的音色。</p></a>
+<a class="card b" href="05-explorer.html"><h4>5 · 工具表</h4><p>全部放进一张可排序、可筛选的表。</p></a>
+<a class="card c" href="06-recording.html"><h4>6 · 录音</h4><p>录多少、麦克风、房间、稿子、格式、清理、同意核验。</p></a>
+<a class="card c" href="07-quality-control.html"><h4>7 · 质量与控制</h4><p>相似度、词错率 / 字错率、平均意见分、盲听 A/B；失败和控制手段。</p></a>
+<a class="card c" href="08-pipeline.html"><h4>8 · 流水线</h4><p>从讲稿到带字幕视频的智能体流程；数字人备注。</p></a>
+<a class="card c" href="09-legal.html"><h4>9 · 法律与安全</h4><p>欧盟人工智能法、平台规则、供应商条款、水印、银行声纹。</p></a>
+<a class="card d" href="10-decide.html"><h4>10 · 怎么选</h4><p>三条路径、费用计算器、「哪种配置适合我」。</p></a>
+<a class="card d" href="11-hands-on.html"><h4>11 · 动手</h4><p>一次对比实验，和一段可以直接交给编程智能体的提示。</p></a>
+<a class="card d" href="12-next.html"><h4>12 · 下次讨论</h4><p>五个要你拍板的方向。</p></a>
+</div>
+<p>参考：<a href="glossary.html">术语</a> · <a href="sources.html">来源与方法</a>。</p>
+
+<p class="page-meta">静态站点：双击 index.html 就能打开；没有服务器，没有构建，没有追踪。顶栏可以切换浅色 / 深色，也可以切回英文。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

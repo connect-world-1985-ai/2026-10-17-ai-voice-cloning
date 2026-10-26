@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>术语 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">参考</div>
+<h1>术语</h1>
+<p class="lead">本指南里用到的语音人工智能术语，每条一两句话。可以打字筛选。英文原名留在词条里，方便你对照论文和文档。</p>
+
+<div class="toolbar"><input type="search" placeholder="筛选术语…（例如 编解码、词错率、LUFS）" data-filter-for="gloss" aria-label="筛选术语"></div>
+<div class="table-wrap">
+<table id="gloss" data-sortable class="compact">
+<thead><tr><th>术语</th><th data-nosort>意思</th><th>用在</th></tr></thead>
+<tbody>
+<tr><td>盲听 A/B</td><td>听者按随机顺序听两段，不知道哪段是哪个工具做的，再选更好的一段。比较「你自己喜不喜欢」最可靠的办法。</td><td><a href="07-quality-control.html">7</a>、<a href="11-hands-on.html">11</a></td></tr>
+<tr><td>声学模型</td><td>语音合成系统里把文本（或文本符号）变成中间音频表示的部分，例如梅尔频谱或编解码符号。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>强制对齐</td><td>已知音频和它的文稿，找出每个词或音素的起止时间。用来做字幕、对准幻灯片。</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>ASR 语音识别</td><td>自动语音识别（语音转文字），例如 Whisper、Paraformer、SenseVoice。这里用来检查合成语音是不是把稿子说对了。</td><td><a href="07-quality-control.html">7</a>、<a href="08-pipeline.html">8</a></td></tr>
+<tr><td>音频标签</td><td>写在文本里的方括号指令，例如 <code>[excited]</code> 或 <code>[whispers]</code>。有的模型（如 ElevenLabs v3/v4）会当成表达方式来读。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>自回归（AR）</td><td>一步一步生成，每一步都看前面已经生成的内容，像大语言模型写字。自然，但可能重复或漏掉。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>C2PA / Content Credentials</td><td>给媒体文件附上签名来源元数据（「由工具 X 制作」）的开放标准，音频也算。</td><td><a href="09-legal.html">9</a></td></tr>
+<tr><td>CER 字错率</td><td>字符错误率。算法和词错率一样，但按字数。中文词与词之间没有空格，所以用它量可懂度。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>切块</td><td>把长稿切成句子或段落大小的块，分别合成，再接起来。</td><td><a href="01-how-it-works.html">1</a>、<a href="08-pipeline.html">8</a></td></tr>
+<tr><td>语码转换</td><td>一句话里混用两种语言，例如普通话里夹英语技术词。这是一项要单独测的能力。</td><td><a href="01-how-it-works.html">1</a>、<a href="11-hands-on.html">11</a></td></tr>
+<tr><td>神经音频编解码器</td><td>把音频压成离散整数符号再解回来的网络，例如 SoundStream、EnCodec、DAC。编解码语言模型的「分词器」。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>编解码语言模型</td><td>一个 Transformer，根据文本加上一段声音提示，去预测音频编解码符号，像大语言模型预测下一个词。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>余弦相似度</td><td>两个嵌入向量方向有多接近，分数在 −1 到 1 之间。用来量说话人相似度。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>跨语言克隆</td><td>用你的声音说一段参考音频里没有的语言。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>dBFS</td><td>相对于满刻度的分贝；0 dBFS 是数字文件能装下的最大响度。录音峰值通常要留在它下面。</td><td><a href="06-recording.html">6</a></td></tr>
+<tr><td>去混响</td><td>去掉录音里房间回声的处理。用过头会产生瑕疵，克隆会把瑕疵一并学走。</td><td><a href="06-recording.html">6</a></td></tr>
+<tr><td>深度伪造（欧盟人工智能法）</td><td>人工智能生成或篡改的图像、音频或视频，像真人、真实物体或真实事件，并且会让人误以为是真的（第 3 条第 60 款）。</td><td><a href="09-legal.html">9</a></td></tr>
+<tr><td>扩散模型</td><td>一种生成模型，学会用很多步去噪，把噪声变成数据。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>漂移</td><td>一次很长的生成里，或不同次生成之间，声音、语速或音高慢慢变了。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>说话人嵌入</td><td>一段固定长度的向量，概括「谁在说话」，不依赖具体的词。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>F0 / 音高</td><td>基频：每个时刻声音有多高或多低。声音转换会跟踪并把它搬过去。</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>微调</td><td>用你的录音继续训练一个已经预训练好的模型，让权重适应你的声音。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>流匹配</td><td>一种生成式训练方法，学习一个速度场，用很少的步把噪声移到数据上。F5-TTS、E2 TTS、CosyVoice 的解码器用它。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>G2P</td><td>字素到音素：把拼写转成发音符号。很多读错都出在这里。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>幻觉（语音合成）</td><td>说出来的和文本对不上：漏词、重复、编造；含糊；长沉默。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>HuBERT / ContentVec</td><td>自监督语音模型。它们的特征抓住「说了什么」，丢掉很多「谁说的」。声音转换里用作内容编码器。</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>即时声音克隆（IVC）</td><td>供应商对「用短样本做零样本克隆」的叫法。</td><td><a href="02-cloud.html">2</a></td></tr>
+<tr><td>IPA 国际音标</td><td>国际音标。用在 SSML 的 <code>&lt;phoneme&gt;</code> 标签和发音词典里。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>词典 / 发音词典</td><td>一张表，把词映射到该怎么读（音素或改写别名），例如 “Kubernetes” → “koo-ber-NET-eez”。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>对口型数字人</td><td>一张脸的视频，嘴型是根据音轨生成的。</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>LoRA</td><td>低秩适配：只微调一小套额外权重，而不是整个模型；更快、更轻。</td><td><a href="03-open-source.html">3</a></td></tr>
+<tr><td>LUFS / LKFS</td><td>相对于满刻度的响度单位，是 ITU-R BS.1770 和 EBU R128 里的感知响度。旁白会归一化到一个目标 LUFS。</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>梅尔频谱</td><td>按感知频率（梅尔刻度）画的声音时频图；语音合成里经典的中间表示。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>MOS 平均意见分</td><td>听者给自然度打 1–5 分，平均就是 MOS。CMOS 比较两个系统；SMOS 给说话人相似度打分。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>非自回归（NAR）</td><td>整段一起生成，而不是一步一步（例如流匹配）。更快，漏词更少。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>文本规范化</td><td>在合成前把文本改写成能念的词：“3.5 GB” → “三点五吉字节”，“2026” → “二零二六”。</td><td><a href="07-quality-control.html">7</a>、<a href="08-pipeline.html">8</a></td></tr>
+<tr><td>响度规范化</td><td>调整增益，让每个文件感知响度一样（目标 LUFS），峰值不超过真峰值上限。</td><td><a href="06-recording.html">6</a>、<a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Personal Voice（Azure）</td><td>微软的受限零样本声音克隆，必须录一段同意声明。</td><td><a href="02-cloud.html">2</a></td></tr>
+<tr><td>音素</td><td>能区分词的最小声音单位，例如英语 “cat” 里的 /k/。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>拼音</td><td>普通话的罗马拼写，带声调数字或符号（例如 <code>hang2</code>）。好几个能说中文的模型接受它，用来改多音字。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>多音字</td><td>一个汉字在不同上下文里有不止一种读法，例如行 xíng / háng。</td><td><a href="01-how-it-works.html">1</a>、<a href="07-quality-control.html">7</a></td></tr>
+<tr><td>专业声音克隆（PVC）</td><td>供应商对「用较长录音微调出来的声音」的叫法，通常要核验身份。</td><td><a href="02-cloud.html">2</a></td></tr>
+<tr><td>韵律</td><td>说话的旋律、节奏、重音和停顿。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>参考片段 / 提示音频</td><td>零样本模型模仿的那一小段你的录音。</td><td><a href="01-how-it-works.html">1</a>、<a href="06-recording.html">6</a></td></tr>
+<tr><td>房间底噪</td><td>房间安静时的背景声。底噪一致，块与块接起来才听不出缝。</td><td><a href="06-recording.html">6</a>、<a href="08-pipeline.html">8</a></td></tr>
+<tr><td>RTF 实时因子</td><td>处理时间除以音频时长。RTF 0.1 表示 100 秒音频用 10 秒计算。</td><td><a href="03-open-source.html">3</a></td></tr>
+<tr><td>RVC</td><td>基于检索的声音转换，一个流行的开源系统，用几分钟目标声音来训练。</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>Seed-TTS-eval</td><td>字节跳动公开的零样本语音合成测试集（英语、中文，另有一个「难」集），报告词错率 / 字错率和说话人相似度；很多论文用它。</td><td><a href="03-open-source.html">3</a>、<a href="07-quality-control.html">7</a></td></tr>
+<tr><td>SNR 信噪比</td><td>你的声音比背景噪声响多少，单位分贝。</td><td><a href="06-recording.html">6</a></td></tr>
+<tr><td>说话人验证</td><td>判断两段录音是不是同一个人。它的模型既当相似度打分器，也当银行的「声纹」。</td><td><a href="07-quality-control.html">7</a>、<a href="09-legal.html">9</a></td></tr>
+<tr><td>SRT / WebVTT</td><td>带时间戳的纯文本字幕格式，由词的时间生成。</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>SSML</td><td>语音合成标记语言：用 XML 标签标停顿（<code>&lt;break&gt;</code>）、发音（<code>&lt;phoneme&gt;</code>）、语速和音高（<code>&lt;prosody&gt;</code>）。各家、各模型支持不一样。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>音色</td><td>让你认出一个人的那种声音「颜色」，不依赖音高和具体的词。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>真峰值（dBTP）</td><td>重建后的模拟波形的最高电平，可以超过采样峰值；交付时通常限制在大约 −1 dBTP。</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>TTS</td><td>文本转语音。</td><td>全站</td></tr>
+<tr><td>视位 viseme</td><td>对应一个语音的口型；用来驱动对口型。</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>声码器</td><td>把频谱变成波形的模型，例如 HiFi-GAN、BigVGAN、Vocos。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>声音转换（VC）</td><td>语音到语音：保留词和时间，换掉声音。</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>音频水印</td><td>嵌在生成音频里、人耳听不见、检测器以后能找出来的信号，例如 SynthID、AudioSeal、PerTh。</td><td><a href="09-legal.html">9</a></td></tr>
+<tr><td>WER 词错率</td><td>（替换 + 删除 + 插入）÷ 参考里的词数。把合成音频转写成文字，再和稿子比。</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>零样本</td><td>推理时用一小段样本克隆声音，不对这个声音做训练。</td><td><a href="01-how-it-works.html">1</a></td></tr>
+</tbody>
+</table>
+</div>
+
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

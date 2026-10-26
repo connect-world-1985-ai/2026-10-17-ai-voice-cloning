@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>讲座 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">先看这个 · 31 分钟 · 中文旁白</div>
+<h1>你的声音，被合成出来</h1>
+<p class="lead">顺着这份实地指南讲一遍。它补上了声学，也补上了语言模型和图像模型的类比，后面的页面才能接上。你听到的是一支库存神经语音，不是任何人的克隆。克隆是它在解释的东西。范围：<b>你自己的声音，用来教书</b>，英语和普通话。</p>
+
+<video id="lecture" class="lecture-player" controls preload="metadata" poster="../media/lecture-zh-poster.jpg">
+  <source src="../media/lecture-zh.mp4" type="video/mp4">
+  <track kind="captions" src="../media/lecture-zh.vtt" srclang="zh-CN" label="中文" default>
+  浏览器不能播放这段视频。文件在 <a href="../media/lecture-zh.mp4">media/lecture-zh.mp4</a>。
+</video>
+<p class="small muted">字幕默认打开。文件里还有 32 个章节，播放器如果认章节就能跳。价格、许可证和法律日期来自指南在 <b>2026年10月17日</b> 的核对。英文讲座在顶栏切回 EN。</p>
+
+<h2>跳到一节</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>起点</th><th>这一节</th><th>看完应能</th></tr></thead>
+<tbody>
+<tr><td><a href="#lecture" data-seek="0">0:00</a></td><td>这件事</td><td>分清一段演示，和一门你以后还能改的课。</td></tr>
+<tr><td><a href="#lecture" data-seek="125">2:05</a></td><td>声音是什么</td><td>分开词语、音色和表达，并看见普通话的声调是词的一部分。</td></tr>
+<tr><td><a href="#lecture" data-seek="302">5:02</a></td><td>克隆怎么工作</td><td>把模型分成「提示」或「微调」，再分成符号、流，或语言与音色的拆分。</td></tr>
+<tr><td><a href="#lecture" data-seek="848">14:08</a></td><td>市面上有什么</td><td>把价格、许可证和听者榜当成三件不同的仪器来读。</td></tr>
+<tr><td><a href="#lecture" data-seek="1118">18:38</a></td><td>做一门课</td><td>录一段母带，给一块设门，把讲稿当成源代码。</td></tr>
+<tr><td><a href="#lecture" data-seek="1498">24:58</a></td><td>怎么选</td><td>做声明，守住文件，用一个下午在你自己的声音上做测试。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>然后读指南</h2>
+<p>讲座是路径。这些页面是证据、表格和决策工具。</p>
+<div class="cards">
+<a class="card a" href="01-how-it-works.html"><h4>1 · 怎么工作</h4><p>同样的机制，带论文链接和图。</p></a>
+<a class="card b" href="02-cloud.html"><h4>2 · 云服务</h4><p>谁接受个人用户，一小时要多少钱。</p></a>
+<a class="card b" href="03-open-source.html"><h4>3 · 开源模型</h4><p>哪些许可证经得起一门付费课。</p></a>
+<a class="card c" href="09-legal.html"><h4>9 · 法律与安全</h4><p>声明、供应商条款，以及不该做的事。</p></a>
+<a class="card d" href="10-decide.html"><h4>10 · 怎么选</h4><p>三条路径和费用计算器。</p></a>
+<a class="card d" href="11-hands-on.html"><h4>11 · 动手</h4><p>讲座结尾的那次对比。</p></a>
+</div>
+<p>完整地图：<a href="index.html">概览</a>。</p>
+
+<p class="page-meta">为本指南录制的讲座。不是法律意见。付钱或发布之前，重新读一遍价格和条款。旁白声音是微软 edge-tts 的 zh-CN-YunyangNeural，不是克隆。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+<script>
+(function () {
+  var video = document.getElementById("lecture");
+  if (!video) return;
+  Array.prototype.forEach.call(document.querySelectorAll("[data-seek]"), function (link) {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+      video.currentTime = Number(link.getAttribute("data-seek"));
+      var play = video.play();
+      if (play && play.catch) play.catch(function () {});
+      video.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>声音克隆怎么工作 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 1 页 · 基础</div>
+<h1>声音克隆怎么工作：写给刚接触语音的工程师</h1>
+<p class="lead">你已经从大语言模型和图像模型里认识了 Transformer、嵌入、分词器和扩散。现代语音合成就是用这些零件搭的。这一页把它们一张图一张图地映射到语音上，后面的工具页才看得懂。</p>
+
+<div class="callout analogy"><span class="title">一段话的心智模型</span>
+<p>一个会克隆声音的文本转语音系统有两个输入：<b>文本</b>（说什么）和<b>声音参考</b>（谁来说），输出是音频。声音参考要么是推理时模型「听」的几秒你（<i>零样本</i>），要么是事先用来调整模型权重的很多分钟你（<i>微调</i>）。其余一切（韵律、情绪、节奏、语言）取决于模型把<i>说了什么</i>、<i>谁在说</i>和<i>怎么说</i>分得有多开。<span class="ev i">推断</span></p></div>
+
+<h2>1. 经典语音合成和现代神经语音合成</h2>
+<p>语音合成走过三代。知道它们，才能解释为什么旧建议（以及今天还在卖的旧工具）和现在的做法差这么多。</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 900 340" role="img" aria-label="三代语音合成">
+  <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>
+  <marker id="a1b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <text x="10" y="22" class="t-title">A. 拼接 / 参数式（1990 年代–2016）</text>
+  <rect x="10" y="34" width="140" height="56" rx="8" class="box"/><text x="20" y="58">文本</text><text x="20" y="76" class="t-muted">规则、词典</text>
+  <rect x="180" y="34" width="190" height="56" rx="8" class="box"/><text x="190" y="58">音素和时长</text><text x="190" y="76" class="t-muted">手写的韵律规则</text>
+  <rect x="400" y="34" width="230" height="56" rx="8" class="box"/><text x="410" y="58">拼接录好的片段</text><text x="410" y="76" class="t-muted">或统计声码器（HMM）</text>
+  <rect x="660" y="34" width="230" height="56" rx="8" class="box-warn"/><text x="670" y="58">机械、有接缝</text><text x="670" y="76" class="t-muted">每个声音要几十小时</text>
+  <path d="M150,62 L177,62" class="line" marker-end="url(#a1)"/><path d="M370,62 L397,62" class="line" marker-end="url(#a1)"/><path d="M630,62 L657,62" class="line" marker-end="url(#a1)"/>
+
+  <text x="10" y="128" class="t-title">B. 两级神经（2017–2022）：Tacotron 2、FastSpeech 2、VITS</text>
+  <rect x="10" y="140" width="140" height="56" rx="8" class="box-accent"/><text x="20" y="164">文本</text><text x="20" y="182" class="t-muted">规范化、音素</text>
+  <rect x="180" y="140" width="190" height="56" rx="8" class="box-b"/><text x="190" y="164" class="t-b">声学模型</text><text x="190" y="182" class="t-muted">文本 → 梅尔频谱</text>
+  <rect x="400" y="140" width="230" height="56" rx="8" class="box-b"/><text x="410" y="164" class="t-b">神经声码器</text><text x="410" y="182" class="t-muted">WaveNet、HiFi-GAN：频谱 → 波形</text>
+  <rect x="660" y="140" width="230" height="56" rx="8" class="box"/><text x="670" y="164">自然，但一个声音</text><text x="670" y="182" class="t-muted">一个模型一个声音；要几小时棚录</text>
+  <path d="M150,168 L177,168" class="line-accent" marker-end="url(#a1b)"/><path d="M370,168 L397,168" class="line-accent" marker-end="url(#a1b)"/><path d="M630,168 L657,168" class="line-accent" marker-end="url(#a1b)"/>
+
+  <text x="10" y="234" class="t-title">C. 大型零样本模型（2023–现在）：VALL-E、Seed-TTS、F5-TTS、CosyVoice …</text>
+  <rect x="10" y="246" width="150" height="56" rx="8" class="box-accent"/><text x="20" y="270">文本</text><text x="20" y="288" class="t-muted">常常是原始字符</text>
+  <rect x="10" y="308" width="150" height="22" rx="5" class="box-d"/><text x="18" y="324" class="t-muted">+ 你的声音 3–30 秒</text>
+  <rect x="190" y="246" width="190" height="56" rx="8" class="box-d"/><text x="200" y="270" class="t-d">大生成模型</text><text x="200" y="288" class="t-muted">音频词元上的语言模型，或流</text>
+  <rect x="410" y="246" width="220" height="56" rx="8" class="box-d"/><text x="420" y="270" class="t-d">编解码解码 / 声码器</text><text x="420" y="288" class="t-muted">词元或频谱 → 波形</text>
+  <rect x="660" y="246" width="230" height="56" rx="8" class="box-ok"/><text x="670" y="270">任何声音，多种语言</text><text x="670" y="288" class="t-muted">用 1 万到 100 万小时以上训练</text>
+  <path d="M160,274 L187,274" class="line-accent" marker-end="url(#a1b)"/><path d="M380,274 L407,274" class="line-accent" marker-end="url(#a1b)"/><path d="M630,274 L657,274" class="line-accent" marker-end="url(#a1b)"/>
+</svg>
+<figcaption>B 代用几小时干净棚录，让一个模型学一个声音。C 代用巨大的多人语料学「语音怎么工作」，再用任何声音的短样本做条件。个人能做的声音克隆，是从 C 代才变得实际的。</figcaption>
+</figure>
+<ul>
+<li><b>B 代</b>：<a href="https://arxiv.org/abs/1712.05884">Tacotron 2</a>（2017）预测梅尔频谱（声音能量随频率和时间的一张图），<a href="https://arxiv.org/abs/1609.03499">WaveNet</a> 声码器把它变成音频。<a href="https://arxiv.org/abs/2006.04558">FastSpeech 2</a> 把它做成非自回归，并显式预测时长、音高和能量；<a href="https://arxiv.org/abs/2106.06103">VITS</a> 把文本到波形做成端到端；<a href="https://arxiv.org/abs/2010.05646">HiFi-GAN</a> 成了标准的快速声码器。很多「定制神经声音」云产品，以及流行的 GPT-SoVITS，仍用这一脉的零件。<span class="ev v">已核实</span>（论文）</li>
+<li><b>C 代</b>：<a href="https://arxiv.org/abs/2301.02111">VALL-E</a>（微软，2023年1月）把语音合成改写成音频编解码词元上的语言建模，用 3 秒提示克隆声音。字节跳动的 <a href="https://arxiv.org/abs/2406.02430">Seed-TTS</a>（2024）和它的公开评测集，成了大多数开源模型对照的标尺。<span class="ev v">已核实</span>（论文）</li>
+</ul>
+
+<h2>2. 零样本克隆和微调</h2>
+<p>这是实践上最重要的区分，因为它决定你必须录多少，以及质量天花板在哪里。</p>
+<figure class="diagram">
+<svg viewBox="0 0 900 300" role="img" aria-label="零样本与微调">
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <text x="10" y="22" class="t-title">零样本（「即时」）克隆：什么都不训练</text>
+  <rect x="10" y="36" width="180" height="60" rx="8" class="box-a"/><text x="22" y="60" class="t-a">参考片段</text><text x="22" y="80" class="t-muted">你的 5–30 秒 + 文稿</text>
+  <rect x="10" y="106" width="180" height="40" rx="8" class="box-accent"/><text x="22" y="131">新文本</text>
+  <rect x="230" y="50" width="250" height="84" rx="8" class="box"/><text x="244" y="76" class="t-title">冻结的预训练模型</text><text x="244" y="96" class="t-muted">每个用户同一套权重；</text><text x="244" y="112" class="t-muted">你的片段只是提示的一部分</text>
+  <rect x="520" y="66" width="180" height="52" rx="8" class="box-ok"/><text x="532" y="90">「你的」声音</text><text x="532" y="107" class="t-muted">几秒就能开始</text>
+  <path d="M190,66 L227,80" class="line-accent" marker-end="url(#a2)"/><path d="M190,126 L227,110" class="line-accent" marker-end="url(#a2)"/><path d="M480,92 L517,92" class="line-accent" marker-end="url(#a2)"/>
+  <text x="720" y="70" class="t-muted">+ 快、便宜、可以多试</text><text x="720" y="88" class="t-muted">− 连片段的情绪、</text><text x="720" y="104" class="t-muted">  麦克风和房间一起复制</text><text x="720" y="120" class="t-muted">− 口音和习惯没那么准</text>
+
+  <text x="10" y="186" class="t-title">微调（「专业」）克隆：权重适应你</text>
+  <rect x="10" y="200" width="180" height="60" rx="8" class="box-a"/><text x="22" y="224" class="t-a">你的数据集</text><text x="22" y="244" class="t-muted">30 分钟–3 小时，有文稿</text>
+  <rect x="230" y="200" width="250" height="60" rx="8" class="box-b"/><text x="244" y="224" class="t-b">训练任务</text><text x="244" y="244" class="t-muted">几分钟（LoRA）到几小时；要显卡</text>
+  <rect x="520" y="200" width="180" height="60" rx="8" class="box-ok"/><text x="532" y="224">你自己的模型</text><text x="532" y="244" class="t-muted">或供应商托管的声音</text>
+  <path d="M190,230 L227,230" class="line-accent" marker-end="url(#a2)"/><path d="M480,230 L517,230" class="line-accent" marker-end="url(#a2)"/>
+  <text x="720" y="214" class="t-muted">+ 音色、口音更近，</text><text x="720" y="230" class="t-muted">  长稿也稳</text><text x="720" y="246" class="t-muted">− 录音、等待、</text><text x="720" y="262" class="t-muted">  核验、费用</text>
+</svg>
+<figcaption>供应商把它们叫做「即时」对「专业」克隆（ElevenLabs），或「个人声音」对「专业定制声音」（Azure）。开源模型：F5-TTS、CosyVoice、IndexTTS 一类是零样本；GPT-SoVITS 和 RVC 通常用几分钟你的音频来微调。</figcaption>
+</figure>
+<div class="callout key"><span class="title">教学旁白的经验法则</span>
+<p>先用零样本弄清你喜欢什么；等到要讲整门课时，再换成微调或专业克隆。零样本的质量很依赖你选的那一段参考，而换参考很便宜。当五十个视频之间的一致比准备时间更重要时，微调才划算。<span class="ev p">实践</span></p></div>
+
+<h2>3. 说话人嵌入：声音的「指纹」向量</h2>
+<p><b>说话人编码器</b>是一个网络，训练目标是把任何一句话映射成固定长度的向量（常常是 192–512 个数），让同一个人的片段靠在一起，不同的人离得远，不管说的是什么词。它是语音版的人脸识别嵌入。</p>
+<figure class="diagram">
+<svg viewBox="0 0 900 260" role="img" aria-label="说话人嵌入空间">
+  <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="40" width="160" height="50" rx="8" class="box-a"/><text x="20" y="62">片段：「同学们好」</text><text x="20" y="80" class="t-muted">你，星期一，英语</text>
+  <rect x="10" y="110" width="160" height="50" rx="8" class="box-a"/><text x="20" y="132">片段：「大家好」</text><text x="20" y="150" class="t-muted">你，普通话</text>
+  <rect x="10" y="180" width="160" height="50" rx="8" class="box"/><text x="20" y="202">片段：「同学们好」</text><text x="20" y="220" class="t-muted">一位同事</text>
+  <rect x="210" y="90" width="190" height="80" rx="8" class="box-b"/><text x="222" y="116" class="t-b">说话人编码器</text><text x="222" y="136" class="t-muted">ECAPA-TDNN、WavLM、</text><text x="222" y="152" class="t-muted">d-vector（GE2E）…</text>
+  <path d="M170,65 L207,110" class="line-accent" marker-end="url(#a3)"/><path d="M170,135 L207,130" class="line-accent" marker-end="url(#a3)"/><path d="M170,205 L207,150" class="line-accent" marker-end="url(#a3)"/>
+  <path d="M400,130 L447,130" class="line-accent" marker-end="url(#a3)"/>
+  <rect x="450" y="20" width="440" height="230" rx="10" class="box"/>
+  <text x="464" y="42" class="t-muted">嵌入空间（投影到二维）</text>
+  <circle cx="560" cy="110" r="46" class="box-a" opacity=".55"/>
+  <circle cx="545" cy="100" r="6" class="box-a"/><circle cx="572" cy="118" r="6" class="box-a"/><circle cx="560" cy="96" r="6" class="box-a"/><circle cx="580" cy="100" r="6" class="box-a"/>
+  <text x="510" y="172" class="t-a">你（两种语言）</text>
+  <circle cx="780" cy="190" r="36" class="box" opacity=".8"/>
+  <circle cx="770" cy="186" r="6" class="box-b"/><circle cx="792" cy="196" r="6" class="box-b"/>
+  <text x="742" y="240" class="t-muted">同事</text>
+  <path d="M580,100 L770,186" class="line" stroke-dasharray="4 3"/>
+  <text x="620" y="150" class="t-muted">余弦相似度低</text>
+  <text x="500" y="70" class="t-muted">余弦相似度高（约 0.7–0.9）</text>
+</svg>
+<figcaption>同一个编码器在本指南里用两次：有的语音合成模型用它来按你的声音做条件；评测时用它给「合成片段离真实的你有多近」打分（第 7 页）。典型数字取决于编码器；只在同一个编码器内部比较。</figcaption>
+</figure>
+<ul>
+<li>历史上的编码器：<a href="https://arxiv.org/abs/1710.10467">GE2E d-vector</a>（Google，2017）、x-vector，以及 <a href="https://arxiv.org/abs/2005.07143">ECAPA-TDNN</a>（2020），SpeechBrain 里很常见。Seed-TTS-eval 用一个为说话人验证微调过的 <a href="https://arxiv.org/abs/2110.13900">WavLM</a>-large 来打相似度。<span class="ev v">已核实</span>（论文）</li>
+<li>很多新模型根本不用一个全局向量：它们把你的参考音频放进<i>上下文</i>，像少样本提示，这样能复制一个向量装不下的更细细节（气声、口音、节奏）。有的（CosyVoice、Spark-TTS）两种都用。<span class="ev v">已核实</span>（CosyVoice 2 和 Spark-TTS 论文）</li>
+<li>一个余弦相似度数字说的是「对验证模型来说像同一个人」。它不说「听起来自然」，也不说「像状态好的那天的你」。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>4. 今天占主导的两种架构</h2>
+<p>第 2–3 页上几乎每个模型都是其中一种，或者一个混合：一种管「说什么、什么时候说」，另一种管「声音的细节」。</p>
+<div data-tabs>
+<div class="tabs"><button data-tab="codec">编解码语言模型</button><button data-tab="flow">流匹配和扩散</button><button data-tab="hybrid">混合</button></div>
+<div class="tab-panel" data-panel="codec">
+<figure class="diagram">
+<svg viewBox="0 0 900 250" role="img" aria-label="编解码语言模型">
+  <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="20" width="190" height="56" rx="8" class="box-a"/><text x="22" y="44" class="t-a">你的参考音频</text><text x="22" y="62" class="t-muted">波形，24 kHz</text>
+  <rect x="240" y="20" width="200" height="56" rx="8" class="box-b"/><text x="252" y="44" class="t-b">神经编解码编码器</text><text x="252" y="62" class="t-muted">EnCodec / DAC / 自有</text>
+  <rect x="480" y="20" width="400" height="56" rx="8" class="box"/><text x="492" y="44">离散词元：412 87 1033 5 …</text><text x="492" y="62" class="t-muted">每个码本大约每秒 12–75 个词元</text>
+  <path d="M200,48 L237,48" class="line-accent" marker-end="url(#a4)"/><path d="M440,48 L477,48" class="line-accent" marker-end="url(#a4)"/>
+  <rect x="10" y="110" width="870" height="56" rx="8" class="box-d"/>
+  <text x="22" y="134" class="t-d">Transformer 语言模型（只有解码器，像 GPT）</text>
+  <text x="22" y="154" class="t-muted">提示 = [参考文本的词元 + 新文本] + [参考音频词元] → 一次预测下一个音频词元，用温度采样</text>
+  <path d="M680,76 L680,107" class="line-accent" marker-end="url(#a4)"/>
+  <rect x="240" y="190" width="200" height="50" rx="8" class="box-b"/><text x="252" y="212" class="t-b">编解码解码器</text><text x="252" y="230" class="t-muted">词元 → 波形</text>
+  <rect x="480" y="190" width="200" height="50" rx="8" class="box-ok"/><text x="492" y="212">新的语音</text><text x="492" y="230" class="t-muted">接着「你的」声音</text>
+  <path d="M340,166 L340,187" class="line-accent" marker-end="url(#a4)"/><path d="M440,215 L477,215" class="line-accent" marker-end="url(#a4)"/>
+</svg>
+</figure>
+<p><b>怎么工作。</b>神经音频编解码器（<a href="https://arxiv.org/abs/2107.03312">SoundStream</a>、<a href="https://arxiv.org/abs/2210.13438">EnCodec</a>、<a href="https://arxiv.org/abs/2306.06546">DAC</a>）用残差向量量化，把音频压成一串整数。一个 GPT 式的模型在你的参考片段之后「续写」这串词元，并以文本为条件。例子：VALL-E、<a href="https://arxiv.org/abs/2411.01156">Fish-Speech</a>、<a href="https://arxiv.org/abs/2502.04128">Llasa</a>、<a href="https://arxiv.org/abs/2503.01710">Spark-TTS</a>、<a href="https://arxiv.org/abs/2406.04904">XTTS</a>、<a href="https://arxiv.org/abs/2502.05512">IndexTTS</a>。<span class="ev v">已核实</span>（论文）</p>
+<p><b>长处：</b>节奏和表现力很自然；边生成边流出音频；像大语言模型一样能放大。<b>短处：</b>和任何采样的大语言模型一样，它会<i>幻觉</i>：漏词、重复或含糊，尤其是长的或不寻常的输入；速度取决于序列长度；时长不是显式的，词的时间要事后找回。<span class="ev p">实践</span></p>
+</div>
+<div class="tab-panel" data-panel="flow">
+<figure class="diagram">
+<svg viewBox="0 0 900 230" role="img" aria-label="流匹配语音合成">
+  <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="20" width="210" height="60" rx="8" class="box-accent"/><text x="22" y="44">文本（补到指定长度）</text><text x="22" y="64" class="t-muted">+ 你的参考频谱</text>
+  <rect x="10" y="110" width="210" height="60" rx="8" class="box"/><text x="22" y="134">随机噪声</text><text x="22" y="154" class="t-muted">形状和目标频谱一样</text>
+  <rect x="260" y="56" width="310" height="80" rx="8" class="box-c"/><text x="272" y="82" class="t-c">Transformer 预测一个速度</text><text x="272" y="102" class="t-muted">「往哪边走，噪声才变成语音？」</text><text x="272" y="118" class="t-muted">重复 16–32 个小步</text>
+  <path d="M410,136 C410,180 330,180 330,140" class="line-loop"/>
+  <rect x="600" y="56" width="140" height="80" rx="8" class="box-b"/><text x="612" y="82" class="t-b">频谱 / 潜变量</text><text x="612" y="102" class="t-muted">整句一次出来</text>
+  <rect x="760" y="56" width="130" height="80" rx="8" class="box-ok"/><text x="772" y="82">声码器</text><text x="772" y="102" class="t-muted">→ 波形</text>
+  <path d="M220,50 L257,80" class="line-accent" marker-end="url(#a5)"/><path d="M220,140 L257,110" class="line-accent" marker-end="url(#a5)"/><path d="M570,96 L597,96" class="line-accent" marker-end="url(#a5)"/><path d="M740,96 L757,96" class="line-accent" marker-end="url(#a5)"/>
+  <text x="260" y="210" class="t-muted">总长度事先选定（例如字数 × 语速），所以速度和时长可以直接控制。</text>
+</svg>
+</figure>
+<p><b>怎么工作。</b>和图像扩散是同一族想法。<a href="https://arxiv.org/abs/2210.02747">流匹配</a>学习一个向量场，用很少的步把随机噪声移到频谱上；模型在你的参考音频旁边，把「被遮住」的目标区域填上。例子：<a href="https://arxiv.org/abs/2306.15687">Voicebox</a>、<a href="https://arxiv.org/abs/2406.18009">E2 TTS</a>、<a href="https://arxiv.org/abs/2410.06885">F5-TTS</a>；<a href="https://arxiv.org/abs/2403.03100">NaturalSpeech 3</a> 在分解过的编解码潜变量上做扩散。<span class="ev v">已核实</span>（论文）</p>
+<p><b>长处：</b>非自回归，所以漏词和重复更少，显卡上快，总时长是显式的。<b>短处：</b>你必须估计时长；韵律可能比最好的编解码语言模型更平、更「平均」；整句一次生成，长文本必须切块。<span class="ev p">实践</span></p>
+</div>
+<div class="tab-panel" data-panel="hybrid">
+<p>很多 2024–2026 的系统把工作拆开：一个自回归语言模型产出紧凑的<i>语义</i>词元（说什么、什么时候、用什么语调），一个流匹配或扩散解码器再用目标声音画出<i>声学</i>细节。例子：<a href="https://arxiv.org/abs/2407.05407">CosyVoice</a> 和 <a href="https://arxiv.org/abs/2412.10117">CosyVoice 2</a>（语言模型 → 流匹配 → 声码器）、Seed-TTS、<a href="https://arxiv.org/abs/2506.21619">IndexTTS2</a>（加上显式时长控制，并把情绪和音色分开）、<a href="https://arxiv.org/abs/2409.00750">MaskGCT</a>（掩码生成，两级都是非自回归）。<span class="ev v">已核实</span>（论文）</p>
+<p>这个拆分对你要紧，因为语义级主要携带<b>语言和韵律</b>，声学级主要携带<b>音色</b>。跨语言克隆能工作，靠的就是这个分开（第 6 节）。<span class="ev i">推断</span></p>
+</div>
+</div>
+
+<h2 id="voice-conversion">5. 声音转换：到达你的声音的另一条路</h2>
+<p><b>声音转换（VC）</b>，也就是语音到语音，保留输入录音的词、时间和语调，把音色换成你的。输入可以是你用差麦克风快速读的，可以是朋友，也可以是韵律很好的高质量库存语音。</p>
+<figure class="diagram">
+<svg viewBox="0 0 900 250" role="img" aria-label="声音转换流水线">
+  <defs><marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="80" width="170" height="70" rx="8" class="box"/><text x="22" y="106">源语音</text><text x="22" y="124" class="t-muted">库存语音，或任何人，</text><text x="22" y="140" class="t-muted">任何语言</text>
+  <rect x="220" y="20" width="230" height="56" rx="8" class="box-b"/><text x="232" y="44" class="t-b">内容编码器</text><text x="232" y="62" class="t-muted">HuBERT / ContentVec / Whisper</text>
+  <rect x="220" y="94" width="230" height="44" rx="8" class="box-c"/><text x="232" y="121" class="t-c">音高（F0）跟踪：RMVPE</text>
+  <rect x="220" y="156" width="230" height="56" rx="8" class="box-a"/><text x="232" y="180" class="t-a">你的声音</text><text x="232" y="198" class="t-muted">训练好的模型，或参考片段</text>
+  <rect x="490" y="70" width="210" height="90" rx="8" class="box-d"/><text x="502" y="96" class="t-d">解码器 / 生成器</text><text x="502" y="116" class="t-muted">内容 + 音高 + 你的</text><text x="502" y="132" class="t-muted">音色 → 波形</text><text x="502" y="148" class="t-muted">（RVC 另加检索索引）</text>
+  <rect x="740" y="85" width="150" height="60" rx="8" class="box-ok"/><text x="752" y="111">同样的词，</text><text x="752" y="129" class="t-muted">你的音色</text>
+  <path d="M180,100 L217,50" class="line-accent" marker-end="url(#a6)"/><path d="M180,115 L217,115" class="line-accent" marker-end="url(#a6)"/>
+  <path d="M450,48 L487,90" class="line-accent" marker-end="url(#a6)"/><path d="M450,116 L487,116" class="line-accent" marker-end="url(#a6)"/><path d="M450,184 L487,140" class="line-accent" marker-end="url(#a6)"/>
+  <path d="M700,115 L737,115" class="line-accent" marker-end="url(#a6)"/>
+</svg>
+<figcaption>RVC（基于检索的声音转换）用你的 10–60 分钟来微调；Seed-VC 一类的模型用一段参考做零样本。细节和现状：<a href="04-voice-conversion.html">第 4 页</a>。</figcaption>
+</figure>
+<ul>
+<li><b>为什么考虑它：</b>你得到源的韵律。如果你自己把稿子读一遍（哪怕是较弱的语言，或便宜的麦克风），声音转换保留的是<i>你的</i>重音，语音合成猜不到。你也可以选一个节奏你喜欢的库存声音，再「换声」。<span class="ev p">实践</span></li>
+<li><b>为什么它不是默认：</b>源里的口音、节奏和读错会原样留下来；质量取决于音域是否匹配；你要多维护一个模型才能保持一致。<span class="ev p">实践</span></li>
+<li><a href="https://arxiv.org/abs/2411.09943">Seed-VC 论文</a>（2024年11月）描述了用扩散 Transformer 做的零样本声音转换。<span class="ev v">已核实</span></li>
+</ul>
+
+<h2 id="prosody-cross-lingual">6. 韵律、情绪、节奏和跨语言克隆</h2>
+<div class="cards">
+<div class="card"><h4>韵律</h4><p>说话的旋律、节奏和重音：哪个词被强调，停顿落在哪里，语调上升还是下降。教学里，韵律就是让人听出「这是重点」的东西。</p></div>
+<div class="card"><h4>情绪和风格</h4><p>中性、热情、平静、严肃。零样本模型大体复制参考片段的情绪；较新的模型加了标签（ElevenLabs v3/v4 的音频标签）、自然语言指令，或单独的情绪参考（IndexTTS2）。</p></div>
+<div class="card"><h4>节奏</h4><p>每分钟多少词，停顿多长。流匹配模型接受显式时长；编解码语言模型跟着参考的节奏和标点。事后把时间拉伸超过大约 ±10%，往往会听出处理过。<span class="ev p">实践</span></p></div>
+<div class="card"><h4>跨语言克隆</h4><p>你的音色说一种参考片段里没有的语言：例如用英语参考生成普通话。能工作，是因为音色和语言部分分开了（第 4 节）。预期有「口音」效应：常常是模型对目标语言的母语口音，有时会漏出你参考语言的口音。</p></div>
+</div>
+<div class="callout think"><span class="title">这对英语加普通话意味着什么</span>
+<ul>
+<li>如果做得到，<b>两种</b>语言都录参考，哪怕一种很短。目标语言里的参考片段，几乎总比跨语言迁移更自然。<span class="ev p">实践</span></li>
+<li>普通话多两个具体风险：<b>声调</b>（声调错了就是词错了）和<b>多音字</b>（例如行，读 xíng 或 háng），文本前端必须消解。在中文数据上训练得多的模型（CosyVoice、IndexTTS、Fish Speech、GPT-SoVITS、MiniMax、火山引擎）通常处理得更好，有几个接受拼音覆盖。<span class="ev i">推断</span>（根据模型文档；见第 7 页）</li>
+<li>语码转换（普通话句子里夹英语术语，技术教学里很正常）是另一项能力；在动手实验里明确测它（第 11 页）。<span class="ev p">实践</span></li>
+</ul></div>
+
+<h2 id="long-form-drift">7. 为什么长旁白会漂、会变差</h2>
+<p>一节 15 分钟的课，比这些模型一次能生成的任何东西都长得多。长输出以特征性的方式失败：</p>
+<figure class="diagram">
+<svg viewBox="0 0 900 220" role="img" aria-label="长文本漂移和切块">
+  <defs><marker id="a7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <text x="10" y="22" class="t-title">一次长生成（不好）</text>
+  <rect x="10" y="32" width="880" height="36" rx="6" class="box"/>
+  <rect x="10" y="32" width="300" height="36" rx="6" class="box-ok"/><text x="20" y="55">声音还好</text>
+  <rect x="310" y="32" width="300" height="36" class="box-c"/><text x="320" y="55" class="t-c">在漂：音高、语速、音色</text>
+  <rect x="610" y="32" width="280" height="36" rx="6" class="box-warn"/><text x="620" y="55">重复、含糊、噪声</text>
+  <text x="10" y="104" class="t-title">每次用同一段参考来切块（好）</text>
+  <g>
+  <rect x="10" y="116" width="200" height="36" rx="6" class="box-ok"/><text x="20" y="139">第 1 块（1–3 句）</text>
+  <rect x="230" y="116" width="200" height="36" rx="6" class="box-ok"/><text x="240" y="139">第 2 块</text>
+  <rect x="450" y="116" width="200" height="36" rx="6" class="box-warn"/><text x="460" y="139">第 3 块：检查失败</text>
+  <rect x="670" y="116" width="220" height="36" rx="6" class="box-ok"/><text x="680" y="139">第 4 块</text>
+  </g>
+  <rect x="450" y="172" width="200" height="36" rx="6" class="box-ok"/><text x="460" y="195">第 3 块，已重做</text>
+  <path d="M550,152 L550,169" class="line-accent" marker-end="url(#a7)"/>
+  <text x="670" y="195" class="t-muted">再用停顿和响度对齐接上</text>
+</svg>
+</figure>
+<ul>
+<li><b>自回归误差累积。</b>每个词元根据前面的词元来预测。一个稍微偏的词元让下一步更偏一点；几千个词元之后，声音就游走或打转。这和语言模型里的<i>暴露偏差</i>是一回事。<span class="ev i">推断</span>（自回归采样的已知性质）</li>
+<li><b>参考条件会消退。</b>生成离上下文里的参考片段越远，对音色的约束就越弱。<span class="ev i">推断</span></li>
+<li><b>训练长度对不上。</b>大多数模型用大约 2–30 秒的语句训练；比这长得多的输入就出了分布。<span class="ev p">实践</span>（好几份模型 README 把这写成建议的最大输入长度）</li>
+<li><b>切块自己会制造问题：</b>每一块重新开始韵律，所以句末语调、响度和速度会在块之间跳。修法：永远同一段参考和同一套设置，在句子或段落边界切，API 支持时把前后文传进去，组装时做响度归一。<span class="ev p">实践</span></li>
+</ul>
+<p><a href="08-pipeline.html">第 8 页</a>的流水线就是围着这个建的：切块、合成、转写并检查、重做失败的，再组装。</p>
+
+<h2>接下来去哪里</h2>
+<div class="cards">
+<a class="card" href="02-cloud.html"><h4>云服务 →</h4><p>ElevenLabs、Azure、Google、MiniMax、Fish Audio 等：它们要你提供什么、费用和条款。</p></a>
+<a class="card" href="03-open-source.html"><h4>开源模型 →</h4><p>F5-TTS、CosyVoice、IndexTTS2、GPT-SoVITS、Chatterbox 和更新的：许可、硬件、中文支持。</p></a>
+<a class="card" href="glossary.html"><h4>术语 →</h4><p>这一页上的每个词，一两句话。</p></a>
+</div>
+
+<p class="page-meta">本页的论文编号在 2026-10-17 对着 arXiv API 核对过。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

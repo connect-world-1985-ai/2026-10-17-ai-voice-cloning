@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>录音与清理 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 6 页 · 把它做好</div>
+<h1>录音，以及清理你的声音</h1>
+<p class="lead">克隆只会和录音一样好。它会忠实复制你的房间回声、笔记本风扇、周五疲惫的声音，以及降噪器加上的每一处瑕疵。这一页是清单：录一套干净的母带，以后每个工具都能拿去用。</p>
+
+<div class="callout key"><span class="title">短版本</span>
+<ol>
+<li>每种语言录<b>一套母带</b>：各大约 60–120 分钟干净语音，格式为 <b>48 kHz、24 位、单声道 WAV</b>。再按每个工具去切。<span class="ev i">推断</span>（根据下面的供应商最低要求）</li>
+<li><b>一致比数量重要</b>：每次都是同一房间、同一麦克风、同一距离（约 20 厘米）、同一增益、同一种说话状态。<span class="ev v">已核实</span>（ElevenLabs、Azure、Google 的录音指南）</li>
+<li><b>读你真实的教材</b>，用你真实的讲课声音，再加一套语音平衡的句子。<span class="ev v">已核实</span>（ElevenLabs、Azure）</li>
+<li><b>清理越少越好。</b>修房间，不要修文件。<span class="ev v">已核实</span>（Applio、ElevenLabs 文档）</li>
+</ol></div>
+
+<h2>每种做法要多少音频</h2>
+<p>引自供应商或项目文档，读于 2026-10-17。<span class="ev v">已核实</span>，除非另标。</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>系统</th><th>类型</th><th>你的音频</th><th>来源</th></tr></thead>
+<tbody>
+<tr><td>Google Chirp 3 Instant Custom Voice</td><td>即时</td><td>参考最长 10 秒，加一段最长 10 秒的同意片段</td><td><a href="https://docs.cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice">Google 文档</a></td></tr>
+<tr><td>GPT-SoVITS（零样本）</td><td>零样本</td><td>5 秒</td><td><a href="https://github.com/RVC-Boss/GPT-SoVITS">README</a></td></tr>
+<tr><td>Seed-VC</td><td>零样本转换</td><td>1–30 秒</td><td><a href="https://github.com/Plachtaa/seed-vc">README</a></td></tr>
+<tr><td>Azure Personal Voice</td><td>即时（需审批）</td><td>5–90 秒，加一段口播的同意声明</td><td><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/personal-voice-create-voice">Microsoft Learn</a></td></tr>
+<tr><td>ElevenLabs 即时声音克隆</td><td>即时</td><td>1–2 分钟；「超过 2–3 分钟……改进很小，甚至可能有害」</td><td><a href="https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning">ElevenLabs 文档</a></td></tr>
+<tr><td>GPT-SoVITS（少样本）</td><td>微调</td><td>1 分钟</td><td>README</td></tr>
+<tr><td>RVC</td><td>微调转换</td><td>≥10 分钟低噪声语音</td><td><a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">README</a></td></tr>
+<tr><td>Resemble 语音到语音的目标<small>（托管产品已停）</small></td><td>克隆</td><td>10 分钟以上</td><td><a href="https://docs.resemble.ai/voice-generation/speech-to-speech">Resemble 文档</a></td></tr>
+<tr><td>Google 完整定制声音</td><td>微调</td><td>约 500 段录音，约 20–30 分钟</td><td><a href="https://cloud.google.com/text-to-speech/custom-voice/docs/training-data">Google 文档</a></td></tr>
+<tr><td>Azure 专业声音</td><td>微调</td><td>300 句算「还行」；人物声音要 1000–2000 句</td><td><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/record-custom-voice-samples">Microsoft Learn</a></td></tr>
+<tr><td>ElevenLabs 专业声音克隆</td><td>微调</td><td>30–180 分钟，「理想是 2 小时以上」</td><td>ElevenLabs 文档</td></tr>
+</tbody>
+</table>
+</div>
+<p>RVC 社区指南把 10–30 分钟当成甜区，1–2 小时之后增益很小。<span class="ev u">未核实</span>（二手）</p>
+
+<h2>麦克风和摆放</h2>
+<div class="cards">
+<div class="card"><h4>USB 电容麦</h4><p>最简单：插上就录。它会收房间，所以要安静、软的房间。大约 50–150 美元。<span class="ev u">未核实</span>（价位）</p></div>
+<div class="card"><h4>XLR 电容麦 + 声卡</h4><p>噪声更低，控制更多。ElevenLabs 说 150–300 美元的 XLR 麦克风「对大多数配音够用」，并举例 Focusrite 声卡配 AT2020 或 Rode NT1，整套 300–500 美元。<span class="ev v">已核实</span>（ElevenLabs 文档；是例子，不是推荐购买）</p></div>
+<div class="card"><h4>动圈麦</h4><p>更不容易收房间声，所以未处理的家庭办公室里往往更好，但需要更多增益。大约 100–400 美元。<span class="ev p">实践</span></p></div>
+<div class="card"><h4>不要用笔记本或耳麦</h4><p>第一次零样本试验可以，母带不行。克隆会听起来像一台笔记本。<span class="ev p">实践</span></p></div>
+</div>
+<ul>
+<li><b>距离：</b>「大约两拳远……约 20 厘米（7–8 英寸），加防喷罩」；稍微偏轴说话能减少爆破音。标出位置，每次都一样。<span class="ev v">已核实</span>（ElevenLabs）</li>
+<li><b>防喷罩：</b>ElevenLabs 要求有，因为爆破音和呼吸「会给克隆过程带来问题」。<span class="ev v">已核实</span></li>
+</ul>
+
+<h2>电平和噪声</h2>
+<p>来源在细节上不同；大家都同意绝不能到 0 dBFS（削波无法挽回）。</p>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>来源</th><th>峰值</th><th>平均 / 噪声</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs 专业克隆指南</td><td>−6 到 −3 dB</td><td>平均大约 −18 dB</td></tr>
+<tr><td>Azure 专业声音</td><td>−6 到 −3 dB</td><td>信噪比高于 35 dB（「低于 20 会有明显噪声」）；说话前的噪声低于 −70 dB；压缩最多 4:1；两端 100–200 毫秒静音</td></tr>
+<tr><td>ACX 有声书标准（参照）</td><td>≤ −3 dB</td><td>RMS −23 到 −18 dB；噪声底 ≤ −60 dB</td></tr>
+<tr><td>Google 完整定制声音</td><td>-</td><td>平均 −23 LUFS ±2</td></tr>
+<tr><td>Sound On Sound（24 位采集）</td><td>大约 −10 dBFS</td><td>平均 −18 到 −20 dBFS；大约 12 dB 安全余量</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout think"><span class="title">怎么把它们对上</span>
+<p>供应商说的是<i>交付</i>电平；录音师说的是<i>采集</i>电平。用 24 位录，正常句子峰值大约 −12 到 −10 dBFS，最响大约 −6 dBFS，然后再抬到供应商的目标。24 位下这不增加噪声。<span class="ev i">推断</span></p></div>
+
+<h2>房间</h2>
+<ul>
+<li>压住反射：录音棚，或自制的「毯子堡，或衣橱」（ElevenLabs 的原话）。小房间里满是衣服，好过空荡荡的大办公室。<span class="ev v">已核实</span>（ElevenLabs）</li>
+<li>关掉风扇和空调，电脑离麦克风远一点，挑安静的时间录。</li>
+<li>每次开始先录 10 秒静音（房间底噪），用来查噪声底，以后也用来填缝。<span class="ev p">实践</span></li>
+</ul>
+
+<h2>跨场次的一致</h2>
+<p>这比任何单项设置都重要。Azure：同一个声音的录音「应该听起来像同一天、同一个房间录的」。ElevenLabs：保持同一种能量和同一种口音；「你不能混搭，否则人工智能会不稳定」。<span class="ev v">已核实</span></p>
+<p><b>Google 的「对照文件」方法</b>最具体：项目开始时录几句参照；以后每次开始先听它们，把音量、能量、节奏和咬字对上，再继续。<span class="ev v">已核实</span>（Google 定制声音文档）</p>
+<p>职业配音一天大约能录 2–3 小时，一周 3–4 天（Azure 的指导）。母带拆成几次短场次来录。<span class="ev v">已核实</span></p>
+
+<h2>读什么</h2>
+<h3>先读你的教材</h3>
+<p>克隆会复制「节奏、音调、表演风格、停顿的长度……『嗯』和『啊』」（ElevenLabs）。所以读真实的课文，带上你真的会说的英语技术词、数字和代码标识符。Azure 建议把一般句子和你会用的领域句子混在一起。<span class="ev v">已核实</span></p>
+<h3>英语的音素覆盖</h3>
+<ul>
+<li><a href="http://festvox.org/cmu_arctic/">CMU ARCTIC</a>：1132 句提示，为双音素覆盖而选，来自已过版权的文本；许可允许署名后商用。Azure 称它是「很好的起点」。<span class="ev v">已核实</span></li>
+<li><a href="https://www.cs.columbia.edu/~hgs/audio/harvard.html">Harvard 句</a>：720 句，72 组，每组 10 句。<span class="ev v">已核实</span></li>
+<li>Rainbow Passage 是常见热身，但 2022 年一项 ASHA 研究发现它只覆盖大约 36% 的英语辅音语境，所以并不真正平衡。<span class="ev v">已核实</span></li>
+</ul>
+<h3>普通话的音素覆盖</h3>
+<ul>
+<li>覆盖四声和轻声、变调（三声相连、一和不一）、翘舌与平舌（zh/ch/sh 对 z/c/s）、n 对 l、前鼻音与后鼻音（-n/-ng），儿化只在你用得一致时才录。<span class="ev p">实践</span>（普通语音学，不是单一出处）</li>
+<li>加入夹着英语技术词的普通话句子，因为你上课就是这样讲。<span class="ev p">实践</span></li>
+<li>公开的普通话语料如 AISHELL-3 可以当<i>风格</i>参照，但注意许可冲突：OpenSLR 写 Apache-2.0，AISHELL 自己的网站写仅供研究，「不允许商用」。要商用就自己写句子。<span class="ev v">已核实</span>（两个页面）</li>
+</ul>
+<h3>稿子卫生</h3>
+<ul>
+<li>每句 2–15 秒；以陈述句为主，带一些问句和感叹；不要重复（Azure）。<span class="ev v">已核实</span></li>
+<li>训练文稿里的数字和缩写按你怎么说来写（“nine one one”，“A P I”）。<span class="ev v">已核实</span>（Azure）</li>
+<li>一套数据一种人格。如果要单独的「兴奋」风格，另录一套。<span class="ev v">已核实</span>（Azure、ElevenLabs）</li>
+</ul>
+
+<h2>英语和普通话：两种都录</h2>
+<p>ElevenLabs 说口音来自声音样本，用英语做的克隆在另一种语言里「非常可能带英语口音」。所以每种语言单独一套。ElevenLabs 专业克隆里，这可能意味着两个克隆，或者主教学语言一个克隆、另一种语言接受口音。Azure 要求同意声明和训练数据同一语言。<span class="ev v">已核实</span></p>
+<ul>
+<li>两种语言用同一麦克风、房间、距离和增益；一场里英语和普通话交替，音色才对得上。<span class="ev p">实践</span></li>
+<li>每个文件标上语言。</li>
+<li>声音转换里，<i>源</i>语音决定口音，所以一个用两种语言训练的目标模型就能用（第 4 页）。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>文件格式</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>供应商 / 工具</th><th>要求（读于 2026-10-17）</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs</td><td>录 WAV 44.1/48 kHz、至少 24 位；上传 MP3 ≥192 kbps 也可以（「WAV 通常不会提高克隆质量」）</td></tr>
+<tr><td>Azure 专业声音</td><td>规格是 WAV 单声道 24 kHz 16 位；接受 48 kHz/24 位再降采样</td></tr>
+<tr><td>Google 定制声音</td><td>48 kHz/24 位 WAV；「不要上采样」</td></tr>
+<tr><td>RVC / Applio</td><td>无损 WAV/FLAC；会重采样到模型的采样率</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>建议：</b>采集 48 kHz、24 位、单声道 WAV；绝不改原件；按供应商另做副本。<span class="ev i">推断</span></p>
+
+<h2>清理：越少越好</h2>
+<div class="callout warn"><span class="title">克隆会学会瑕疵</span>
+<p>Applio：「不要仅仅因为有，就上很重的门限、压缩、降噪或去混响。」ElevenLabs：「你不需要花哨的后期、插件、降噪器。」过重的降噪听起来「水汪汪的」或金属味，模型会在每一句里复现。处理后的文件永远和原件做 A/B。<span class="ev v">已核实</span></p></div>
+<h3>建议顺序</h3>
+<ol class="stepper">
+<li>听一遍；删掉有错误、削波、咳嗽或别人声音的条。</li>
+<li>大约 70–80 Hz 的高通，去掉隆隆声。<span class="ev p">实践</span></li>
+<li>只有噪声底达不到目标时（例如信噪比要高于 35 dB）才做轻微降噪。</li>
+<li>只有房间明显听得见时才去混响；更好的办法是换一个更「死」的地方重录。</li>
+<li>需要时做轻微去齿音和去口水音。</li>
+<li>两端修剪到 100–200 毫秒静音；切成 2–15 秒的片段。</li>
+<li>每段电平一致（峰值归一），不要做很重的响度处理。</li>
+<li>转写（英语用 Whisper，中文用 FunASR/Paraformer），并且<b>校对</b>文稿。</li>
+<li>留出几段做评测（第 7 页）。</li>
+</ol>
+<h3>工具</h3>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>任务</th><th>工具</th><th>状态 / 许可（2026-10-17）</th><th data-nosort>备注</th></tr></thead>
+<tbody>
+<tr><td>降噪</td><td><a href="https://manual.audacityteam.org/man/noise_reduction.html">Audacity 降噪</a></td><td>免费</td><td>用至少 0.5 秒纯噪声做噪声样本；听起来「水」就降低强度。</td></tr>
+<tr><td>降噪（神经）</td><td><a href="https://github.com/xiph/rnnoise">RNNoise</a></td><td>BSD-3；推送 2025-02</td><td>CPU 低，质量一般。</td></tr>
+<tr><td>降噪（神经）</td><td><a href="https://github.com/Rikorose/DeepFilterNet">DeepFilterNet</a></td><td>MIT/Apache；最后推送 2024-10（停滞）</td><td>48 kHz；支持 Windows。</td></tr>
+<tr><td>降噪 + 增强</td><td><a href="https://github.com/resemble-ai/resemble-enhance">Resemble Enhance</a></td><td>MIT；最后推送 2024-12（停滞）</td><td>增强器会改变音色：训练数据上不做 A/B 就不要用。</td></tr>
+<tr><td>托管「录音室声」</td><td><a href="https://podcast.adobe.com/en/features">Adobe Podcast Enhance Speech</a></td><td>免费档和高级档</td><td>免费档不能调强度：训练数据上过度处理的风险高。</td></tr>
+<tr><td>专业修复套件</td><td><a href="https://www.izotope.com/products/rx-standard">iZotope RX 12</a></td><td>标准版 399 美元，高级版 1399 美元</td><td>对白分离、去混响、去齿音、去咔嗒。</td></tr>
+<tr><td>分离 / 去混响模型</td><td><a href="https://github.com/Anjok07/ultimatevocalremovergui">UVR</a></td><td>MIT；活跃</td><td>MDX/Demucs/Roformer 模型的图形界面（模型许可各不相同）。GPT-SoVITS 捆绑 UVR5 做去混响。</td></tr>
+<tr><td>切片</td><td><a href="https://github.com/openvpi/audio-slicer">audio-slicer</a></td><td>MIT</td><td>基于 RMS；GPT-SoVITS 和 Applio 自带切片器。</td></tr>
+<tr><td>转写（英）</td><td><a href="https://github.com/SYSTRAN/faster-whisper">faster-whisper</a></td><td>MIT；活跃</td><td>GPT-SoVITS 用 Faster Whisper large-v3 做英语。</td></tr>
+<tr><td>转写（中）</td><td><a href="https://github.com/modelscope/FunASR">FunASR</a></td><td>代码 MIT；模型用自定义署名许可</td><td>Paraformer-large + VAD + 标点，GPT-SoVITS 也这么用。</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">价格：iZotope 商店，2026-10-17。星标和推送日期：GitHub API，2026-10-17。<span class="ev v">已核实</span></p>
+
+<h2>供应商要求的身份和同意核验</h2>
+<p>认真的供应商都会让你证明声音是你的。预期每个声音做一次。供应商细节在<a href="02-cloud.html">第 2 页</a>，法律背景在<a href="09-legal.html">第 9 页</a>。</p>
+<ul>
+<li><b>Azure Personal Voice</b>：需申请的受限服务；你要用和声音样本相同的语言和相同的环境，录一段口播同意声明。<span class="ev v">已核实</span></li>
+<li><b>Google Chirp 3 Instant Custom Voice</b>：一段最长 10 秒的同意片段，和参考在同一环境录。<span class="ev v">已核实</span></li>
+<li><b>ElevenLabs 专业声音克隆</b>：你必须朗读提示来证明你是声音主人；别人即使有你的同意也不能给你做专业克隆。即时克隆要勾选确认权利。<span class="ev v">已核实</span>（ElevenLabs 帮助中心）</li>
+<li><b>开源本地模型</b>：完全不检查。责任，以及录音的安全，全在你身上。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>录音当天清单</h2>
+<pre><code>[ ] 订好安静的时间；风扇/空调关掉；手机静音
+[ ] 麦克风在标好的位置（约 20 厘米），防喷罩，增益和上次一样
+[ ] 48 kHz / 24 位 / 单声道 WAV；试读峰值 −12…−6 dBFS
+[ ] 录了 10 秒房间底噪
+[ ] 听过「对照文件」，能量和节奏对上了
+[ ] 分段：课文（英）· 平衡句（英）· 课文（中）· 平衡句（中）
+[ ] 水，每 20–30 分钟休息；声音累了就停
+[ ] 文件名 YYYYMMDD_语言_分段_条.wav；原件备份并加密</code></pre>
+
+<p class="page-meta">研究笔记：r3-vc-recording.md（2026-10-17）。主要来源是 ElevenLabs 声音克隆文档、Microsoft Learn 录音指南、Google 定制声音文档、ACX。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>声音转换 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 4 页 · 市面上有什么</div>
+<h1>声音转换：先说出来（或让库存声音说），再变成你</h1>
+<p class="lead">声音转换（VC）保留输入录音的词、时间和语调，把音色换成你的。对教学来说它是文本转语音的<b>补充</b>，不是替代：你要的重音必须分毫不差，或者一句话要修、又不想整段重录的时候，用它。</p>
+
+<div class="callout key"><span class="title">结论（2026年10月）</span>
+<ul>
+<li>做旁白时，VC 是<b>第二件工具</b>：语音合成的韵律不够好，或要把库存声音换成你的音色时再用。大多数人应先从语音合成克隆开始（第 2–3 页），以后再加 VC。<span class="ev i">推断</span></li>
+<li>Windows + NVIDIA 上成熟的本地路线是 <b>RVC</b>，或它还在积极维护的分支 <b>Applio</b>（都是 MIT），用大约 10–30 分钟你的声音来训练。<span class="ev v">已核实</span>（仓库，2026-10-17）</li>
+<li>最有名的开源零样本 VC <b>Seed-VC</b> 已经<b>归档</b>（最后推送 2025-04-20，GPL-3.0）；<b>so-vits-svc</b> 已归档，它的分支也说不再维护。<span class="ev v">已核实</span>（GitHub API，2026-10-17）</li>
+<li>云端：<b>ElevenLabs Voice Changer</b> 可以用你自己的克隆，API 每分钟 0.12 美元，每次请求最长 5 分钟。<span class="ev v">已核实</span>（ElevenLabs API 价格和文档，读于 2026-10-17）</li>
+</ul></div>
+
+<h2>一张图看它怎么工作</h2>
+<p><a href="01-how-it-works.html#voice-conversion">第 1 页</a>的图是整条流水线。简短说：</p>
+<ol class="stepper">
+<li><b>内容编码器。</b>一个自监督语音模型（HuBERT、ContentVec、WavLM，或 Whisper 编码器）把源音频变成一帧一帧的特征，带着<i>说了什么</i>，很少带着<i>谁说的</i>。</li>
+<li><b>音高（F0）。</b>单独提取（RVC 用 RMVPE），语调才能留下来。通常会移到你习惯的音域。</li>
+<li><b>你的声音。</b>要么是用你的录音训练的模型（RVC、Applio），要么是短参考片段抽出的说话人嵌入（零样本：Seed-VC、OpenVoice、CosyVoice VC、MeanVC、Chatterbox VC），要么是在你的参考音频里查找（kNN-VC 把每一帧换成你录音里最接近的几帧的平均）。</li>
+<li><b>解码器和声码器</b>画出波形。RVC 另加一个用你的训练特征建的<b>检索索引</b>；推理时把源特征和你声音里最近的存储特征混在一起，把音色拉向真实的你。</li>
+</ol>
+<p class="small muted">来源：RVC、Applio、kNN-VC、Seed-VC 的 README（读于 2026-10-17）；<a href="https://arxiv.org/abs/2411.09943">Seed-VC 论文</a>。<span class="ev v">已核实</span></p>
+
+<h2>教学流程里的三种用法</h2>
+<div class="cards">
+<div class="card d"><h4>1. 你的表演，你最好的声音</h4><p>用任何麦克风，也许在累的一天，快速把稿子读一遍。再用你最好那次录音训练的模型转换。你自己的重音和节奏留下来了，语音合成只能猜。<span class="ev p">实践</span></p></div>
+<div class="card b"><h4>2. 给库存语音换音色</h4><p>用一个韵律你喜欢的库存声音生成课程（普通话就用母语者的声音），再转换成你的音色。母语发音，你的音色。<span class="ev i">推断</span></p></div>
+<div class="card a"><h4>3. 修一句</h4><p>成片里一句话改了。用笔记本麦克风录下来，转换，接进去。ElevenLabs 把 Voice Changer 描述成「保留原声的语气和表达」，适合改读音。<span class="ev v">已核实</span>（ElevenLabs 文档）</p></div>
+</div>
+
+<div class="callout warn"><span class="title">口音来自源，不来自你</span>
+<p>VC 改的是音色，不是发音。源如果是母语普通话的语音合成，结果就是你的音色加母语发音；源如果是你说自己较弱的语言，你的口音会留下来。第二种做法还算不算「你」，是一个伦理选择：声明方式和任何合成旁白一样（<a href="09-legal.html">第 9 页</a>）。<span class="ev i">推断</span></p></div>
+
+<h2>本地和开源工具</h2>
+<p>GitHub 数字都是 2026-10-17 经 GitHub API 读的。「权重许可」指预训练模型文件，可以和代码许可不同；研究期间连不上 Hugging Face 模型卡，标成「未核实」的权重许可，商用前必须自己查。</p>
+<div class="toolbar"><input type="search" placeholder="筛选声音转换工具…" data-filter-for="vc-tools" aria-label="筛选声音转换工具"></div>
+<div class="table-wrap">
+<table id="vc-tools" data-sortable class="compact">
+<thead><tr><th>工具</th><th>星标</th><th>许可（代码）</th><th>最后推送</th><th>状态</th><th>需要你提供</th><th>零样本</th><th>实时</th><th data-nosort>备注</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">RVC WebUI</a></td><td data-v="38790">38,790</td><td><span class="lic-ok">MIT</span></td><td>2026-08-04</td><td>维护节奏低（2026-07-21 发过版）</td><td>≥10 分钟干净语音（README）</td><td>否</td><td>是，90–170 毫秒</td><td>社区最大。Windows 原生；AMD/Intel 走 DirectML。训练：大约 8 GB 显存比较从容<span class="ev u">未核实</span>（社区维基）。用的 HuBERT/ContentVec 和 RMVPE 权重，许可要查。</td></tr>
+<tr><td><a href="https://github.com/IAHispano/Applio">Applio</a></td><td data-v="3846">3,846</td><td><span class="lic-ok">MIT</span></td><td>2026-10-17</td><td>活跃（v3.7.0，2026-10-16）</td><td>10–30 分钟「干净且多样」</td><td>否</td><td>是</td><td>RVC 分支，界面更友好，有 Windows 构建，训练建议 NVIDIA RTX 20 系以上。README 请商用用户联系团队确认官方构建的条款。</td></tr>
+<tr><td><a href="https://github.com/ASLP-lab/MeanVC2">MeanVC2</a></td><td data-v="171">171</td><td><span class="lic-cond">README 写 Apache-2.0</span>（没有检测到许可文件）</td><td>2026-09-13</td><td>新（2026）；<span class="ev x">实验性</span></td><td>一段参考</td><td>是</td><td>是，110 毫秒</td><td>1800 万参数；单 CPU 核上 RTF &lt; 0.633；有预编译的纯 CPU Windows 可执行文件。找到的最好的纯 CPU 选项。<a href="https://aslp-lab.github.io/MeanVC2/">演示页</a>。</td></tr>
+<tr><td><a href="https://github.com/ASLP-lab/MeanVC">MeanVC</a></td><td data-v="309">309</td><td><span class="lic-ok">Apache-2.0</span></td><td>2026-07-31</td><td>研究，2025</td><td>一段参考</td><td>是</td><td>是</td><td>1400 万参数，流式。<a href="https://aslp-lab.github.io/MeanVC/">演示页</a>。</td></tr>
+<tr><td><a href="https://github.com/myshell-ai/OpenVoice">OpenVoice v2</a></td><td data-v="37911">37,911</td><td><span class="lic-ok">MIT（代码 + 权重）</span></td><td>2025-04-19</td><td>停滞</td><td>一小段</td><td>是</td><td>未核实</td><td>README：「商用和研究都免费」。在基础语音合成上做音色转换；英/西/法/中/日/韩。</td></tr>
+<tr><td><a href="https://github.com/resemble-ai/chatterbox">Chatterbox VC</a></td><td data-v="27023">27,023</td><td><span class="lic-ok">MIT</span></td><td>2026-07-21</td><td>在维护</td><td>一段参考</td><td>是</td><td>未核实</td><td><b>每段输出都带 Resemble 的 PerTh 水印。</b>和 Chatterbox 语音合成是同一个仓库。</td></tr>
+<tr><td><a href="https://github.com/QwenAudio/CosyVoice">CosyVoice（VC 模式）</a></td><td data-v="24018">24,018</td><td><span class="lic-ok">Apache-2.0</span></td><td>2026-05-25</td><td>在维护（已迁到 QwenAudio 组织）</td><td>一段参考</td><td>是</td><td>有流式开关</td><td>用 CosyVoice-300M 模型的 <code>inference_vc(source, prompt)</code>；权重许可未核实。</td></tr>
+<tr><td><a href="https://github.com/open-mmlab/Amphion">Amphion Vevo / Vevo2</a></td><td data-v="10311">10,311</td><td><span class="lic-ok">MIT（代码）</span></td><td>2026-03-25</td><td>研究</td><td>一段参考</td><td>是</td><td>否</td><td>用 Emilia 训练（CC BY-NC 4.0）：<span class="lic-no">查清之前把权重要成非商用</span>。</td></tr>
+<tr><td><a href="https://github.com/bshall/knn-vc">kNN-VC</a></td><td data-v="526">526</td><td><span class="lic-ok">MIT</span></td><td>2026-01-16</td><td>研究</td><td>最多约 5 分钟参考</td><td>是</td><td>否</td><td>完全不用训练；「超过 5 分钟收益递减」。适合快速试验。</td></tr>
+<tr><td><a href="https://github.com/Plachtaa/seed-vc">Seed-VC</a></td><td data-v="3897">3,897</td><td><span class="lic-cond">GPL-3.0</span></td><td>2025-04-20</td><td class="status-dead">已归档</td><td>1–30 秒</td><td>是</td><td>是，约 430 毫秒</td><td>还能用，但没有修复；再分发要遵守 copyleft。<a href="https://plachtaa.github.io/seed-vc/">演示页</a>。</td></tr>
+<tr><td><a href="https://github.com/svc-develop-team/so-vits-svc">so-vits-svc</a></td><td data-v="28073">28,073</td><td><span class="lic-cond">AGPL-3.0</span></td><td>2023-11-11</td><td class="status-dead">已归档</td><td>训练集</td><td>否</td><td>-</td><td>面向歌唱。<a href="https://github.com/voicepaw/so-vits-svc-fork">分支</a> README 写「不再维护」，并指向 Applio。</td></tr>
+<tr><td><a href="https://github.com/RVC-Boss/GPT-SoVITS">GPT-SoVITS</a></td><td data-v="62997">62,997</td><td><span class="lic-ok">MIT（代码）</span></td><td>2026-10-08</td><td>活跃</td><td>5 秒 / 1 分钟</td><td>语音合成：是</td><td>-</td><td>主要是语音合成（第 3 页）；待办里列了零样本和少样本 VC。界面里有没有暴露 VC：<span class="ev u">未核实</span>。</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>云端和消费级语音到语音</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>服务</th><th>价格（读于 2026-10-17）</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td><a href="https://elevenlabs.io/docs/overview/capabilities/voice-changer">ElevenLabs Voice Changer</a></td><td>API 每分钟 0.12 美元 <span class="ev v">已核实</span></td><td>每次请求最长 5 分钟；模型 <code>eleven_multilingual_sts_v2</code> 和 <code>eleven_english_sts_v2</code>；目标可以是你的即时或专业克隆；可选去背景噪声。</td></tr>
+<tr><td class="status-dead">Resemble AI 语音到语音</td><td>-</td><td>Resemble 文档现在说托管声音产品「不再作为商业付费产品提供」（<a href="https://docs.resemble.ai/voice-archive.md">声音归档页</a>）。上面的开源 Chatterbox VC 还在。<span class="ev v">已核实</span>（研究助手，2026-10-17）</td></tr>
+<tr><td>Voice.ai、Voicemod</td><td>消费订阅</td><td>给直播和通话用的实时「变声器」，不是旁白工具。Voicemod 不能用短样本克隆你自己的声音<span class="ev u">未核实</span>。</td></tr>
+<tr><td>Fish Audio</td><td>-</td><td>没能确认有专门的语音到语音产品。<span class="ev u">未核实</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>积木上的许可陷阱</h2>
+<p>VC 工具自己的 MIT 许可，盖不住它下载的预训练零件。商用输出要逐个查：</p>
+<ul>
+<li><b>内容编码器。</b>ContentVec 仓库是 MIT；HuBERT base 来自 fairseq（MIT，现已归档）。权重许可的明确声明：<span class="ev u">未核实</span>。</li>
+<li><b>音高提取器。</b>RVC 下载的 RMVPE 权重，训练它的仓库<b>没有许可文件</b>；另一个 RMVPE 实现是 Apache-2.0。<span class="ev v">已核实</span>（GitHub，2026-10-17）</li>
+<li><b>预训练模型的训练数据。</b>Vevo 用的 Emilia 是 CC BY-NC 4.0。非商用数据集不会自动让权重变成非商用，但这是一个风险旗。<span class="ev i">推断</span></li>
+<li>找到的最干净、文档也写清的商用链：Applio/RVC（MIT）加你自己的数据；或 MeanVC/MeanVC2（按 README 是 Apache-2.0）；或 OpenVoice v2（README 说含权重的 MIT）。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>什么时候选 VC，不选语音合成</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>情况</th><th>更好的选择</th><th>为什么</th></tr></thead>
+<tbody>
+<tr><td>大量按稿子来的常规旁白</td><td>语音合成克隆</td><td>不用表演；智能体可以无人值守地跑。</td></tr>
+<tr><td>一段关键讲解，重音必须正好</td><td>转换你自己的朗读</td><td>你的韵律，你最好的音色。</td></tr>
+<tr><td>你较弱的那门语言</td><td>用该语言的参考做语音合成；用母语库存声音做 VC 当实验</td><td>语音合成管发音；VC 会复制源的口音。</td></tr>
+<tr><td>已发布视频里改一句</td><td>VC，或用同一参考和设置做语音合成</td><td>只要留着设置登记（第 8 页），两种都能对上。</td></tr>
+<tr><td>用你的「录音室」声音直播</td><td>实时 VC（RVC/Applio、MeanVC2）</td><td>90–170 毫秒延迟对直播够用。</td></tr>
+</tbody>
+</table>
+</div>
+
+<p class="page-meta">研究笔记：r3-vc-recording.md（2026-10-17）。RVC、Applio、Seed-VC、so-vits-svc、MeanVC、MeanVC2、kNN-VC 的 GitHub 数字，主代理复核过。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

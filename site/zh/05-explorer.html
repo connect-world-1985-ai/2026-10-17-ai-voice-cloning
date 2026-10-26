@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工具表 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 5 页 · 市面上有什么</div>
+<h1>工具表</h1>
+<p class="lead">第 2–4 页里的每一种云服务、开源模型和声音转换工具，放在一张可排序、可筛选的表里。点列表头排序；用上面的按钮缩小范围。所有数值的读取日期是 2026-10-17。</p>
+
+<div class="callout think"><span class="title">数字怎么读</span>
+<ul>
+<li><b>Elo</b> = Artificial Analysis 受控声音竞技场（听众盲听克隆出来的<i>英语</i>声音）。只有一部分模型上了榜。差距小于大约 20，落在置信区间里。<span class="ev v">已核实</span></li>
+<li><b>SIM 英 / SIM 中</b> = Seed-TTS-eval 说话人相似度 ×100，由模型作者<b>自己报告</b>（同一个人两段真实录音大约是 73 / 75）。只在这一列内部可比。<span class="ev v">已核实</span>（按发表的数字）</li>
+<li><b>$/h</b> = 一小时成品旁白的标价（英语约 5–6 万字符，普通话约 1.5 万字符）。开源模型显示 0：你付的是硬件或租来的 GPU；见<a href="10-decide.html#cost-calculator">费用计算器</a>。</li>
+<li><b>商用</b>：<span class="lic-ok">可以</span> = 代码和权重（或付费方案）允许；<span class="lic-cond">有条件</span> = 备注里写了条件；<span class="lic-no">不行</span> = 非商用；<span class="lic-cond">不清楚</span> = 来源互相矛盾，或根本没写。不是法律意见。</li>
+</ul></div>
+
+<div class="toolbar" id="chips-kind" role="group" aria-label="类型">
+<button class="chip" data-kind="all" aria-pressed="true">全部类型</button>
+<button class="chip" data-kind="cloud" aria-pressed="false">云</button>
+<button class="chip" data-kind="open" aria-pressed="false">开源语音合成</button>
+<button class="chip" data-kind="vc" aria-pressed="false">声音转换</button>
+</div>
+<div class="toolbar" id="chips-flags" role="group" aria-label="筛选">
+<button class="chip" data-flag="commercial" aria-pressed="false">可以商用</button>
+<button class="chip" data-flag="commercialCond" aria-pressed="false">可以或有条件商用</button>
+<button class="chip" data-flag="zh" aria-pressed="false">普通话</button>
+<button class="chip" data-flag="xling" aria-pressed="false">跨语言</button>
+<button class="chip" data-flag="nogpu" aria-pressed="false">不需要 NVIDIA GPU</button>
+<button class="chip" data-flag="live" aria-pressed="true">隐藏已停和已撤回</button>
+</div>
+<div class="toolbar">
+<input type="search" id="tool-search" placeholder="搜索名称、许可证、备注…" aria-label="搜索工具">
+<span class="count" id="tool-count"></span>
+</div>
+
+<div class="table-wrap">
+<table id="tools" data-sortable class="compact">
+<thead><tr>
+<th>工具</th><th>类型</th><th>商用</th><th>普通话</th><th>跨语言</th><th>你的录音</th><th>Elo（克隆英语）</th><th>SIM 英</th><th>SIM 中</th><th>英语 $/h</th><th>中文 $/h</th><th>显存</th><th>Windows</th><th>速度</th><th>API / CLI</th><th>Star</th><th>最后推送</th><th>状态</th><th data-nosort>许可证与备注</th>
+</tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<p class="small muted">来源：第 2–4 页及其研究笔记；GitHub 数字来自 GitHub API，Hugging Face 许可证标签来自 Hugging Face API 的镜像，都是 2026-10-17。“-”表示不适用或未公布。行上的短标签：<span class="ev v">核</span> 已核实，<span class="ev u">未</span> 有一部分未核实，<span class="ev x">试</span> 实验性或预览。</p>
+
+<h2>三条捷径</h2>
+<div class="cards">
+<div class="card a"><h4>商用安全、本地、英 + 中</h4><p>点<b>开源语音合成</b>、<b>可以商用</b>、<b>普通话</b>，再按<b>SIM 中</b>排序。</p></div>
+<div class="card b"><h4>云端音质最好</h4><p>点<b>云</b>，再按<b>Elo</b>从高到低排。</p></div>
+<div class="card c"><h4>你现在这台电脑能跑</h4><p>点<b>不需要 NVIDIA GPU</b>。剩下的是云服务，加上少数能用 CPU 的模型。</p></div>
+</div>
+
+<p class="page-meta">数据在 ../assets/js/data-tools.js（一个全局数组），中文说明在 tools-zh.js。改数据后，表会自己重建。筛选用的仍是英文键，免得筛选项对不上。</p>
+</div></main>
+<script src="../assets/js/data-tools.js"></script>
+<script src="tools-zh.js"></script>
+<script>
+window.PAGE_INIT = function () {
+  var raw = window.TOOLS_DATA || [];
+  var overlay = window.TOOLS_ZH || {};
+  var data = raw.map(function (t) {
+    var o = overlay[t.id] || {};
+    var c = {};
+    for (var k in t) if (Object.prototype.hasOwnProperty.call(t, k)) c[k] = t[k];
+    ["licence", "notes", "audio", "api", "speed", "price", "vram"].forEach(function (key) {
+      if (o[key]) c[key] = o[key];
+    });
+    return c;
+  });
+  var tbody = document.querySelector("#tools tbody");
+  var state = { kind: "all", flags: { live: true }, q: "" };
+  var KIND = { cloud: "云", open: "开源语音合成", vc: "声音转换" };
+  var COM = { yes: ["lic-ok", "可以"], cond: ["lic-cond", "有条件"], no: ["lic-no", "不行"], unclear: ["lic-cond", "不清楚"] };
+  var WIN = { native: "pip / 原生", oneclick: "一键包", wsl: "多半要 WSL2", cloud: "浏览器 / API", unverified: "未核实" };
+  var YN = { yes: "是", partial: "部分", no: "否", unverified: "未核实" };
+  var STATUS = { active: "在用", slowing: "变慢", stale: "停滞", withdrawn: "已撤回", gated: "需审批", discontinued: "已停", archived: "已归档" };
+  var EV = { v: "核", p: "践", i: "推", u: "未", x: "试" };
+  var DEAD = { discontinued: 1, withdrawn: 1 };
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]; }); }
+  function num(v, digits) { return v == null ? "-" : (digits != null ? Number(v).toFixed(digits) : String(v)); }
+  function td(html, sortV) { return "<td" + (sortV != null ? ' data-v="' + esc(sortV) + '"' : "") + ">" + html + "</td>"; }
+  function yn(v) { return YN[v] || v; }
+
+  function rowHtml(t) {
+    var c = COM[t.commercial] || ["", t.commercial];
+    var ev = '<span class="ev ' + esc(t.ev) + '">' + esc(EV[t.ev] || t.ev) + "</span>";
+    var dead = DEAD[t.status] || t.status === "archived";
+    return "<tr>" +
+      td('<a href="' + esc(t.url) + '"' + (dead ? ' class="status-dead"' : "") + ">" + esc(t.name) + "</a> " + ev) +
+      td(KIND[t.kind] || t.kind) +
+      td('<span class="' + c[0] + '">' + c[1] + "</span>", { yes: 1, cond: 2, unclear: 3, no: 4 }[t.commercial]) +
+      td(esc(yn(t.zh))) + td(esc(yn(t.xling))) + td(esc(t.audio)) +
+      td(num(t.elo), t.elo == null ? "" : t.elo) +
+      td(num(t.simEn), t.simEn == null ? "" : t.simEn) +
+      td(num(t.simZh), t.simZh == null ? "" : t.simZh) +
+      td(t.priceEn == null ? "-" : (t.priceEn === 0 ? "0*" : num(t.priceEn, 2)), t.priceEn == null ? "" : t.priceEn) +
+      td(t.priceZh == null ? "-" : (t.priceZh === 0 ? "0*" : num(t.priceZh, 2)), t.priceZh == null ? "" : t.priceZh) +
+      td(esc(t.vram), t.vramGb == null ? "" : t.vramGb) +
+      td(esc(WIN[t.windows] || t.windows)) +
+      td(esc(t.speed)) + td(esc(t.api)) +
+      td(t.stars == null ? "-" : Number(t.stars).toLocaleString("zh-CN"), t.stars == null ? "" : t.stars) +
+      td(esc(t.push || "-")) +
+      td(esc(STATUS[t.status] || t.status)) +
+      td("<b>" + esc(t.licence) + "。</b> " + esc(t.notes) + (t.price && t.priceEn !== 0 ? " <i>价格：" + esc(t.price) + "</i>" : "")) +
+      "</tr>";
+  }
+
+  function keep(t) {
+    if (state.kind !== "all" && t.kind !== state.kind) return false;
+    var f = state.flags;
+    if (f.commercial && t.commercial !== "yes") return false;
+    if (f.commercialCond && !(t.commercial === "yes" || t.commercial === "cond")) return false;
+    if (f.zh && t.zh !== "yes") return false;
+    if (f.xling && t.xling !== "yes") return false;
+    if (f.nogpu && !(t.cpu || t.windows === "cloud")) return false;
+    if (f.live && (DEAD[t.status])) return false;
+    if (state.q) {
+      var hay = (t.name + " " + t.licence + " " + t.notes + " " + t.api + " " + t.audio + " " + t.speed).toLowerCase();
+      if (hay.indexOf(state.q) < 0) return false;
+    }
+    return true;
+  }
+
+  function render() {
+    var rows = data.filter(keep);
+    tbody.innerHTML = rows.map(rowHtml).join("");
+    document.getElementById("tool-count").textContent = rows.length + " / " + data.length + " 个工具";
+    var sorted = document.querySelector("#tools th[data-dir]");
+    if (sorted) { var d = sorted.getAttribute("data-dir"); sorted.setAttribute("data-dir", d === "asc" ? "desc" : "asc"); sorted.click(); }
+    if (window.SITE_initSortable) window.SITE_initSortable(document);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("#chips-kind .chip"), function (b) {
+    b.addEventListener("click", function () {
+      state.kind = b.getAttribute("data-kind");
+      Array.prototype.forEach.call(document.querySelectorAll("#chips-kind .chip"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      render();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#chips-flags .chip"), function (b) {
+    b.addEventListener("click", function () {
+      var k = b.getAttribute("data-flag");
+      state.flags[k] = !state.flags[k];
+      b.setAttribute("aria-pressed", state.flags[k] ? "true" : "false");
+      render();
+    });
+  });
+  document.getElementById("tool-search").addEventListener("input", function (e) { state.q = e.target.value.toLowerCase().trim(); render(); });
+  render();
+};
+</script>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

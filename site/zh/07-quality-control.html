@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>质量、评测与控制 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 7 页 · 把它做好</div>
+<h1>测量质量，控制输出</h1>
+<p class="lead">「我觉得好听」撑不起四十节课。这一页讲三件你能量的事（像不像我、词对不对、自然不自然），合成语音通常怎么失败，以及每一种失败你有什么控制。</p>
+
+<div class="callout key"><span class="title">结论</span>
+<ul>
+<li>两个自动检查能抓住大多数真问题：<b>用语音识别对着你的稿子算词错率或字错率</b>，以及<b>时长是否合理</b>。每一块都跑。<span class="ev p">实践</span></li>
+<li>说话人相似度只有<b>相对于你自己的真人对比真人基线</b>才有意义，而且要用同一个嵌入模型。<span class="ev v">已核实</span>（Seed-TTS 论文；不同模型的刻度不一样）</li>
+<li>技术词读错是教学内容里最常烦人的事；在<b>词典</b>里修一次，并单独留一份<b>口播稿</b>。<span class="ev p">实践</span></li>
+<li>像不像<i>你</i>，重音对不对，还是要耳朵。换工具或换设置时做盲听 A/B（<a href="11-hands-on.html">第 11 页</a>）。</li>
+</ul></div>
+
+<h2>三个能测量的问题</h2>
+<div class="cards">
+<div class="card a"><h4>1 · 像不像我？</h4><p><b>说话人相似度（SIM）</b>：说话人验证模型把每段变成向量；SIM 是两个向量的余弦。只量音色和身份。</p></div>
+<div class="card b"><h4>2 · 词说对了吗？</h4><p><b>可懂度</b>：用语音识别转写生成的音频，再和稿子比。英语用<b>词错率 WER</b>，普通话用<b>字错率 CER</b>。</p></div>
+<div class="card c"><h4>3 · 自然吗？</h4><p><b>自然度 / 偏好</b>：人的评分（MOS、CMOS、A/B），或一个自动 MOS 预测器当便宜的分诊信号。</p></div>
+</div>
+
+<h3>参照协议：Seed-TTS-eval</h3>
+<p>几乎每篇近年的零样本语音合成论文都用字节跳动的 <a href="https://github.com/BytedanceSpeech/seed-tts-eval">Seed-TTS-eval</a> 配方来报数字：英语词错率用 <b>Whisper-large-v3</b>，中文字错率用 <b>Paraformer-zh</b>，相似度用<b>为说话人验证微调过的 WavLM-large</b>。<span class="ev v">已核实</span>（Seed-TTS 论文，<a href="https://arxiv.org/abs/2406.02430">arXiv 2406.02430</a>）</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>系统</th><th>英 WER %</th><th>英 SIM</th><th>中 CER %</th><th>中 SIM</th><th>中文难集 CER % / SIM</th></tr></thead>
+<tbody>
+<tr><td><b>真人录音</b></td><td>2.14</td><td>0.730</td><td>1.25</td><td>0.750</td><td>-</td></tr>
+<tr><td>Seed-TTS（闭源）</td><td>2.25</td><td>0.762</td><td>1.12</td><td>0.796</td><td>7.59 / 0.776</td></tr>
+<tr><td>MiniMax-Speech（闭源）</td><td>1.65</td><td>0.692</td><td>0.83</td><td>0.783</td><td>-</td></tr>
+<tr><td>F5-TTS 0.3B</td><td>2.00</td><td>0.647</td><td>1.52</td><td>0.741</td><td>8.67 / 0.713</td></tr>
+<tr><td>CosyVoice 2 0.5B</td><td>2.57</td><td>0.659</td><td>1.45</td><td>0.757</td><td>6.83 / 0.724</td></tr>
+<tr><td>IndexTTS2 1.5B</td><td>2.23</td><td>0.706</td><td>1.03</td><td>0.765</td><td>7.12 / 0.755</td></tr>
+<tr><td>VoxCPM 0.5B</td><td>1.85</td><td>0.729</td><td>0.93</td><td>0.772</td><td>8.87 / 0.730</td></tr>
+<tr><td>Fun-CosyVoice3 0.5B（2512）</td><td>2.24</td><td>0.718</td><td>1.21</td><td>0.780</td><td>6.71 / 0.758</td></tr>
+<tr><td>Fun-CosyVoice3 0.5B（2512，RL）</td><td>1.68</td><td>0.695</td><td>0.81</td><td>0.774</td><td>5.44 / 0.750</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">真人一行来自 Seed-TTS 论文（表 1）；模型行来自 CosyVoice README 的对照表，读于 2026-10-17。CosyVoice README 把真人一行重算成 2.14 / 0.734 / 1.26 / 0.755。数字是模型自己的作者报的。<span class="ev v">已核实</span>（按发表）</p>
+<div class="callout think"><span class="title">怎么读这张表</span>
+<ul>
+<li><b>同一个人的两段真录音只有大约 0.73–0.75。</b>克隆到 0.70 以上，就是「和你自己换一天一样像」。克隆甚至可以超过真人那一行，因为它把参考片段的麦克风和房间复制得比另一段真录音更紧。<span class="ev v">已核实</span>（Seed-TTS 论文的解释）</li>
+<li><b>顶尖开源模型在朗读语音上，和人类错误率大约差 1 个百分点以内。</b>中文「难」集（绕口令、重复的词）上，大家仍有 5–9% 的字错率。</li>
+<li>这些是参考片段很好的基准句。你的技术词汇会把错误率抬高。<span class="ev i">推断</span></li>
+</ul></div>
+
+<h2>实践里的说话人相似度</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>嵌入模型</th><th>备注（2026-10-17）</th><th>许可</th></tr></thead>
+<tbody>
+<tr><td>WavLM-large SV（经 Seed-TTS-eval / 微软 UniSpeech 脚本）</td><td>想要和论文可比的数字就用这个。检查点是 Seed-TTS-eval README 里的 Google 云端硬盘链接。</td><td>代码 NOASSERTION；Seed-TTS-eval 没有许可文件</td></tr>
+<tr><td>SpeechBrain ECAPA-TDNN</td><td>最好装。它内置的「同一说话人」门槛是 <b>0.25</b>，和 WavLM 的大约 0.7 完全不是一个刻度。</td><td>Apache-2.0（代码）</td></tr>
+<tr><td>3D-Speaker ERes2NetV2 / CAM++（阿里）</td><td>普通话上强。GPT-SoVITS v2Pro 自带一个 ERes2NetV2 检查点。</td><td>Apache-2.0</td></tr>
+<tr><td>Resemblyzer</td><td>很小的 GE2E 模型；最后推送 2023（停滞）。快速检查够用。</td><td>Apache-2.0</td></tr>
+<tr><td>pyannote 嵌入</td><td>模型在 Hugging Face 上要门禁（接受条件、要令牌）。</td><td>MIT（代码）</td></tr>
+</tbody>
+</table>
+</div>
+<ol class="stepper">
+<li><b>基线只测一次。</b>取 10 对你自己的真录音（不同的句子，同一套设备）。基线 B = 这些对的平均相似度。</li>
+<li><b>每一块生成的音频</b>都用同一个模型对黄金参考打分。</li>
+<li><b>相似度 &lt; B − 0.10 就标出来</b>，并画出每课的均值，抓住慢慢的漂移。<span class="ev i">推断</span>（建议的规则，不是发表过的标准）</li>
+</ol>
+<div class="callout warn"><span class="title">相似度告诉不了你的事</span>
+相似度会奖励麦克风和房间也对上，不只是声音。它看不见读错、错声调和扁平的表达。一段复制了坏参考里噪声的片段，分数可以<i>很高</i>。短于 2–3 秒的片段分数很吵。<span class="ev p">实践</span></div>
+
+<h2>实践里的可懂度</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>工具</th><th>角色</th><th>许可（2026-10-17）</th></tr></thead>
+<tbody>
+<tr><td>Whisper large-v3 / faster-whisper</td><td>英语语音识别（基准的选择）；faster-whisper 是同一模型跑在 CTranslate2 上，快很多，有词级时间戳。</td><td>MIT</td></tr>
+<tr><td>Paraformer-zh（FunASR）</td><td>Seed-TTS-eval 用的普通话语音识别。</td><td>代码 MIT；<b>权重用 FunASR 模型许可</b>（要求署名）</td></tr>
+<tr><td>SenseVoice Small</td><td>中 / 粤 / 英 / 日 / 韩语音识别，带标点和逆文本规范化（<code>use_itn</code>）。</td><td>MIT（仓库）</td></tr>
+<tr><td>jiwer</td><td>用文本变换流水线算词错率 / 字错率。</td><td>Apache-2.0</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>打分前两边都要规范化</b>，否则「3」对「三」、标点和大小写会把错误率灌高：</p>
+<ul>
+<li><b>英语</b>：用 Whisper 自己的 <code>EnglishTextNormalizer</code>，再 <code>jiwer.wer</code>。</li>
+<li><b>普通话</b>：去掉标点和空格，全角转半角，两边用同一种方式映射数字（WeTextProcessing），再逐字算字错率。</li>
+</ul>
+<div class="callout key"><span class="title">建议的每一块门槛</span>
+规范化之后，如果<b>英语词错率 &gt; 5%</b>，或<b>中文字错率 &gt; 3%</b>，或<b>任何一个受保护术语</b>（产品名、代码标识符、数字）缺失，或语音识别显示<b>插入了超过 2 个词</b>（幻觉出来的话），就重新生成。<span class="ev i">推断</span>（我的门槛，大约是上面人类错误率的 2 倍；用你自己的材料来调）</div>
+<p><b>注意。</b>10 个词的句子里错一个词已经是 10% 词错率，所以短块会跳。Whisper 自己会在静音上幻觉，会「纠正」不流利，也会在罕见技术词上失败，造成误报。留一份已知术语白名单，或改用强制对齐的置信度来查（<a href="08-pipeline.html#word-timestamps">第 8 页</a>）。<span class="ev p">实践</span></p>
+
+<h3>最便宜的检查：时长</h3>
+<p>预期时长 ≈ 词数 ÷ 你的语速（英语大约每分钟 150 词，普通话大约每秒 4–5 个字，都是粗数）。真实时长低于预期的 0.7 倍或高于 1.4 倍，几乎总是漏了一句、循环了，或有一段长静音。这不花钱，而且跑在语音识别之前。<span class="ev i">推断</span></p>
+
+<h2>自然度和偏好</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>方法</th><th>听者做什么</th><th>用来</th></tr></thead>
+<tbody>
+<tr><td><b>MOS</b>（ITU-T P.800）</td><td>每段打 1（差）到 5（优秀）。</td><td>论文；要很多听者才有意义。</td></tr>
+<tr><td><b>CMOS</b></td><td>相对片段 A 给片段 B 打分（例如 −3 … +3）。</td><td>比较两个系统；Seed-TTS 用 −2 … +2。</td></tr>
+<tr><td><b>SMOS</b></td><td>「这和参考声音有多像？」1–5。</td><td>人感知到的相似度。</td></tr>
+<tr><td><b>MUSHRA</b>（ITU-R BS.1534）</td><td>几个系统并排打 0–100，有隐藏参照和一个低锚。</td><td>仔细的多系统测试；<a href="https://github.com/audiolabs/webMUSHRA">webMUSHRA</a> 实现了它。</td></tr>
+<tr><td><b>盲听 A/B</b></td><td>随机顺序听两段，没有标签，选更好的。</td><td><b>你的主要工具。</b> 20 对以上；二项检验告诉你偏好是不是真的。</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">标准按一般知识描述；ITU 页面没有取回。<span class="ev p">实践</span></p>
+
+<h3>自动 MOS 预测器（只做分诊）</h3>
+<ul>
+<li><b>UTMOSv2</b>（MIT，sarulab-speech）：VoiceMOS 2024 第一赛道（高质量合成语音）16 项指标里 7 项第一，其余第二。默认输出不确定。<span class="ev v">已核实</span></li>
+<li><b>UTMOS22</b>（MIT）：大多数语音合成论文引用的 “UTMOS” 分数。<span class="ev v">已核实</span></li>
+<li><b>DNSMOS</b>（微软）：为噪声抑制而做；擅长发现噪声和瑕疵，对韵律弱。<span class="ev p">实践</span></li>
+<li><b>NISQA-TTS</b>：代码 MIT，但<b>权重是 CC BY-NC-SA 4.0</b>，所以非商用。<span class="ev v">已核实</span></li>
+</ul>
+<p>这些预测器和听者小组在平均上相关，不是一段一段相关。用它们给要听的块排序，不要用来自动通过或拒绝。<span class="ev p">实践</span></p>
+
+<h2>合成语音怎么失败</h2>
+<div class="toolbar"><input type="search" placeholder="筛选失败…" data-filter-for="failures" aria-label="筛选失败"></div>
+<div class="table-wrap">
+<table id="failures" data-sortable class="compact">
+<thead><tr><th>失败</th><th>常见原因</th><th>能自动抓住吗？</th><th>主要控制</th></tr></thead>
+<tbody>
+<tr><td>技术词读错（Kubernetes、nginx、<code>kubectl</code>）</td><td>词不在训练数据里；字素到音素在猜</td><td>部分：语音识别里缺了受保护术语；对齐置信度低</td><td>词典 / 别名 / 国际音标；在口播稿里改拼</td></tr>
+<tr><td>缩写读错（API、GUI、SaaS）</td><td>当成词还是逐字母，有歧义</td><td>部分</td><td>别名规则：<code>API</code> → “A P I”</td></tr>
+<tr><td>数字、版本、日期（“v2.10”、“1.5x”、“3/4”）</td><td>每个模型规范化方式不同</td><td>能（对规范化文本算词错率）</td><td>你自己先规范化。ElevenLabs 文档展示 Flash v2.5 把 “$1,000,000” 读成 “one thousand thousand dollars”。</td></tr>
+<tr><td>把代码念出来</td><td><code>()</code>、<code>_</code>、<code>-&gt;</code> 这类符号</td><td>能（输入里的符号就是红旗）</td><td>绝不发送原始代码；写一个能念的版本</td></tr>
+<tr><td>普通话声调或是多音字错了（行 xíng/háng，给 gěi/jǐ）</td><td>前端选错了读音</td><td>弱：语音识别常常会「纠正」它</td><td>拼音覆盖（IndexTTS2、CosyVoice 3），G2PW（GPT-SoVITS）；用耳朵听</td></tr>
+<tr><td>扁平、单调</td><td>稳定度设得高、参考片段平、块太长</td><td>弱（音高方差、UTMOS）</td><td>更有表现力的参考，降低稳定度，风格标签</td></tr>
+<tr><td>重音错了，问句式的升调收尾</td><td>模型在猜句子焦点</td><td>不能：要耳朵</td><td>标点、改写、<code>&lt;emphasis&gt;</code> 或 CosyVoice 的 <code>&lt;strong&gt;</code></td></tr>
+<tr><td>金属音色、咔嗒、呼吸、结尾被切掉</td><td>编解码器 / 声码器错误、参考有噪声、块的边缘</td><td>部分（DNSMOS 下跌、峰值/咔嗒检测、边缘静音）</td><td>干净的参考；换种子重生成；接缝处短淡化</td></tr>
+<tr><td>漏词、重复或编造；无尽循环</td><td>自回归词元模型在采样时丢掉对齐</td><td>能：语音识别的插入/删除、时长比</td><td>新种子、更短的块、抗重复采样（VALL-E 2；CosyVoice 默认打开）</td></tr>
+<tr><td>长文本漂移（声音变了、语速加快、能量下降）</td><td>暴露偏差；对参考的注意消退（<a href="01-how-it-works.html">第 1 页</a>）</td><td>能：随时间看每一块的相似度和语速</td><td>切块、每一块用同一段参考、上下文条件</td></tr>
+<tr><td>块边界上韵律重置</td><td>每一块生成时看不见邻居</td><td>部分（接缝处音高跳变）</td><td>ElevenLabs 的 <code>previous_text</code>/<code>next_text</code> 或请求编号；按段落切块</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">来自评测与流水线的研究笔记，2026-10-17；供应商行为来自供应商文档。供应商专有的行<span class="ev v">已核实</span>，原因是<span class="ev p">实践</span>。</p>
+
+<h2>控制手段，按供应商和模型</h2>
+<div data-tabs>
+<div class="tabs"><button data-tab="el">ElevenLabs</button><button data-tab="az">Azure</button><button data-tab="gg">Google</button><button data-tab="open">开源模型</button></div>
+<div class="tab-panel" data-panel="el">
+<ul>
+<li><b>Eleven v4 和 v3 没有 SSML <code>&lt;break&gt;</code>。</b>文档：「Eleven v4 和 Eleven v3 不支持 SSML break 标签」。用标点、省略号和音频标签。更老的模型接受 <code>&lt;break time="1.5s"/&gt;</code>，最长 3 秒，但太多会造成不稳定。<span class="ev v">已核实</span></li>
+<li><b>v4 的行内国际音标</b>：在纯文本里用斜杠写出发音，例如 <code>/ˈkuːbərˈnɛtiːz/</code>。<span class="ev v">已核实</span></li>
+<li><b>发音词典</b>：上传 PLS 或 TXT，或用 API 从规则创建（<code>alias</code> 或 <code>phoneme</code> 规则；默认区分大小写）。<b>每次请求最多 3 本词典</b>，每本有版本（<code>version_id</code>）。音素规则只在 <code>eleven_v4</code>、<code>eleven_v3</code> 和 <code>eleven_flash_v2</code> 上工作；其他模型只用别名规则。<span class="ev v">已核实</span></li>
+<li><b>方括号音频标签</b>，v3/v4：<code>[whispers]</code>、<code>[excitedly]</code>、<code>[sighs]</code>。v4 跟得更稳，但标签可能被误读成音效请求。专业克隆「没有为 Eleven v3 完全优化」；用 v4。<span class="ev v">已核实</span></li>
+<li><b>声音设置</b>：<code>stability</code> 0.5（越高越单调），<code>similarity_boost</code> 0.75，<code>style</code> 0，<code>speed</code> 1.0。<span class="ev v">已核实</span>（API 参考的默认值）</li>
+<li><b>连贯</b>：<code>previous_text</code>/<code>next_text</code>，或最多 3 个 <code>previous_request_ids</code>/<code>next_request_ids</code>（不超过 2 小时；v3 上没有；编号优先于文本）。<code>seed</code> 是「尽力而为」，不保证。<span class="ev v">已核实</span></li>
+<li><b>规范化</b>：<code>apply_text_normalization</code> = auto/on/off；<code>language_code</code> 强制语言。<span class="ev v">已核实</span></li>
+</ul>
+<p class="small muted">小冲突：ElevenLabs 有一页说 SSML 音素标签只在 <code>eleven_flash_v2</code> 上工作，一篇博客说英语的 Flash v2 和 Turbo v2。如果你用带词典的 v4，这无关。</p>
+</div>
+<div class="tab-panel" data-panel="az">
+<ul>
+<li>最完整的 SSML：<code>&lt;phoneme alphabet="ipa|sapi|ups"&gt;</code>、<code>&lt;sub&gt;</code>、<code>&lt;break&gt;</code>、<code>&lt;prosody&gt;</code>、<code>&lt;lexicon uri="…"&gt;</code>。<span class="ev v">已核实</span></li>
+<li>自定义词典 = 放在公开或 SAS 网址上的 W3C PLS 1.0 XML；一个文件一个区域；≤ 100 KB；按 URI 缓存最多 15 分钟；zh-CN 有一套 SAPI 音素。长音频 API 不支持（用批量合成）。<span class="ev v">已核实</span></li>
+<li><code>WordBoundary</code> 事件给出词、标点和句子偏移（100 纳秒刻度），可以直接做字幕。<span class="ev v">已核实</span></li>
+</ul>
+</div>
+<div class="tab-panel" data-panel="gg">
+<ul>
+<li>经典 Cloud TTS 声音：SSML 带 <code>&lt;phoneme alphabet="ipa|x-sampa"&gt;</code>；中文用 <code>alphabet="pinyin"</code>（粤语 <code>jyutping</code>）；每次请求可以有自定义发音。<span class="ev v">已核实</span></li>
+<li><b>Chirp 3 HD：Google 自己的页面互相矛盾</b>：一页说同步请求的预览里支持 SSML，声音列表说 Chirp 3 HD「不支持 SSML 输入」。依赖之前先测。<span class="ev u">未核实</span></li>
+<li>Gemini TTS 靠自然语言风格提示和行内发声事件来引导，而不是 SSML。<span class="ev v">已核实</span></li>
+</ul>
+</div>
+<div class="tab-panel" data-panel="open">
+<ul>
+<li><b>IndexTTS2</b>：汉字和带声调数字的拼音混写，例如 <code>打DI1去银行</code>（只接受它拼音词表里的音节）。<b>IndexTTS2.5</b> 增加逐字替换 <code>&lt;行|HANG2&gt;</code> 和英语 CMU 音素 <code>&lt;minute|M IH1 . N AH0 T&gt;</code>；情绪向量（<code>emo_alpha</code> 约 0.6 或更低）和时长因子。<span class="ev v">已核实</span>（README）</li>
+<li><b>Fun-CosyVoice 3</b>：用拼音和 CMU 音素做「发音修补」，例如 <code>对报道[j][ǐ]予好评</code>；标签 <code>[breath]</code>、<code>[laughter]</code>、<code>&lt;strong&gt;…&lt;/strong&gt;</code>；自然语言指令控制方言、语速和情绪。<span class="ev v">已核实</span>（README、example.py）</li>
+<li><b>GPT-SoVITS</b>：中文前端用 G2PW 模型消解多音字；没有找到直接的拼音覆盖语法。<span class="ev u">未核实</span></li>
+<li><b>F5-TTS 和同类流模型</b>需要参考片段的精确文稿；文稿错了，输出会变差。<span class="ev p">实践</span></li>
+<li><code>pypinyin</code>（MIT）可以帮你生成并检查覆盖清单里的拼音。</li>
+</ul>
+</div>
+</div>
+
+<h2>文本规范化：口播稿</h2>
+<p>每份稿子留两个版本：</p>
+<dl class="kv">
+<dt>显示稿</dt><dd>出现在幻灯片和字幕上的：<code>kubectl get pods -n prod</code>，“v2.10”，“¥1,500”。</dd>
+<dt>口播稿</dt><dd>送给语音合成的：“kube control get pods, dash n, prod”，“version two point ten”，“一千五百元”。</dd>
+</dl>
+<p>智能体用规则加项目词典生成口播稿，新的词典条目和你一起看一次。库：<b>WeTextProcessing</b>（中+英，Apache-2.0），<b>NeMo text processing</b>（Apache-2.0），<b>num2words</b>（LGPL-2.1），或一次带明确规则的大语言模型处理（ElevenLabs 推荐这个）。<span class="ev v">已核实</span>（许可）</p>
+
+<h2>切块、参考片段和种子</h2>
+<ul>
+<li><b>在句子或段落边界切</b>，1–3 句（大约 100–400 字）。绝不在句子中间切，也绝不跨过幻灯片标记。<span class="ev p">实践</span></li>
+<li><b>每种语言一段黄金参考</b>给零样本模型：5–15 秒，干净，没有音乐或混响，用你平时的麦克风，用你要的<i>讲课</i>语气，结束在完整的一句上，并有精确文稿。每一块传同一段。<span class="ev p">实践</span></li>
+<li><b>种子</b>：由块文本和设置的哈希得出，重跑才能复现；要修一块坏的，只改种子。更低的温度或 top-p 更稳，但更平。<span class="ev p">实践</span></li>
+<li><b>跨语言</b>：如果你的普通话参考比英语好（或反过来），每种语言两种参考都试。口音从参考带过去的程度，每个模型不同（<a href="01-how-it-works.html">第 1 页</a>）。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>什么自动化，什么要耳朵</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>完全自动化</th><th>需要人（至少抽一部分）</th></tr></thead>
+<tbody>
+<tr><td>文本规范化和套用词典</td><td>自然度和重音的最终判断</td></tr>
+<tr><td>对着稿子的词错率/字错率；受保护术语检查</td><td>「像不像我？」（相似度只是代理）</td></tr>
+<tr><td>时长比、静音、削波、峰值检查</td><td>情绪是否配得上内容</td></tr>
+<tr><td>相对基线的相似度；UTMOSv2/DNSMOS 分诊</td><td>语音识别会「纠正」的细微读错，尤其是普通话声调和多音字</td></tr>
+<tr><td>响度规范化和测量</td><td>节奏和画面上发生的事是否合拍</td></tr>
+<tr><td>对齐、字幕、幻灯片计时、渲染</td><td>每个新词典条目的第一次批准</td></tr>
+<tr><td>失败就重生成的循环（最多 3 次，然后标出）</td><td>听每一个被标出的块，再加随机 10%</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">分工和 10% 抽样率是建议。<span class="ev i">推断</span></p>
+
+<p class="page-meta">研究笔记：r4-eval-pipeline.md（2026-10-17）。基准表按模型作者发表的数字。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

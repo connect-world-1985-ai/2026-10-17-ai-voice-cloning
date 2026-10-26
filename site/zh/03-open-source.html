@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>开源模型 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 3 页 · 市面上有什么</div>
+<h1>开源的声音克隆模型</h1>
+<p class="lead">开源模型在标准基准上已经追上或超过闭源模型，而且声音留在你自己的机器上。卡住你的不是音质，是许可证（很多强模型禁止商用）、硬件（大多数要 NVIDIA 显卡），以及 Windows 支不支持。</p>
+
+<div class="callout key"><span class="title">结论（2026-10-17 的状态）</span>
+<ul>
+<li><b>商用干净、英语、普通话和跨语言都能做</b>（代码<i>和</i>权重都是 Apache-2.0 或 MIT）：<b>VoxCPM2</b>、<b>Fun-CosyVoice 3（0.5B）</b>、<b>Qwen3-TTS</b>、<b>GPT-SoVITS</b>、<b>Chatterbox Multilingual</b>。<span class="ev v">已核实</span>（许可证原文和 Hugging Face 标签；主代理复核了 VoxCPM、CosyVoice 3、Qwen3-TTS）</li>
+<li><b>权重非商用</b>，做实验可以，付费课不行：F5-TTS、XTTS-v2（许可明确覆盖输出）、Fish Audio S2-Pro / Drama 3、Spark-TTS、MaskGCT、Llasa。<span class="ev v">已核实</span>（主代理重读了 F5、XTTS、Fish 的许可）</li>
+<li><b>Windows 上最好上手</b>：GPT-SoVITS，唯一有官方一键 Windows 包的，大约一分钟你的声音就能微调。<span class="ev v">已核实</span>（README）</li>
+<li><b>你现在这台电脑</b>（Intel UHD 核显，没有 NVIDIA）只能慢慢跑其中少数几个。计划一块 8–24 GB 的 NVIDIA，或按小时租 GPU；见下面的<a href="#hardware">硬件</a>。<span class="ev i">推断</span></li>
+</ul></div>
+
+<h2>建议的短名单</h2>
+<div class="cards">
+<div class="card a"><h4>VoxCPM2（OpenBMB）</h4><p>Apache-2.0。20 亿参数，30 种语言，48 kHz，大约 8 GB 显存。可商用模型里自报相似度最高（SIM 英语 75.3 / 中文 79.5）。跨语言不用语言标签；支持 LoRA 微调；可通过 vLLM-Omni 开一个兼容 OpenAI 的服务。<a href="https://openbmb.github.io/voxcpm2-demopage/">演示页</a></p></div>
+<div class="card b"><h4>Fun-CosyVoice 3 0.5B（阿里）</h4><p>Apache-2.0。有明确的跨语言模式，能用指令控制语速和情绪，技术词可以用拼音和音素修正，18 种以上汉语方言，有 FastAPI / gRPC 服务。安装以 Linux 为主：Windows 上预期用 WSL2。<a href="https://funaudiollm.github.io/cosyvoice3/">演示页</a></p></div>
+<div class="card c"><h4>Qwen3-TTS 1.7B（阿里 Qwen）</h4><p>Apache-2.0。3 秒加文稿就能克隆；自报错误率很低；大约 5–6 GB 显存（二手）。仓库自 2026-03-17 起很安静。长旁白用 1.7B，不要用 0.6B（二手报道）。</p></div>
+<div class="card d"><h4>GPT-SoVITS</h4><p>MIT。官方 Windows 一键包，自带切片、语音识别和标注，用大约一分钟或更多你的录音来微调。中文血统很强。零样本还不够「像你」时走这条。</p></div>
+</div>
+<p><b>也值得看：</b><b>IndexTTS-2.5</b>（哔哩哔哩）自报的跨语言相似度最好，时长和情绪控制细；许可在月活一亿或年收入十亿人民币以下免版税，但 README 写商用要联系哔哩哔哩，付费产品上线前先问。<b>Chatterbox</b>（MIT）安装最简单，但每段输出都带听不见的水印，参考语言和目标语言不同时口音会漏过去。<span class="ev v">已核实</span></p>
+
+<h2>主要模型对照</h2>
+<p>完整名单，连云服务和声音转换，在<a href="05-explorer.html">工具表</a>里。</p>
+<div class="toolbar"><input type="search" placeholder="筛选模型…（例如 Apache、非商用、Windows）" data-filter-for="open" aria-label="筛选开源模型"></div>
+<div class="table-wrap">
+<table id="open" data-sortable class="compact">
+<thead><tr><th>模型</th><th>权重许可</th><th>商用</th><th>SIM 英</th><th>SIM 中</th><th>跨语言</th><th>显存</th><th>Windows</th><th>星标</th><th>最后推送</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/OpenBMB/VoxCPM">VoxCPM2</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">可以</span></td><td>75.3</td><td>79.5</td><td>可以</td><td data-v="8">约 8 GB</td><td>pip</td><td data-v="39459">39,459</td><td>2026-10-08</td></tr>
+<tr><td><a href="https://github.com/QwenAudio/CosyVoice">Fun-CosyVoice 3 0.5B</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">可以</span></td><td>71.8</td><td>78.0</td><td>可以（有模式）</td><td data-v="99">未说明</td><td>多半要 WSL2</td><td data-v="24018">24,018</td><td>2026-05-25</td></tr>
+<tr><td><a href="https://github.com/QwenLM/Qwen3-TTS">Qwen3-TTS 1.7B</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">可以</span></td><td>71.7</td><td>77.0</td><td>可以</td><td data-v="6">约 5–6 GB <small>（二手）</small></td><td>pip</td><td data-v="13829">13,829</td><td>2026-03-17</td></tr>
+<tr><td><a href="https://github.com/RVC-Boss/GPT-SoVITS">GPT-SoVITS</a></td><td>MIT</td><td data-v="1"><span class="lic-ok">可以</span></td><td>-</td><td>-</td><td>可以</td><td data-v="99">未说明</td><td><b>一键包</b></td><td data-v="62997">62,997</td><td>2026-10-08</td></tr>
+<tr><td><a href="https://github.com/resemble-ai/chatterbox">Chatterbox 多语 V3</a></td><td>MIT（输出带水印）</td><td data-v="1"><span class="lic-ok">可以</span></td><td>-</td><td>-</td><td>部分（口音会漏）</td><td data-v="99">未说明</td><td>pip</td><td data-v="27023">27,023</td><td>2026-07-21</td></tr>
+<tr><td><a href="https://github.com/index-tts/index-tts">IndexTTS2 / 2.5</a></td><td>哔哩哔哩模型使用许可</td><td data-v="2"><span class="lic-cond">有条件</span></td><td>70.6</td><td>76.5</td><td>可以（中到英最好）</td><td data-v="8">≥8 GB</td><td>uv 安装</td><td data-v="24536">24,536</td><td>2026-09-29</td></tr>
+<tr><td><a href="https://github.com/boson-ai/higgs-audio">Higgs TTS 3</a></td><td>非商用 + 创作者授权</td><td data-v="2"><span class="lic-cond">有条件</span></td><td>-</td><td>-</td><td>可以</td><td data-v="99">未说明（4B）</td><td>未核实</td><td data-v="8371">8,371</td><td>2026-06-05</td></tr>
+<tr><td><a href="https://github.com/FireRedTeam/FireRedTTS2">FireRedTTS-2</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">可以</span></td><td>66.5</td><td>73.6</td><td>可以（偏弱）</td><td data-v="9">9 GB</td><td>未核实</td><td data-v="1432">1,432</td><td>2025-10-26</td></tr>
+<tr><td><a href="https://github.com/myshell-ai/OpenVoice">OpenVoice V2</a></td><td>MIT</td><td data-v="1"><span class="lic-ok">可以</span></td><td>-</td><td>-</td><td>可以</td><td data-v="4">低</td><td>未核实</td><td data-v="37911">37,911</td><td>2025-04-19</td></tr>
+<tr><td><a href="https://github.com/bytedance/MegaTTS3">MegaTTS3</a></td><td>Apache-2.0，编码器未发布</td><td data-v="2"><span class="lic-cond">不实用</span></td><td>77.1</td><td>79.0</td><td>可以</td><td data-v="99">未说明</td><td>测试中</td><td data-v="6098">6,098</td><td>2026-06-15</td></tr>
+<tr><td><a href="https://github.com/fishaudio/fish-speech">Fish Audio S2-Pro / Drama 3</a></td><td>Fish Audio 研究许可</td><td data-v="4"><span class="lic-no">不行</span></td><td>-</td><td>-</td><td>可以</td><td data-v="24">大（4B / MoE）</td><td>未核实</td><td data-v="33228">33,228</td><td>2026-10-14</td></tr>
+<tr><td><a href="https://github.com/SWivid/F5-TTS">F5-TTS</a></td><td>CC-BY-NC-4.0</td><td data-v="4"><span class="lic-no">不行</span></td><td>67.0</td><td>76.0</td><td>未核实</td><td data-v="2">约 2 GB <small>（二手）</small></td><td>pip</td><td data-v="15415">15,415</td><td>2026-10-14</td></tr>
+<tr><td><a href="https://github.com/k2-fsa/OmniVoice">OmniVoice</a></td><td>不清楚（见下）</td><td data-v="3"><span class="lic-cond">不清楚</span></td><td>-</td><td>-</td><td>可以</td><td data-v="99">未说明</td><td>未核实</td><td data-v="14682">14,682</td><td>2026-10-12</td></tr>
+<tr><td><a href="https://github.com/idiap/coqui-ai-TTS">XTTS-v2（idiap 分支）</a></td><td>Coqui 公共模型许可</td><td data-v="4"><span class="lic-no">不行（含输出）</span></td><td>-</td><td>-</td><td>可以</td><td data-v="99">未说明</td><td>有 Windows 轮子</td><td data-v="2337">2,337</td><td>2026-10-16</td></tr>
+<tr><td><a href="https://github.com/SparkAudio/Spark-TTS">Spark-TTS</a></td><td>CC-BY-NC-SA-4.0</td><td data-v="4"><span class="lic-no">不行</span></td><td>57.3</td><td>66.0</td><td>可以</td><td data-v="99">-</td><td>issue 里有指南</td><td data-v="10984">10,984</td><td>2025-04-09</td></tr>
+<tr><td><a href="https://github.com/open-mmlab/Amphion">MaskGCT</a></td><td>CC-BY-NC-4.0</td><td data-v="4"><span class="lic-no">不行</span></td><td>71.7</td><td>77.4</td><td>可以</td><td data-v="99">-</td><td>未核实</td><td data-v="10311">10,311</td><td>2026-03-25</td></tr>
+<tr><td><a href="https://github.com/microsoft/VibeVoice" class="status-dead">VibeVoice TTS</a></td><td>MIT，TTS 代码已撤回</td><td data-v="4"><span class="lic-no">仅研究</span></td><td>68.9</td><td>74.4</td><td>可以</td><td data-v="99">-</td><td>-</td><td data-v="54856">54,856</td><td>2026-10-08</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">SIM = Seed-TTS-eval 说话人相似度 ×100，模型作者自报（VoxCPM 与 CosyVoice 的 README 表，2026-10-17）；真人录音是英语 73.4 / 中文 75.5。GitHub 数字来自 2026-10-17 的 GitHub API。显存只有 VoxCPM 和 FireRedTTS-2 是官方数字。<span class="ev v">已核实</span>（按发表）</p>
+
+<h2>基准说了什么，没说什么</h2>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>模型</th><th>英 WER %</th><th>英 SIM</th><th>中 CER %</th><th>中 SIM</th><th>难中文 CER %</th><th>中→英 WER % / SIM</th></tr></thead>
+<tbody>
+<tr><td>Seed-TTS（闭源参照）</td><td>2.25</td><td>76.2</td><td>1.12</td><td>79.6</td><td>7.59</td><td>-</td></tr>
+<tr><td>VoxCPM2</td><td>1.84</td><td>75.3</td><td>0.97</td><td>79.5</td><td>8.13</td><td data-v="4.48">4.48 / 64.3</td></tr>
+<tr><td>Qwen3-TTS 1.7B</td><td>1.23</td><td>71.7</td><td>1.22</td><td>77.0</td><td>6.76</td><td data-v="5.74">5.74 / 63.0</td></tr>
+<tr><td>Fun-CosyVoice 3 0.5B</td><td>2.24</td><td>71.8</td><td>1.21</td><td>78.0</td><td>6.71</td><td data-v="3.23">3.23 / 62.8</td></tr>
+<tr><td>IndexTTS2（中→英用 2.5-RL）</td><td>2.23</td><td>70.6</td><td>1.03</td><td>76.5</td><td>7.12</td><td data-v="3.55">3.55 / 67.5</td></tr>
+<tr><td>Fish Audio S2-Pro</td><td>0.99</td><td>-</td><td>0.54</td><td>-</td><td>5.99</td><td data-v="4.14">4.14 / 55.9</td></tr>
+<tr><td>F5-TTS</td><td>2.00</td><td>67.0</td><td>1.53</td><td>76.0</td><td>8.67</td><td>-</td></tr>
+<tr><td>Higgs Audio v2</td><td>2.44</td><td>67.7</td><td>1.50</td><td>74.0</td><td>55.07</td><td>-</td></tr>
+<tr><td>真人录音</td><td>2.14</td><td>73.4</td><td>1.26</td><td>75.5</td><td>-</td><td>-</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Seed-TTS-eval 各列取自 VoxCPM README 的汇总（CosyVoice 行来自 CosyVoice README）；中→英一列来自 IndexTTS 团队编的 CV3-Eval 表。全是自报或竞争者汇编，读于 2026-10-17。Qwen3-TTS 自己的 README 报的是英语 1.24 / 中文 0.77，两次运行互相冲突。<span class="ev v">已核实</span>（按发表）</p>
+<div class="callout think"><span class="title">怎么读这些基准</span>
+<ul>
+<li><b>错误率已经分不开第一档</b>：朗读句子上，几乎都在人类水平或更低。相似度和你自己的耳朵更要紧。<span class="ev i">推断</span></li>
+<li><b>跨语言相似度大约掉 10 个点</b>（中→英 SIM 56–68，同语言是 71–80）。「另一门语言」的声音会没那么像你。没有找到英→中的数字。<span class="ev v">已核实</span>（CV3 表）· 解释<span class="ev i">推断</span></li>
+<li><b>有听者投票的竞技场只测英语，而且大多用库存声音。</b>独立克隆音色榜上，列出的最好开源模型远低于顶尖云服务（Chatterbox 930，XTTS-v2 830，Eleven v4 是 1159）。上面短名单里的大多数根本不在那张榜上。<span class="ev v">已核实</span></li>
+</ul></div>
+
+<h2 id="licences">许可证陷阱</h2>
+<ul>
+<li><b>代码许可 ≠ 权重许可。</b>F5-TTS：「代码按 MIT 发布。预训练模型因训练数据 Emilia 采用 CC-BY-NC。」Spark-TTS、MaskGCT 等是同一模式。<span class="ev v">已核实</span>（主代理重读 README）</li>
+<li><b>XTTS-v2 明确覆盖输出</b>：「本许可只允许对机器学习模型及其输出做非商用。」Coqui 已经关闭，没有人可以卖商用许可。<span class="ev v">已核实</span>（许可原文）</li>
+<li><b>Fish Audio：代码许可不是权重许可。</b>代码许可允许商用，「仅当你的年收入低于 50 万美元」；S2-Pro 权重许可写着「本协议不授予任何商用权利。」<span class="ev v">已核实</span>（两份原文）</li>
+<li><b>IndexTTS</b>：免版税使用；月活超过一亿或年收入超过十亿人民币要另签许可；禁止用它或它的输出「改进任何人工智能模型，非商用模型除外」。README 另写「商用与合作请联系」。个人课程从正文看似乎允许；发邮件确认。<span class="ev v">已核实</span>（许可原文）· 读法<span class="ev i">推断</span></li>
+<li><b>OmniVoice：不清楚。</b>研究助手说 README 里有非商用权重声明；主代理在 2026-10-17 的当前 README 里没找到；仓库是 Apache-2.0，Hugging Face 卡片没有许可标签，训练数据部分用了 Emilia（非商用）。澄清之前按非商用对待。<span class="ev u">未核实</span></li>
+<li><b>Higgs TTS 3</b>：研究与非商用，外加一份创作者授权：在<i>你自己拥有的频道</i>上变现视频和播客，并注明 “Boson AI's Higgs Audio”。课放在你不拥有的平台上，说不清。<span class="ev v">已核实</span>（助手读过许可）</li>
+<li><b>非商用条款是否延伸到你生成的音频</b>，法律上有争议。保守读法：只要可能商用，只用标了「可以」的模型。<span class="ev i">推断</span></li>
+</ul>
+
+<h2>已撤回、停滞和受限</h2>
+<ul>
+<li><b>VibeVoice TTS（微软）</b>：「我们已从本仓库移除 VibeVoice-TTS 代码」（2025-09-05），原因是被滥用；README：「仅供研究与开发」。只剩社区分支。不要放进长期流水线。<span class="ev v">已核实</span>（主代理重读 README）</li>
+<li><b>Coqui TTS</b>：原仓库自 2024-08 起无人维护；<a href="https://github.com/idiap/coqui-ai-TTS">idiap 分支</a>（<code>coqui-tts</code>，有 Windows 轮子）还在维护。<span class="ev v">已核实</span></li>
+<li><b>MegaTTS3</b>：Apache-2.0，但声音编码器没有发布；你得把样本上传到一个 Google 云端硬盘文件夹，才能拿到可用的声音潜变量。这就失去了「私有本地克隆」的意义。<span class="ev v">已核实</span>（README）</li>
+<li><b>没有中文，或不能克隆</b>：Kyutai Pocket TTS（CPU 优先，英语和欧洲语言）、Sesame CSM、Dia2、Orpheus（以英语为中心）、Kokoro（很好，但只有预设声音）。<span class="ev v">已核实</span></li>
+<li><b>停滞</b>（12 个月以上没有推送）：Spark-TTS、Zonos、OpenVoice V2、StyleTTS 2、Sesame CSM。<span class="ev v">已核实</span>（GitHub API）</li>
+</ul>
+
+<h2 id="hardware">硬件：什么能在哪里跑</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>配置</th><th>现实情况</th></tr></thead>
+<tbody>
+<tr><td><b>你今天的电脑</b>：Intel UHD 核显，64 GB 内存</td><td>只能 CPU。GPT-SoVITS 有 CPU 安装选项（自报在 Apple M4 上 RTF 0.53；x86 笔记本 CPU 多半更慢）。Chatterbox 能在 CPU 上跑。VoxCPM 有 GGUF 构建（M4 Pro 上 RTF 约 1.8，比实时慢）。MeanVC2 声音转换带一个纯 CPU 的 Windows 可执行文件。预期一分钟音频要算好几分钟。<span class="ev u">未核实</span>（x86 上）</td></tr>
+<tr><td><b>8 GB NVIDIA</b>（例如 RTX 4060）</td><td>VoxCPM2（约 8 GB，很紧）、Qwen3-TTS 1.7B、GPT-SoVITS、Chatterbox；IndexTTS2 在边缘。<span class="ev v">已核实</span>（VoxCPM）· 其余<span class="ev u">未核实</span></td></tr>
+<tr><td><b>12–16 GB</b></td><td>短名单全部从容，外加 FireRedTTS-2（9 GB）。<span class="ev i">推断</span></td></tr>
+<tr><td><b>24 GB</b>（RTX 3090 / 4090）</td><td>这里的全部，包括 40 亿参数模型（Fish S2-Pro、Higgs TTS 3）用来评测。<span class="ev i">推断</span></td></tr>
+<tr><td><b>租来的 GPU</b></td><td>2026-10-17，RunPod 列出 RTX 3090（24 GB）每小时 0.50 美元，L4（24 GB）0.59 美元，RTX 4090（24 GB）0.89 美元。实时因子 0.3 时，一小时旁白大约要 20 分钟 GPU 时间，再加准备和重录。<span class="ev v">已核实</span>（价格）· 耗时<span class="ev i">推断</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">速度是高端显卡上的自报数字（VoxCPM2 在 RTX 4090 上 RTF 约 0.30；IndexTTS2.5 为 0.21；GPT-SoVITS v2ProPlus 为 0.014）。你的数字会不同。</p>
+
+<h2>安装之前先听</h2>
+<p>官方演示页有样音（样音许可证没写，所以只链接、不内嵌）：</p>
+<ul>
+<li><a href="https://openbmb.github.io/voxcpm2-demopage/">VoxCPM2 演示</a> · <a href="https://funaudiollm.github.io/cosyvoice3/">CosyVoice 3 演示</a> · <a href="https://qwen.ai/blog?id=qwen3tts-0115">Qwen3-TTS 博客</a></li>
+<li><a href="https://index-tts.github.io/index-tts2-5.github.io/">IndexTTS-2.5 演示</a> · <a href="https://resemble-ai.github.io/chatterbox_demopage/">Chatterbox 演示</a> · <a href="https://lj1995-gpt-sovits-proplus.hf.space/">GPT-SoVITS Hugging Face Space</a></li>
+<li><a href="https://swivid.github.io/F5-TTS/">F5-TTS 演示</a> · <a href="https://zhu-han.github.io/omnivoice">OmniVoice 演示</a> · <a href="https://sparkaudio.github.io/spark-tts/">Spark-TTS 演示</a> · <a href="https://fireredteam.github.io/demos/firered_tts_2/">FireRedTTS-2 演示</a></li>
+</ul>
+<p>演示页展示的是每个模型最好的样子，参考片段是作者挑过的干净录音。它告诉你上限，不告诉你你的声音会怎样。<span class="ev i">推断</span></p>
+
+<p class="page-meta">研究笔记：r2-open-source.md（2026-10-17）。F5-TTS、VoxCPM、IndexTTS、VibeVoice、Fish、XTTS-v2、CosyVoice 3、Qwen3-TTS、OmniVoice 的许可，主代理当天复核过。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>动手实验 · 你的声音，被合成出来</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">第 11 页 · 做决定并开始</div>
+<h1>动手：先公平对比，再搭流水线</h1>
+<p class="lead">两件要你自己做的事。第一，一个小而受控的实验，告诉你哪个工具在两种语言里最像你。第二，一段现成的提示，让编程智能体按第 8 页搭旁白流水线。</p>
+
+<h2 id="experiment">第一部分：对比实验</h2>
+<div class="callout key"><span class="title">目标</span>
+同一三段文字，同一段参考录音，三到四个工具，用自动分数<i>和</i>盲听来判断。大约一个下午，外加大约一小时录音。<span class="ev i">推断</span>（时间是估计）</div>
+
+<h3>选 3–4 个工具</h3>
+<p>每一行选一个，对比才覆盖不同的取舍。默认是建议；可以用<a href="05-explorer.html">工具表</a>换掉。</p>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>位子</th><th>默认选择</th><th>为什么在测试里</th><th>试一次的成本</th></tr></thead>
+<tbody>
+<tr><td><b>A · 最好的云端音质</b></td><td>ElevenLabs Eleven v4，即时声音克隆</td><td>独立克隆音色榜的第一档；普通话和英语；API 最好。</td><td>Starter 方案每月 6 美元 <span class="ev v">已核实</span></td></tr>
+<tr><td><b>B · 便宜的云</b></td><td>Google Gemini 3.8 Flash TTS，声音复刻</td><td>每小时大约五分之一的价格；有同意核验；任何语言。</td><td>按量付费，几美分；用<i>付费</i>档（免费档会拿你的数据去训练）<span class="ev v">已核实</span></td></tr>
+<tr><td><b>C · 本地零样本，普通话强</b></td><td>VoxCPM2（Apache-2.0）；如果要拼音覆盖，用 Fun-CosyVoice 3（<a href="03-open-source.html">第 3 页</a>）</td><td>看免费、私有、本地能给你什么。</td><td>软件免费；没有 NVIDIA 就租 GPU，大约每小时 0.50–0.89 美元 <span class="ev v">已核实</span>（RunPod 标价，2026-10-17）</td></tr>
+<tr><td><b>D · 本地微调</b> <small>（可选）</small></td><td>用几分钟你的声音训练 GPT-SoVITS</td><td>看小规模微调会不会比零样本更像你。</td><td>免费；同样的 GPU 选项</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>输入只录一次</h3>
+<ol class="stepper">
+<li><b>黄金参考片段</b>：一段 10–15 秒英语，一段 10–15 秒普通话，用你的讲课声音，并有精确文稿（<a href="06-recording.html">第 6 页</a>）。每个工具拿到同一段。ElevenLabs 即时克隆另备 1–2 分钟；GPT-SoVITS 另备大约 5 分钟。</li>
+<li><b>地面真值</b>：你自己把下面三段测试读一遍。这是「真实的你」，用来做基线和听测。</li>
+<li><b>基线相似度</b>：算你自己真实录音两两之间的相似度（<a href="07-quality-control.html">第 7 页</a>）。</li>
+</ol>
+
+<h3>三段测试</h3>
+<p>每一段都是为了引出一种已知的失败。主题可以换成你的学科，陷阱留着。第一段故意是英语，因为它测的就是英语技术旁白。</p>
+<div data-tabs>
+<div class="tabs"><button data-tab="p1">1 · 英语，技术</button><button data-tab="p2">2 · 普通话，多音字</button><button data-tab="p3">3 · 中英混合</button></div>
+<div class="tab-panel" data-panel="p1">
+<pre class="prompt" id="para-en">In this lesson we deploy version 2.10 of the API to a Kubernetes cluster. First, run kubectl apply with the manifest file. If the pod stays in CrashLoopBackOff for more than 30 seconds, check the logs. Why does this happen? Usually, the container can't reach PostgreSQL on port 5432. Let's fix that now, step by step, without rushing.</pre>
+<p class="small">陷阱：版本号、缩写（API）、代码词（<code>kubectl</code>、CrashLoopBackOff）、端口号、一句要升调的问句，以及一句平静的收尾。</p>
+</div>
+<div class="tab-panel" data-panel="p2">
+<pre class="prompt" id="para-zh">今天我们来看银行系统的重新设计。第一步，执行数据迁移，把旧表里的数据转到新表中；第二步，给每个用户重新分配权限。这个功能已经上线了吗？还没有，预计在2026年第四季度完成，大约需要3.5个人月。好，我们一步一步来，不着急。</pre>
+<p class="small">陷阱：多音字 行（银行 háng / 执行 xíng），重（重新 chóng），给（gěi，不是 jǐ），了（le，不是 liǎo）；年份、季度和小数；问句；放松的结尾。</p>
+</div>
+<div class="tab-panel" data-panel="p3">
+<pre class="prompt" id="para-mix">接下来我们用 Docker Compose 启动三个服务：一个 Redis 缓存，一个 FastAPI 后端，还有一个 React 前端。注意，environment variables 要写在 .env 文件里，不要直接提交到 GitHub。If you work mainly in English, the same rule applies: never commit secrets.</pre>
+<p class="small">陷阱：普通话里的英语产品名，句中切换语言，一个文件名（<code>.env</code>），以及最后一句英语：声音跨语言时身份还在不在？</p>
+</div>
+</div>
+<p>每个工具把每一段生成<b>三次</b>（能换种子就换），第 1 段用英语参考，第 2 段用普通话参考，第 3 段<b>两种</b>参考各做一遍。这样能把运气和能力分开，也能看见参考语言怎样影响口音。<span class="ev i">推断</span></p>
+
+<h3>怎么判断</h3>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>量什么</th><th>怎么量</th><th>「好」长什么样</th></tr></thead>
+<tbody>
+<tr><td>像不像你</td><td>用同一个嵌入模型，对黄金参考算相似度</td><td>接近你真人对比真人的基线（差距在 0.10 以内）</td></tr>
+<tr><td>词对不对</td><td>规范化之后的词错率（英）/ 字错率（中）；列出每个读错的术语</td><td>没有漏词或编造；受保护的术语正确</td></tr>
+<tr><td>稳不稳</td><td>三次之间的散布</td><td>三次都能用</td></tr>
+<tr><td>自然，以及「像我」</td><td><b>盲听 A/B</b>：成对片段随机顺序、不贴标签，有些对子的一边是你的真录音</td><td>你不能稳定地把克隆和真录音分开</td></tr>
+<tr><td>普通话声调</td><td>最好请一位母语同事听第 2 段</td><td>没有读错的多音字，变调自然</td></tr>
+<tr><td>实务</td><td>每段耗时、费用、在 Windows 上的准备，以及商用许可</td><td>符合你在<a href="10-decide.html">第 10 页</a>的答案</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout think"><span class="title">五分钟做一个盲听页</span>
+让编程智能体做「一个静态 HTML 文件，列出文件夹里成对的 WAV，以 A 和 B 随机顺序播放且不贴标签，把我的选择（A、B、一样）记在 localStorage 里，并下载成 CSV」。20 对以上时，二项检验能告诉你偏好是真的还是噪声。<span class="ev p">实践</span></div>
+
+<h3>记分表</h3>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>工具</th><th>SIM 英</th><th>SIM 中</th><th>WER 英 %</th><th>CER 中 %</th><th>混合：口音可以？</th><th>A/B 胜场</th><th>能用的条 /9</th><th>每小时费用</th><th>可以商用？</th></tr></thead>
+<tbody>
+<tr><td>A</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>B</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>C</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>D</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="agent-prompt">第二部分：给编程智能体的提示</h2>
+<p>把下面这段贴进编程智能体（Cursor、Claude Code、Codex 或同类），放在一个空文件夹里。它会按<a href="08-pipeline.html">第 8 页</a>，围绕你对比里赢的那个语音合成来搭流水线。先改方括号里的部分。提示用中文写，文件名和接口名保持英文，方便代码对得上。</p>
+<p><button class="copy-btn" data-copy="agent-prompt-text">复制</button></p>
+<pre class="prompt" id="agent-prompt-text">你在搭建一条双语（英语 / 普通话）技术课程的旁白流水线，用我自己的克隆声音。在这个文件夹里工作。Windows 11，Python 3.11+，ffmpeg 在 PATH 上。
+
+语音引擎：[ElevenLabs eleven_v4，voice_id 来自环境变量 ELEVEN_VOICE_ID | 本地模型 X，走它的 Python API]
+引擎后面只留一个接口：synthesize(text, lang, seed, context) -&gt; wav_path, request_id。
+密钥只从环境变量读。绝不把密钥或我的声音录音写进 git。
+
+输入
+- lessons/&lt;id&gt;/script.md ：显示文本，带幻灯片标记 "&lt;!-- slide N --&gt;" 和语言标签 [en]/[zh]。
+- lexicon.yaml ：术语 -&gt; {en: 别名或国际音标, zh: 拼音覆盖}，外加一份「受保护术语」清单。
+- settings.yaml ：钉死的 model_id、voice_id、声音设置、词典版本、参考片段路径和 sha256、
+  种子策略、采样率 48000 单声道、响度目标 -16 LUFS / -1.5 dBTP。绝不用 "latest"。
+
+阶段（每个阶段一个命令行子命令；每阶段可重入、可续跑）
+1. normalize ：显示文本 -&gt; 口播文本。展开数字、版本、单位、日期、缩写；把代码改写成能念的话。
+   中文用 WeTextProcessing。应用 lexicon.yaml。显示文本和口播文本并排保留。
+2. chunk     ：每块 1–3 句，绝不跨过幻灯片标记。写出 chunks.jsonl
+   （幻灯片、语言、口播、显示、预期时长）。
+3. synth     ：缓存键 = sha256(口播 + model_id + voice_id + 设置 + 词典版本 + 种子 + 参考哈希)。
+   已有则跳过。ElevenLabs 传入前后请求编号（最多 3 个，不到 2 小时）以保持连贯，并把
+   request-id 和 character-cost 响应头写入 manifest.sqlite。
+4. check     ：每一块：时长比 0.7–1.4，削波，两端静音；英语用 faster-whisper large-v3，
+   中文用 SenseVoice/Paraformer；规范化后英语词错率 &lt;= 5%，中文字错率 &lt;= 3%；受保护术语都在；
+   与参考的说话人相似度 &gt;= 基线 - 0.10（同一个嵌入模型，基线来自 refs/baseline/*.wav）；
+   用 UTMOSv2 分数做分诊。写出 qc.csv。
+5. fix       ：失败的块换新种子，最多 3 次；仍然失败则标成 "needs_human" 并写原因。
+6. assemble  ：修剪两端静音，停顿 300 毫秒（句）/ 800 毫秒（段）/ 1500 毫秒（换幻灯片），
+   切口 5–10 毫秒淡化；ffmpeg loudnorm 两遍打到目标；用 pyloudnorm 复核。
+7. align     ：把口播稿强制对齐到 lesson.wav（ctc-forced-aligner，或 ElevenLabs 强制对齐 API）；
+   words.json 里每个词有起止。
+8. captions  ：用显示文本加口播时间做出 SRT 和 WebVTT；中文每行 &lt;= 16 字，英语 &lt;= 42 字符，最多 2 行。
+9. video     ：PNG 幻灯片（来自 [Marp | 导出的 PowerPoint]）+ 每张幻灯片由音频得出的时长 -&gt; 用 ffmpeg
+   或 MoviePy 做成 MP4。视频以 settings.yaml 里的 "disclosure_text" 开头（口播并且上屏）。
+   默认中文声明：本课程旁白使用人工智能合成的本人声音。
+10. review   ：生成 review.html，列出每一个 needs_human 的块，再加随机 10% 抽样，带播放器、
+   稿子、质检数字，以及按钮：通过 / 重新生成 / 改文本。
+
+交付
+- README：确切命令、每课费用估计、质检摘要（按失败类型计数）。
+- normalize、chunk、缓存键和字幕换行的单元测试。
+- 在 lessons/demo 上跑完整条流水线：每种语言 3 张短幻灯片，并把 qc.csv 给我看。
+
+先问我再做：API 费用超过 [5 美元]、删除任何已生成的音频、或修改 settings.yaml。</pre>
+<p class="small muted">门槛、停顿和响度来自第 7 页和第 8 页，是建议，不是标准。<span class="ev i">推断</span></p>
+
+<p class="page-meta">2026-10-17 由主代理写成。中文页译自同一份实验设计，测试段落原文保留。</p>
+</div></main>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>
