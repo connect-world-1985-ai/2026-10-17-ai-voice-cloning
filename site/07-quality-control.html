@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quality &amp; control · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 7 · Doing it well</div>
+<h1>Measuring quality and controlling the output</h1>
+<p class="lead">"Sounds good to me" does not scale to a 40-lesson course. This page covers the three things you can measure (does it sound like me, did it say the right words, does it sound natural), the ways synthetic speech typically fails, and the controls you have over each failure.</p>
+
+<div class="callout key"><span class="title">Bottom line</span>
+<ul>
+<li>Two automatic checks catch most real problems: <b>ASR word/character error rate against your script</b>, and a <b>duration sanity check</b>. Run both on every chunk. <span class="ev p">Practice</span></li>
+<li>Speaker similarity scores only mean something <b>relative to your own real-versus-real baseline</b>, measured with the same embedding model. <span class="ev v">Verified</span> (Seed-TTS paper; scales differ between models)</li>
+<li>Pronunciation of technical terms is the most frequent annoyance in teaching content; fix it once in a <b>lexicon</b> and keep a separate <b>spoken script</b>. <span class="ev p">Practice</span></li>
+<li>Whether it <i>sounds like you</i>, and whether the emphasis is right, still needs ears. Use a blind A/B test when you change tools or settings (<a href="11-hands-on.html">page 11</a>).</li>
+</ul></div>
+
+<h2>The three measurable questions</h2>
+<div class="cards">
+<div class="card a"><h4>1 · Does it sound like me?</h4><p><b>Speaker similarity (SIM)</b>: a speaker-verification model turns each clip into a vector; SIM is the cosine of the two vectors. Measures timbre and identity only.</p></div>
+<div class="card b"><h4>2 · Did it say the right words?</h4><p><b>Intelligibility</b>: transcribe the generated audio with ASR and compare to the script. <b>WER</b> (word error rate) for English, <b>CER</b> (character error rate) for Mandarin.</p></div>
+<div class="card c"><h4>3 · Does it sound natural?</h4><p><b>Naturalness / preference</b>: human ratings (MOS, CMOS, A/B), or an automatic MOS predictor as a cheap triage signal.</p></div>
+</div>
+
+<h3>The reference protocol: Seed-TTS-eval</h3>
+<p>Almost every recent zero-shot TTS paper reports numbers using ByteDance's <a href="https://github.com/BytedanceSpeech/seed-tts-eval">Seed-TTS-eval</a> recipe: <b>Whisper-large-v3</b> for English WER, <b>Paraformer-zh</b> for Chinese CER, and <b>WavLM-large fine-tuned for speaker verification</b> for SIM. <span class="ev v">Verified</span> (Seed-TTS paper, <a href="https://arxiv.org/abs/2406.02430">arXiv 2406.02430</a>)</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>System</th><th>EN WER %</th><th>EN SIM</th><th>ZH CER %</th><th>ZH SIM</th><th>ZH hard set CER % / SIM</th></tr></thead>
+<tbody>
+<tr><td><b>Real human recordings</b></td><td>2.14</td><td>0.730</td><td>1.25</td><td>0.750</td><td>-</td></tr>
+<tr><td>Seed-TTS (closed)</td><td>2.25</td><td>0.762</td><td>1.12</td><td>0.796</td><td>7.59 / 0.776</td></tr>
+<tr><td>MiniMax-Speech (closed)</td><td>1.65</td><td>0.692</td><td>0.83</td><td>0.783</td><td>-</td></tr>
+<tr><td>F5-TTS 0.3B</td><td>2.00</td><td>0.647</td><td>1.52</td><td>0.741</td><td>8.67 / 0.713</td></tr>
+<tr><td>CosyVoice 2 0.5B</td><td>2.57</td><td>0.659</td><td>1.45</td><td>0.757</td><td>6.83 / 0.724</td></tr>
+<tr><td>IndexTTS2 1.5B</td><td>2.23</td><td>0.706</td><td>1.03</td><td>0.765</td><td>7.12 / 0.755</td></tr>
+<tr><td>VoxCPM 0.5B</td><td>1.85</td><td>0.729</td><td>0.93</td><td>0.772</td><td>8.87 / 0.730</td></tr>
+<tr><td>Fun-CosyVoice3 0.5B (2512)</td><td>2.24</td><td>0.718</td><td>1.21</td><td>0.780</td><td>6.71 / 0.758</td></tr>
+<tr><td>Fun-CosyVoice3 0.5B (2512, RL)</td><td>1.68</td><td>0.695</td><td>0.81</td><td>0.774</td><td>5.44 / 0.750</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Human row from the Seed-TTS paper (Table 1); model rows from the CosyVoice README comparison table, read 2026-10-17. The CosyVoice README recomputes the human row as 2.14 / 0.734 / 1.26 / 0.755. Numbers reported by a model's own authors. <span class="ev v">Verified</span> (as published)</p>
+
+<div class="callout think"><span class="title">How to read this table</span>
+<ul>
+<li><b>Two real recordings of the same person score only about 0.73–0.75.</b> A clone at 0.70+ is "as similar as you are to yourself on another day". Clones can even beat the human row, because they copy the reference clip's microphone and room more closely than a different real recording does. <span class="ev v">Verified</span> (Seed-TTS paper's explanation)</li>
+<li><b>The top open models are within about 1 percentage point of human error rates</b> on read speech. The "hard" Chinese set (tongue twisters, repeated words) still shows 5–9 % CER for all of them.</li>
+<li>These are benchmark sentences with good reference clips. Your technical vocabulary will produce higher error rates. <span class="ev i">Inference</span></li>
+</ul></div>
+
+<h2>Speaker similarity in practice</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Embedding model</th><th>Notes (2026-10-17)</th><th>Licence</th></tr></thead>
+<tbody>
+<tr><td>WavLM-large SV (via Seed-TTS-eval / microsoft UniSpeech scripts)</td><td>Use this if you want numbers comparable to papers. Checkpoint is a Google-Drive link in the Seed-TTS-eval README.</td><td>Code NOASSERTION; Seed-TTS-eval has no licence file</td></tr>
+<tr><td>SpeechBrain ECAPA-TDNN</td><td>Easiest to install. Its built-in "same speaker" threshold is <b>0.25</b>, a completely different scale from WavLM's ~0.7.</td><td>Apache-2.0 (code)</td></tr>
+<tr><td>3D-Speaker ERes2NetV2 / CAM++ (Alibaba)</td><td>Strong on Mandarin. GPT-SoVITS v2Pro ships an ERes2NetV2 checkpoint.</td><td>Apache-2.0</td></tr>
+<tr><td>Resemblyzer</td><td>Tiny GE2E model; last push 2023 (stale). Fine for quick checks.</td><td>Apache-2.0</td></tr>
+<tr><td>pyannote embedding</td><td>Models gated on Hugging Face (accept conditions, token).</td><td>MIT (code)</td></tr>
+</tbody>
+</table>
+</div>
+<ol class="stepper">
+<li><b>Measure your baseline once.</b> Take 10 pairs of your own real recordings (different sentences, same setup). Baseline B = mean SIM of those pairs.</li>
+<li><b>Score every generated chunk</b> against your golden reference clip with the same model.</li>
+<li><b>Flag a chunk if SIM &lt; B − 0.10</b>, and plot the per-lesson mean to catch slow drift. <span class="ev i">Inference</span> (a suggested rule, not a published standard)</li>
+</ol>
+<div class="callout warn"><span class="title">What SIM cannot tell you</span>
+SIM rewards matching the microphone and room as well as the voice. It is blind to mispronunciation, wrong tone, and flat delivery. A clip that copies noise from a bad reference can score <i>high</i>. Clips shorter than 2–3 s give noisy scores. <span class="ev p">Practice</span></div>
+
+<h2>Intelligibility in practice</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Tool</th><th>Role</th><th>Licence (2026-10-17)</th></tr></thead>
+<tbody>
+<tr><td>Whisper large-v3 / faster-whisper</td><td>English ASR (the benchmark choice); faster-whisper is the same model on CTranslate2, much faster, with word timestamps.</td><td>MIT</td></tr>
+<tr><td>Paraformer-zh (FunASR)</td><td>Mandarin ASR used by Seed-TTS-eval.</td><td>Code MIT; <b>weights under the FunASR Model License</b> (attribution required)</td></tr>
+<tr><td>SenseVoice Small</td><td>zh / yue / en / ja / ko ASR with punctuation and inverse normalisation (<code>use_itn</code>).</td><td>MIT (repo)</td></tr>
+<tr><td>jiwer</td><td>Computes WER / CER with text-transform pipelines.</td><td>Apache-2.0</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>Normalise both sides before scoring</b>, otherwise "3" versus "three", punctuation and casing inflate the error rate:</p>
+<ul>
+<li><b>English</b>: Whisper's own <code>EnglishTextNormalizer</code>, then <code>jiwer.wer</code>.</li>
+<li><b>Mandarin</b>: remove punctuation and spaces, convert full-width to half-width, map digits the same way on both sides (WeTextProcessing), then compute CER character by character.</li>
+</ul>
+<div class="callout key"><span class="title">Suggested gate per chunk</span>
+Regenerate if, after normalisation: <b>EN WER &gt; 5 %</b>, or <b>ZH CER &gt; 3 %</b>, or <b>any protected term</b> (product names, code identifiers, numbers) is missing, or the ASR shows <b>more than 2 inserted words</b> (hallucinated speech). <span class="ev i">Inference</span> (my thresholds, about 2× the human error rate above; tune on your own material)</div>
+<p><b>Caveats.</b> One wrong word in a 10-word sentence is already 10 % WER, so short chunks are jumpy. Whisper itself hallucinates on silence and "corrects" disfluencies, and it fails on rare technical terms, causing false alarms. Keep a whitelist of known terms, or check them via forced-alignment confidence instead (<a href="08-pipeline.html#word-timestamps">page 8</a>). <span class="ev p">Practice</span></p>
+
+<h3>The cheapest check: duration</h3>
+<p>Expected duration ≈ words ÷ your speaking rate (about 150 words per minute in English, about 4–5 characters per second in Mandarin, both rough). A chunk whose real duration is below 0.7× or above 1.4× of expected almost always has a skipped sentence, a loop or a long silence. This costs nothing and runs before ASR. <span class="ev i">Inference</span></p>
+
+<h2>Naturalness and preference</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Method</th><th>What the listener does</th><th>Use it for</th></tr></thead>
+<tbody>
+<tr><td><b>MOS</b> (ITU-T P.800)</td><td>Rates each clip 1 (bad) to 5 (excellent).</td><td>Papers; needs many listeners to be meaningful.</td></tr>
+<tr><td><b>CMOS</b></td><td>Rates clip B relative to clip A (e.g. −3 … +3).</td><td>Comparing two systems; Seed-TTS used −2 … +2.</td></tr>
+<tr><td><b>SMOS</b></td><td>"How similar is this to the reference voice?" 1–5.</td><td>Similarity as perceived by humans.</td></tr>
+<tr><td><b>MUSHRA</b> (ITU-R BS.1534)</td><td>Rates several systems 0–100 side by side, with a hidden reference and a low anchor.</td><td>Careful multi-system tests; <a href="https://github.com/audiolabs/webMUSHRA">webMUSHRA</a> implements it.</td></tr>
+<tr><td><b>Blind A/B</b></td><td>Hears two clips in random order, unlabelled, picks the better one.</td><td><b>Your main tool.</b> 20+ pairs; a binomial test tells you whether the preference is real.</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Standards described from general knowledge; the ITU pages were not fetched. <span class="ev p">Practice</span></p>
+
+<h3>Automatic MOS predictors (triage only)</h3>
+<ul>
+<li><b>UTMOSv2</b> (MIT, sarulab-speech): VoiceMOS 2024 Track 1 (high-quality synthetic speech) first in 7 of 16 metrics, second in the rest. Output is not deterministic by default. <span class="ev v">Verified</span></li>
+<li><b>UTMOS22</b> (MIT): the "UTMOS" score cited in most TTS papers. <span class="ev v">Verified</span></li>
+<li><b>DNSMOS</b> (Microsoft): built for noise suppression; good at detecting noise and artefacts, weak on prosody. <span class="ev p">Practice</span></li>
+<li><b>NISQA-TTS</b>: code MIT but <b>weights CC BY-NC-SA 4.0</b>, so non-commercial. <span class="ev v">Verified</span></li>
+</ul>
+<p>These predictors correlate with listener panels on average, not clip by clip. Use them to sort chunks for listening, not to accept or reject automatically. <span class="ev p">Practice</span></p>
+
+<h2>How synthetic speech fails</h2>
+<div class="toolbar"><input type="search" placeholder="Filter failures…" data-filter-for="failures" aria-label="Filter failures"></div>
+<div class="table-wrap">
+<table id="failures" data-sortable class="compact">
+<thead><tr><th>Failure</th><th>Typical cause</th><th>Caught automatically?</th><th>Main control</th></tr></thead>
+<tbody>
+<tr><td>Mispronounced technical terms (Kubernetes, nginx, <code>kubectl</code>)</td><td>Word not in training data; grapheme-to-phoneme guess</td><td>Partly: missing protected term in ASR; low alignment confidence</td><td>Lexicon / alias / IPA; respell in the spoken script</td></tr>
+<tr><td>Acronyms read wrongly (API, GUI, SaaS)</td><td>Ambiguity between word and letters</td><td>Partly</td><td>Alias rules: <code>API</code> → "A P I"</td></tr>
+<tr><td>Numbers, versions, dates ("v2.10", "1.5x", "3/4")</td><td>Each model normalises differently</td><td>Yes (WER on normalised text)</td><td>Pre-normalise yourself. ElevenLabs' docs show Flash v2.5 reading "$1,000,000" as "one thousand thousand dollars".</td></tr>
+<tr><td>Code read aloud</td><td>Symbols like <code>()</code>, <code>_</code>, <code>-&gt;</code></td><td>Yes (symbols in the input are a red flag)</td><td>Never send raw code; write a spoken version</td></tr>
+<tr><td>Wrong Mandarin tone or polyphone (行 xíng/háng, 给 gěi/jǐ)</td><td>Front-end picks the wrong reading</td><td>Weakly: ASR often "corrects" it</td><td>Pinyin overrides (IndexTTS2, CosyVoice 3), G2PW (GPT-SoVITS); listen</td></tr>
+<tr><td>Flat, monotone delivery</td><td>High stability setting, flat reference clip, long chunk</td><td>Weakly (pitch variance, UTMOS)</td><td>More expressive reference, lower stability, style tags</td></tr>
+<tr><td>Wrong emphasis, question-like rising ends</td><td>Model guesses sentence focus</td><td>No: needs ears</td><td>Punctuation, rephrasing, <code>&lt;emphasis&gt;</code> or CosyVoice <code>&lt;strong&gt;</code></td></tr>
+<tr><td>Metallic timbre, clicks, breaths, clipped endings</td><td>Codec / vocoder errors, noisy reference, chunk edges</td><td>Partly (DNSMOS dips, peak/click detection, edge silence)</td><td>Clean reference; regenerate with another seed; short fades at joins</td></tr>
+<tr><td>Skipped, repeated or invented words; endless loops</td><td>Autoregressive token models lose their alignment while sampling</td><td>Yes: ASR insertions/deletions, duration ratio</td><td>New seed, shorter chunks, repetition-aware sampling (VALL-E 2; on by default in CosyVoice)</td></tr>
+<tr><td>Long-form drift (voice changes, pace speeds up, energy drops)</td><td>Exposure bias; fading attention to the reference (<a href="01-how-it-works.html">page 1</a>)</td><td>Yes: SIM and speaking rate per chunk over time</td><td>Chunking, the same reference for every chunk, context conditioning</td></tr>
+<tr><td>Prosody resets at chunk boundaries</td><td>Each chunk generated without its neighbours</td><td>Partly (pitch jump at joins)</td><td>ElevenLabs <code>previous_text</code>/<code>next_text</code> or request IDs; paragraph-sized chunks</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">From the research note on evaluation and pipelines, 2026-10-17; vendor behaviour from vendor docs. <span class="ev v">Verified</span> for vendor-specific rows, <span class="ev p">Practice</span> for causes.</p>
+
+<h2>Controls, by vendor and model</h2>
+<div data-tabs>
+<div class="tabs"><button data-tab="el">ElevenLabs</button><button data-tab="az">Azure</button><button data-tab="gg">Google</button><button data-tab="open">Open models</button></div>
+<div class="tab-panel" data-panel="el">
+<ul>
+<li><b>No SSML <code>&lt;break&gt;</code> on Eleven v4 or v3.</b> Docs: "Eleven v4 and Eleven v3 do not support SSML break tags". Use punctuation, ellipses and audio tags. Older models accept <code>&lt;break time="1.5s"/&gt;</code> up to 3 s, but too many cause instability. <span class="ev v">Verified</span></li>
+<li><b>Inline IPA on v4</b>: write the pronunciation between slashes in plain text, e.g. <code>/ˈkuːbərˈnɛtiːz/</code>. <span class="ev v">Verified</span></li>
+<li><b>Pronunciation dictionaries</b>: upload a PLS or TXT file, or create one from rules via the API (<code>alias</code> or <code>phoneme</code> rules; case-sensitive by default). <b>Up to 3 dictionaries per request</b>, each versioned (<code>version_id</code>). Phoneme rules work only on <code>eleven_v4</code>, <code>eleven_v3</code> and <code>eleven_flash_v2</code>; other models use alias rules only. <span class="ev v">Verified</span></li>
+<li><b>Audio tags</b> in square brackets on v3/v4: <code>[whispers]</code>, <code>[excitedly]</code>, <code>[sighs]</code>. v4 follows them more reliably, but tags can be misread as sound-effect requests. Professional clones are "not fully optimized for Eleven v3"; use v4. <span class="ev v">Verified</span></li>
+<li><b>Voice settings</b>: <code>stability</code> 0.5 (higher = more monotone), <code>similarity_boost</code> 0.75, <code>style</code> 0, <code>speed</code> 1.0. <span class="ev v">Verified</span> (API reference defaults)</li>
+<li><b>Continuity</b>: <code>previous_text</code>/<code>next_text</code>, or up to 3 <code>previous_request_ids</code>/<code>next_request_ids</code> (≤ 2 hours old; not on v3; IDs override text). <code>seed</code> is "best effort", not guaranteed. <span class="ev v">Verified</span></li>
+<li><b>Normalisation</b>: <code>apply_text_normalization</code> = auto/on/off; <code>language_code</code> forces the language. <span class="ev v">Verified</span></li>
+</ul>
+<p class="small muted">Minor conflict: one ElevenLabs page says SSML phoneme tags work only on <code>eleven_flash_v2</code>, a blog post says Flash v2 and Turbo v2 in English. Irrelevant if you use v4 with dictionaries.</p>
+</div>
+<div class="tab-panel" data-panel="az">
+<ul>
+<li>The most complete SSML stack: <code>&lt;phoneme alphabet="ipa|sapi|ups"&gt;</code>, <code>&lt;sub&gt;</code>, <code>&lt;break&gt;</code>, <code>&lt;prosody&gt;</code>, <code>&lt;lexicon uri="…"&gt;</code>. <span class="ev v">Verified</span></li>
+<li>Custom lexicon = W3C PLS 1.0 XML at a public or SAS URL; one locale per file; ≤ 100 KB; cached by URI for up to 15 minutes; a SAPI phone set exists for zh-CN. Not supported by the Long Audio API (use batch synthesis). <span class="ev v">Verified</span></li>
+<li><code>WordBoundary</code> events give word, punctuation and sentence offsets (in 100-ns ticks), ready for captions. <span class="ev v">Verified</span></li>
+</ul>
+</div>
+<div class="tab-panel" data-panel="gg">
+<ul>
+<li>Classic Cloud TTS voices: SSML with <code>&lt;phoneme alphabet="ipa|x-sampa"&gt;</code>; for Chinese <code>alphabet="pinyin"</code> (Cantonese <code>jyutping</code>); custom pronunciations per request. <span class="ev v">Verified</span></li>
+<li><b>Chirp 3 HD: Google's own pages contradict each other</b>: one says SSML is supported in Preview for synchronous requests, the voice list says Chirp 3 HD "doesn't support SSML input". Test before relying on it. <span class="ev u">Unverified</span></li>
+<li>Gemini TTS is steered by natural-language style prompts and inline vocal events rather than SSML. <span class="ev v">Verified</span></li>
+</ul>
+</div>
+<div class="tab-panel" data-panel="open">
+<ul>
+<li><b>IndexTTS2</b>: mix characters and pinyin with tone numbers, e.g. <code>打DI1去银行</code> (only syllables in its pinyin vocabulary). <b>IndexTTS2.5</b> adds per-character replacement <code>&lt;行|HANG2&gt;</code> and English CMU phonemes <code>&lt;minute|M IH1 . N AH0 T&gt;</code>; emotion vectors (<code>emo_alpha</code> ≈ 0.6 or lower) and a duration factor. <span class="ev v">Verified</span> (README)</li>
+<li><b>Fun-CosyVoice 3</b>: "pronunciation inpainting" with pinyin and CMU phonemes, e.g. <code>对报道[j][ǐ]予好评</code>; tags <code>[breath]</code>, <code>[laughter]</code>, <code>&lt;strong&gt;…&lt;/strong&gt;</code>; natural-language instructions for dialect, speed and emotion. <span class="ev v">Verified</span> (README, example.py)</li>
+<li><b>GPT-SoVITS</b>: Chinese front end uses the G2PW model for polyphone disambiguation; a direct pinyin-override syntax was not found. <span class="ev u">Unverified</span></li>
+<li><b>F5-TTS and similar flow models</b> need the reference clip's exact transcript; a wrong transcript degrades output. <span class="ev p">Practice</span></li>
+<li><code>pypinyin</code> (MIT) helps you generate and check pinyin for your override lists.</li>
+</ul>
+</div>
+</div>
+
+<h2>Text normalisation: the spoken script</h2>
+<p>Keep two versions of every script:</p>
+<dl class="kv">
+<dt>Display script</dt><dd>What appears on slides and in captions: <code>kubectl get pods -n prod</code>, "v2.10", "¥1,500".</dd>
+<dt>Spoken script</dt><dd>What the TTS receives: "kube control get pods, dash n, prod", "version two point ten", "一千五百元".</dd>
+</dl>
+<p>The agent creates the spoken script with rules plus a project lexicon, and reviews new lexicon entries with you once. Libraries: <b>WeTextProcessing</b> (zh + en, Apache-2.0), <b>NeMo text processing</b> (Apache-2.0), <b>num2words</b> (LGPL-2.1), or an LLM pass with explicit rules (ElevenLabs recommends this). <span class="ev v">Verified</span> (licences)</p>
+
+<h2>Chunking, reference clips and seeds</h2>
+<ul>
+<li><b>Chunk at sentence or paragraph boundaries</b>, 1–3 sentences (about 100–400 characters). Never split inside a sentence, and never across a slide marker. <span class="ev p">Practice</span></li>
+<li><b>One golden reference clip per language</b> for zero-shot models: 5–15 s, clean, no music or reverb, recorded on your normal mic, in the <i>lecture</i> tone you want, ending on a complete sentence, with an exact transcript. Pass the same clip to every chunk. <span class="ev p">Practice</span></li>
+<li><b>Seeds</b>: derive the seed from a hash of the chunk text and settings so re-runs reproduce; to fix a bad chunk, change only the seed. Lower temperature or top-p is more stable but flatter. <span class="ev p">Practice</span></li>
+<li><b>Cross-lingual</b>: if your Mandarin reference is better than your English one (or the reverse), test both as references for each language. The accent carries over from the reference to a varying degree per model (<a href="01-how-it-works.html">page 1</a>). <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>What to automate and what needs ears</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Automate fully</th><th>Needs a human (at least as a sample)</th></tr></thead>
+<tbody>
+<tr><td>Text normalisation and lexicon application</td><td>Final judgement of naturalness and emphasis</td></tr>
+<tr><td>WER/CER against the script; protected-term check</td><td>"Does it sound like me?" (SIM is only a proxy)</td></tr>
+<tr><td>Duration ratio, silence, clipping, peak checks</td><td>Emotional tone fitting the content</td></tr>
+<tr><td>SIM against baseline; UTMOSv2/DNSMOS triage</td><td>Subtle mispronunciations ASR "corrects", especially Mandarin tones and polyphones</td></tr>
+<tr><td>Loudness normalisation and measurement</td><td>Pacing relative to what happens on screen</td></tr>
+<tr><td>Alignment, captions, slide timing, rendering</td><td>First approval of each new lexicon entry</td></tr>
+<tr><td>Regenerate-on-fail loop (max 3 attempts, then flag)</td><td>Listen to every flagged chunk plus a random 10 %</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Division of labour and the 10 % sampling rate are a recommendation. <span class="ev i">Inference</span></p>
+
+<p class="page-meta">Research note: r4-eval-pipeline.md (2026-10-17). Benchmark tables as published by model authors.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

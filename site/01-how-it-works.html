@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How voice cloning works · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 1 · Foundations</div>
+<h1>How voice cloning works, for an engineer new to speech</h1>
+<p class="lead">You already know transformers, embeddings, tokenisers and diffusion from LLMs and image models. Modern speech synthesis is built from exactly those pieces. This page maps them onto speech, one diagram at a time, so the tool pages that follow make sense.</p>
+
+<div class="callout analogy"><span class="title">The one-paragraph mental model</span>
+<p>A voice-cloning text-to-speech (TTS) system takes two inputs, <b>text</b> (what to say) and a <b>voice reference</b> (who should say it), and produces audio. The voice reference is either a few seconds of you that the model "listens to" at inference time (<i>zero-shot</i>), or many minutes of you that were used to adjust the model's weights in advance (<i>fine-tuning</i>). Everything else (prosody, emotion, pacing, language) is how well the model separates <i>what is said</i> from <i>who says it</i> and <i>how</i>. <span class="ev i">Inference</span></p></div>
+
+<h2>1. Classic TTS versus modern neural TTS</h2>
+<p>Speech synthesis went through three generations. Knowing them explains why older advice (and older tools still sold today) differs so much from current practice.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 900 330" role="img" aria-label="Three generations of TTS">
+  <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>
+  <marker id="a1b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <text x="10" y="22" class="t-title">A. Concatenative / parametric (1990s–2016)</text>
+  <rect x="10" y="34" width="140" height="56" rx="8" class="box"/><text x="20" y="58">Text</text><text x="20" y="76" class="t-muted">rules, lexicon</text>
+  <rect x="180" y="34" width="190" height="56" rx="8" class="box"/><text x="190" y="58">Phonemes + durations</text><text x="190" y="76" class="t-muted">hand-built prosody rules</text>
+  <rect x="400" y="34" width="230" height="56" rx="8" class="box"/><text x="410" y="58">Glue recorded snippets</text><text x="410" y="76" class="t-muted">or a statistical vocoder (HMM)</text>
+  <rect x="660" y="34" width="230" height="56" rx="8" class="box-warn"/><text x="670" y="58">Robotic / choppy</text><text x="670" y="76" class="t-muted">needed 10s of hours per voice</text>
+  <path d="M150,62 L177,62" class="line" marker-end="url(#a1)"/><path d="M370,62 L397,62" class="line" marker-end="url(#a1)"/><path d="M630,62 L657,62" class="line" marker-end="url(#a1)"/>
+
+  <text x="10" y="128" class="t-title">B. Two-stage neural (2017–2022): Tacotron 2, FastSpeech 2, VITS</text>
+  <rect x="10" y="140" width="140" height="56" rx="8" class="box-accent"/><text x="20" y="164">Text</text><text x="20" y="182" class="t-muted">normalised, phonemes</text>
+  <rect x="180" y="140" width="190" height="56" rx="8" class="box-b"/><text x="190" y="164" class="t-b">Acoustic model</text><text x="190" y="182" class="t-muted">text → mel spectrogram</text>
+  <rect x="400" y="140" width="230" height="56" rx="8" class="box-b"/><text x="410" y="164" class="t-b">Neural vocoder</text><text x="410" y="182" class="t-muted">WaveNet, HiFi-GAN: mel → wave</text>
+  <rect x="660" y="140" width="230" height="56" rx="8" class="box"/><text x="670" y="164">Natural, but one voice</text><text x="670" y="182" class="t-muted">per model; ~hours of studio data</text>
+  <path d="M150,168 L177,168" class="line-accent" marker-end="url(#a1b)"/><path d="M370,168 L397,168" class="line-accent" marker-end="url(#a1b)"/><path d="M630,168 L657,168" class="line-accent" marker-end="url(#a1b)"/>
+
+  <text x="10" y="234" class="t-title">C. Large zero-shot models (2023–now): VALL-E, Seed-TTS, F5-TTS, CosyVoice …</text>
+  <rect x="10" y="246" width="140" height="56" rx="8" class="box-accent"/><text x="20" y="270">Text</text><text x="20" y="288" class="t-muted">often raw characters</text>
+  <rect x="10" y="306" width="140" height="20" rx="5" class="box-d"/><text x="18" y="321" class="t-muted">+ 3–30 s of your voice</text>
+  <rect x="180" y="246" width="190" height="56" rx="8" class="box-d"/><text x="190" y="270" class="t-d">Big generative model</text><text x="190" y="288" class="t-muted">LLM over audio tokens, or flow</text>
+  <rect x="400" y="246" width="230" height="56" rx="8" class="box-d"/><text x="410" y="270" class="t-d">Codec decoder / vocoder</text><text x="410" y="288" class="t-muted">tokens or mel → waveform</text>
+  <rect x="660" y="246" width="230" height="56" rx="8" class="box-ok"/><text x="670" y="270">Any voice, many languages</text><text x="670" y="288" class="t-muted">trained on 10k–1M+ hours</text>
+  <path d="M150,274 L177,274" class="line-accent" marker-end="url(#a1b)"/><path d="M370,274 L397,274" class="line-accent" marker-end="url(#a1b)"/><path d="M630,274 L657,274" class="line-accent" marker-end="url(#a1b)"/>
+</svg>
+<figcaption>Generation B learned one voice per model from hours of clean studio data. Generation C learned "how speech works" from a huge multi-speaker corpus and conditions on a short sample of any voice. Voice cloning for individuals became practical with C.</figcaption>
+</figure>
+
+<ul>
+<li><b>Generation B</b>: <a href="https://arxiv.org/abs/1712.05884">Tacotron 2</a> (2017) predicted mel spectrograms (a picture of sound energy per frequency over time) and a <a href="https://arxiv.org/abs/1609.03499">WaveNet</a> vocoder turned them into audio. <a href="https://arxiv.org/abs/2006.04558">FastSpeech 2</a> made it non-autoregressive with explicit duration, pitch and energy predictors; <a href="https://arxiv.org/abs/2106.06103">VITS</a> did text-to-waveform end-to-end; <a href="https://arxiv.org/abs/2010.05646">HiFi-GAN</a> became the standard fast vocoder. Many "custom neural voice" cloud products and the popular GPT-SoVITS still use pieces of this lineage. <span class="ev v">Verified</span> (papers)</li>
+<li><b>Generation C</b>: <a href="https://arxiv.org/abs/2301.02111">VALL-E</a> (Microsoft, Jan 2023) recast TTS as language modelling over audio-codec tokens and cloned voices from a 3-second prompt. ByteDance's <a href="https://arxiv.org/abs/2406.02430">Seed-TTS</a> (2024) and its public evaluation set became the yardstick most open models report against. <span class="ev v">Verified</span> (papers)</li>
+</ul>
+
+<h2>2. Zero-shot cloning versus fine-tuning</h2>
+<p>This is the most important practical distinction, because it decides how much you must record and what quality ceiling you hit.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 900 300" role="img" aria-label="Zero-shot versus fine-tuning">
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <text x="10" y="22" class="t-title">Zero-shot ("instant") cloning: nothing is trained</text>
+  <rect x="10" y="36" width="170" height="60" rx="8" class="box-a"/><text x="22" y="60" class="t-a">Reference clip</text><text x="22" y="80" class="t-muted">5–30 s of you + transcript</text>
+  <rect x="10" y="106" width="170" height="40" rx="8" class="box-accent"/><text x="22" y="131">New text</text>
+  <rect x="230" y="50" width="250" height="84" rx="8" class="box"/><text x="244" y="76" class="t-title">Frozen pretrained model</text><text x="244" y="96" class="t-muted">same weights for every user;</text><text x="244" y="112" class="t-muted">your clip is just part of the prompt</text>
+  <rect x="530" y="66" width="170" height="52" rx="8" class="box-ok"/><text x="542" y="90">Speech in "your" voice</text><text x="542" y="107" class="t-muted">seconds to set up</text>
+  <path d="M180,66 L227,80" class="line-accent" marker-end="url(#a2)"/><path d="M180,126 L227,110" class="line-accent" marker-end="url(#a2)"/><path d="M480,92 L527,92" class="line-accent" marker-end="url(#a2)"/>
+  <text x="720" y="70" class="t-muted">+ fast, cheap, try many</text><text x="720" y="88" class="t-muted">− copies the clip's mood,</text><text x="720" y="104" class="t-muted">  mic and room too</text><text x="720" y="120" class="t-muted">− accent/quirks less exact</text>
+
+  <text x="10" y="186" class="t-title">Fine-tuning ("professional" cloning): the model's weights adapt to you</text>
+  <rect x="10" y="200" width="170" height="60" rx="8" class="box-a"/><text x="22" y="224" class="t-a">Dataset of you</text><text x="22" y="244" class="t-muted">30 min – 3 h, transcribed</text>
+  <rect x="230" y="200" width="250" height="60" rx="8" class="box-b"/><text x="244" y="224" class="t-b">Training job</text><text x="244" y="244" class="t-muted">minutes (LoRA) to hours; GPU</text>
+  <rect x="530" y="200" width="170" height="60" rx="8" class="box-ok"/><text x="542" y="224">Your own model</text><text x="542" y="244" class="t-muted">or a vendor-hosted voice</text>
+  <path d="M180,230 L227,230" class="line-accent" marker-end="url(#a2)"/><path d="M480,230 L527,230" class="line-accent" marker-end="url(#a2)"/>
+  <text x="720" y="214" class="t-muted">+ closer timbre, accent,</text><text x="720" y="230" class="t-muted">  stable over long scripts</text><text x="720" y="246" class="t-muted">− recording effort, wait,</text><text x="720" y="262" class="t-muted">  verification, cost</text>
+</svg>
+<figcaption>Vendors call these "instant" versus "professional" cloning (ElevenLabs), or "personal voice" versus "professional custom voice" (Azure). Open models: F5-TTS, CosyVoice, IndexTTS and similar are zero-shot; GPT-SoVITS and RVC are typically fine-tuned on minutes of your audio.</figcaption>
+</figure>
+
+<div class="callout key"><span class="title">Rule of thumb for teaching narration</span>
+<p>Start zero-shot to learn what you like; switch to a fine-tuned or professional clone once you narrate whole courses. Zero-shot quality depends heavily on the single reference clip you choose, which is cheap to iterate on. Fine-tuning pays off when consistency across 50 videos matters more than setup time. <span class="ev p">Practice</span></p></div>
+
+<h2>3. Speaker embeddings: a "fingerprint" vector for a voice</h2>
+<p>A <b>speaker encoder</b> is a network trained to map any utterance to a fixed-length vector (often 192–512 numbers) such that clips from the same person land close together and different people land far apart, regardless of the words spoken. It is the speech equivalent of a face-recognition embedding.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 900 260" role="img" aria-label="Speaker embedding space">
+  <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="40" width="150" height="50" rx="8" class="box-a"/><text x="20" y="62">Clip: "Hello class"</text><text x="20" y="80" class="t-muted">you, Monday</text>
+  <rect x="10" y="110" width="150" height="50" rx="8" class="box-a"/><text x="20" y="132">Clip: "大家好"</text><text x="20" y="150" class="t-muted">you, in Mandarin</text>
+  <rect x="10" y="180" width="150" height="50" rx="8" class="box"/><text x="20" y="202">Clip: "Hello class"</text><text x="20" y="220" class="t-muted">a colleague</text>
+  <rect x="210" y="90" width="170" height="80" rx="8" class="box-b"/><text x="222" y="116" class="t-b">Speaker encoder</text><text x="222" y="136" class="t-muted">ECAPA-TDNN, WavLM-SV,</text><text x="222" y="152" class="t-muted">d-vector (GE2E) …</text>
+  <path d="M160,65 L207,110" class="line-accent" marker-end="url(#a3)"/><path d="M160,135 L207,130" class="line-accent" marker-end="url(#a3)"/><path d="M160,205 L207,150" class="line-accent" marker-end="url(#a3)"/>
+  <path d="M380,130 L427,130" class="line-accent" marker-end="url(#a3)"/>
+  <rect x="430" y="20" width="460" height="230" rx="10" class="box"/>
+  <text x="444" y="42" class="t-muted">embedding space (projected to 2-D)</text>
+  <circle cx="560" cy="110" r="46" class="box-a" opacity=".55"/>
+  <circle cx="545" cy="100" r="6" class="box-a"/><circle cx="572" cy="118" r="6" class="box-a"/><circle cx="560" cy="96" r="6" class="box-a"/><circle cx="580" cy="100" r="6" class="box-a"/>
+  <text x="510" y="172" class="t-a">you (both languages)</text>
+  <circle cx="780" cy="190" r="36" class="box" opacity=".8"/>
+  <circle cx="770" cy="186" r="6" class="box-b"/><circle cx="792" cy="196" r="6" class="box-b"/>
+  <text x="742" y="240" class="t-muted">colleague</text>
+  <path d="M580,100 L770,186" class="line" stroke-dasharray="4 3"/>
+  <text x="640" y="128" class="t-muted">low cosine similarity</text>
+  <text x="600" y="70" class="t-muted">high cosine similarity (≈0.7–0.9)</text>
+</svg>
+<figcaption>The same encoder is used twice in this guide: inside some TTS models to condition on your voice, and as an <i>evaluation</i> tool that scores how close a synthetic clip is to real you (page 7). Typical similarity numbers depend on the encoder; compare only within one encoder.</figcaption>
+</figure>
+
+<ul>
+<li>Historic encoders: <a href="https://arxiv.org/abs/1710.10467">GE2E d-vectors</a> (Google, 2017), x-vectors, and <a href="https://arxiv.org/abs/2005.07143">ECAPA-TDNN</a> (2020), widely available in SpeechBrain. Seed-TTS-eval scores similarity with a <a href="https://arxiv.org/abs/2110.13900">WavLM</a>-large model fine-tuned for speaker verification. <span class="ev v">Verified</span> (papers)</li>
+<li>Many recent models do not use one global vector at all: they put your reference audio <i>in-context</i>, like a few-shot prompt, so the model can copy finer detail (breathiness, accent, pacing) than a single vector can hold. Some (CosyVoice, Spark-TTS) use both. <span class="ev v">Verified</span> (CosyVoice 2 and Spark-TTS papers)</li>
+<li>A cosine similarity number says "sounds like the same person to a verification model". It does not say "sounds natural" or "sounds like you on a good day". <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>4. The two dominant architectures today</h2>
+<p>Nearly every model on pages 2–3 is one of these, or a hybrid that uses one for "what and when" and the other for "fine sound".</p>
+
+<div data-tabs>
+<div class="tabs"><button data-tab="codec">Codec language models</button><button data-tab="flow">Flow matching &amp; diffusion</button><button data-tab="hybrid">Hybrids</button></div>
+<div class="tab-panel" data-panel="codec">
+<figure class="diagram">
+<svg viewBox="0 0 900 250" role="img" aria-label="Codec language model">
+  <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="20" width="190" height="56" rx="8" class="box-a"/><text x="22" y="44" class="t-a">Your reference audio</text><text x="22" y="62" class="t-muted">waveform, 24 kHz</text>
+  <rect x="240" y="20" width="200" height="56" rx="8" class="box-b"/><text x="252" y="44" class="t-b">Neural codec encoder</text><text x="252" y="62" class="t-muted">EnCodec / DAC / custom</text>
+  <rect x="480" y="20" width="400" height="56" rx="8" class="box"/><text x="492" y="44">Discrete tokens: 412 87 1033 5 …</text><text x="492" y="62" class="t-muted">≈ 12–75 tokens per second per codebook</text>
+  <path d="M200,48 L237,48" class="line-accent" marker-end="url(#a4)"/><path d="M440,48 L477,48" class="line-accent" marker-end="url(#a4)"/>
+  <rect x="10" y="110" width="870" height="56" rx="8" class="box-d"/>
+  <text x="22" y="134" class="t-d">Transformer LM (decoder-only, like GPT)</text>
+  <text x="22" y="154" class="t-muted">prompt = [text tokens of reference + new text] + [reference audio tokens] → predicts next audio token, one at a time, sampled with temperature</text>
+  <path d="M680,76 L680,107" class="line-accent" marker-end="url(#a4)"/>
+  <rect x="240" y="190" width="200" height="50" rx="8" class="box-b"/><text x="252" y="212" class="t-b">Codec decoder</text><text x="252" y="230" class="t-muted">tokens → waveform</text>
+  <rect x="480" y="190" width="200" height="50" rx="8" class="box-ok"/><text x="492" y="212">New speech</text><text x="492" y="230" class="t-muted">continues "your" voice</text>
+  <path d="M340,166 L340,187" class="line-accent" marker-end="url(#a4)"/><path d="M440,215 L477,215" class="line-accent" marker-end="url(#a4)"/>
+</svg>
+</figure>
+<p><b>How it works.</b> A neural audio codec (<a href="https://arxiv.org/abs/2107.03312">SoundStream</a>, <a href="https://arxiv.org/abs/2210.13438">EnCodec</a>, <a href="https://arxiv.org/abs/2306.06546">DAC</a>) compresses audio into a stream of integers using residual vector quantisation. A GPT-style model then "continues" the token stream after your reference clip, conditioned on the text. Examples: VALL-E, <a href="https://arxiv.org/abs/2411.01156">Fish-Speech</a>, <a href="https://arxiv.org/abs/2502.04128">Llasa</a>, <a href="https://arxiv.org/abs/2503.01710">Spark-TTS</a>, <a href="https://arxiv.org/abs/2406.04904">XTTS</a>, <a href="https://arxiv.org/abs/2502.05512">IndexTTS</a>. <span class="ev v">Verified</span> (papers)</p>
+<p><b>Strengths:</b> very natural rhythm and expressiveness; streams audio as it generates; scales like LLMs. <b>Weaknesses:</b> like any sampled LLM it can <i>hallucinate</i>: skip, repeat or garble words, especially on long or unusual inputs; speed depends on sequence length; durations are not explicit, so word timing must be recovered afterwards. <span class="ev p">Practice</span></p>
+</div>
+<div class="tab-panel" data-panel="flow">
+<figure class="diagram">
+<svg viewBox="0 0 900 230" role="img" aria-label="Flow matching TTS">
+  <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="20" width="200" height="60" rx="8" class="box-accent"/><text x="22" y="44">Text (padded to length)</text><text x="22" y="64" class="t-muted">+ your reference mel</text>
+  <rect x="10" y="110" width="200" height="60" rx="8" class="box"/><text x="22" y="134">Random noise</text><text x="22" y="154" class="t-muted">same shape as target mel</text>
+  <rect x="260" y="56" width="300" height="80" rx="8" class="box-c"/><text x="272" y="82" class="t-c">Transformer predicts a velocity</text><text x="272" y="102" class="t-muted">"which direction moves noise toward</text><text x="272" y="118" class="t-muted">speech?" — repeat 16–32 small steps</text>
+  <path d="M410,136 C410,180 330,180 330,140" class="line-loop"/>
+  <rect x="610" y="56" width="130" height="80" rx="8" class="box-b"/><text x="622" y="82" class="t-b">Mel / latent</text><text x="622" y="102" class="t-muted">whole utterance</text><text x="622" y="118" class="t-muted">at once</text>
+  <rect x="770" y="56" width="120" height="80" rx="8" class="box-ok"/><text x="782" y="82">Vocoder</text><text x="782" y="102" class="t-muted">→ waveform</text>
+  <path d="M210,50 L257,80" class="line-accent" marker-end="url(#a5)"/><path d="M210,140 L257,110" class="line-accent" marker-end="url(#a5)"/><path d="M560,96 L607,96" class="line-accent" marker-end="url(#a5)"/><path d="M740,96 L767,96" class="line-accent" marker-end="url(#a5)"/>
+  <text x="260" y="210" class="t-muted">Total length is chosen up front (e.g. from character count × speaking rate), so speed and duration are directly controllable.</text>
+</svg>
+</figure>
+<p><b>How it works.</b> Same family of ideas as image diffusion. <a href="https://arxiv.org/abs/2210.02747">Flow matching</a> learns a vector field that moves random noise to a spectrogram in a few steps; the model fills in the "masked" target region next to your reference audio. Examples: <a href="https://arxiv.org/abs/2306.15687">Voicebox</a>, <a href="https://arxiv.org/abs/2406.18009">E2 TTS</a>, <a href="https://arxiv.org/abs/2410.06885">F5-TTS</a>; <a href="https://arxiv.org/abs/2403.03100">NaturalSpeech 3</a> uses diffusion over factorised codec latents. <span class="ev v">Verified</span> (papers)</p>
+<p><b>Strengths:</b> non-autoregressive, so fewer skipped/repeated words, fast on GPU, explicit total duration. <b>Weaknesses:</b> you must estimate duration; prosody can sound flatter or "averaged" than the best codec LMs; whole-utterance generation means chunking is mandatory for long text. <span class="ev p">Practice</span></p>
+</div>
+<div class="tab-panel" data-panel="hybrid">
+<p>Many 2024–2026 systems split the job: an autoregressive LM produces compact <i>semantic</i> tokens (what is said, when, with what intonation), and a flow-matching or diffusion decoder renders <i>acoustic</i> detail in the target voice. Examples: <a href="https://arxiv.org/abs/2407.05407">CosyVoice</a> and <a href="https://arxiv.org/abs/2412.10117">CosyVoice 2</a> (LLM → flow matching → vocoder), Seed-TTS, <a href="https://arxiv.org/abs/2506.21619">IndexTTS2</a> (adds explicit duration control and separated emotion/timbre), <a href="https://arxiv.org/abs/2409.00750">MaskGCT</a> (masked generative, non-autoregressive in both stages). <span class="ev v">Verified</span> (papers)</p>
+<p>The split matters for you because the semantic stage mostly carries <b>language and prosody</b>, and the acoustic stage mostly carries <b>timbre</b>. That separation is what makes cross-lingual cloning work (section 6). <span class="ev i">Inference</span></p>
+</div>
+</div>
+
+<h2 id="voice-conversion">5. Voice conversion: an alternative route to your voice</h2>
+<p><b>Voice conversion (VC)</b>, or speech-to-speech, keeps the words, timing and intonation of an input recording and replaces the timbre with yours. The input can be you reading quickly on a bad mic, a friend, or a high-quality stock TTS voice with excellent prosody.</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 900 250" role="img" aria-label="Voice conversion pipeline">
+  <defs><marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <rect x="10" y="80" width="170" height="70" rx="8" class="box"/><text x="22" y="106">Source speech</text><text x="22" y="124" class="t-muted">stock TTS, or anyone,</text><text x="22" y="140" class="t-muted">any language</text>
+  <rect x="220" y="20" width="220" height="56" rx="8" class="box-b"/><text x="232" y="44" class="t-b">Content encoder</text><text x="232" y="62" class="t-muted">HuBERT / ContentVec / Whisper</text>
+  <rect x="220" y="94" width="220" height="44" rx="8" class="box-c"/><text x="232" y="121" class="t-c">Pitch (F0) tracker: RMVPE</text>
+  <rect x="220" y="156" width="220" height="56" rx="8" class="box-a"/><text x="232" y="180" class="t-a">Your voice</text><text x="232" y="198" class="t-muted">trained model, or ref clip</text>
+  <rect x="490" y="70" width="210" height="90" rx="8" class="box-d"/><text x="502" y="96" class="t-d">Decoder / generator</text><text x="502" y="116" class="t-muted">content + pitch + your</text><text x="502" y="132" class="t-muted">timbre → waveform</text><text x="502" y="148" class="t-muted">(RVC adds a retrieval index)</text>
+  <rect x="740" y="85" width="150" height="60" rx="8" class="box-ok"/><text x="752" y="111">Same words,</text><text x="752" y="129" class="t-muted">your timbre</text>
+  <path d="M180,100 L217,50" class="line-accent" marker-end="url(#a6)"/><path d="M180,115 L217,115" class="line-accent" marker-end="url(#a6)"/>
+  <path d="M440,48 L487,90" class="line-accent" marker-end="url(#a6)"/><path d="M440,116 L487,116" class="line-accent" marker-end="url(#a6)"/><path d="M440,184 L487,140" class="line-accent" marker-end="url(#a6)"/>
+  <path d="M700,115 L737,115" class="line-accent" marker-end="url(#a6)"/>
+</svg>
+<figcaption>RVC (retrieval-based VC) fine-tunes on 10–60 minutes of you; Seed-VC-style models are zero-shot from a reference clip. Details and current status: <a href="04-voice-conversion.html">page 4</a>.</figcaption>
+</figure>
+<ul>
+<li><b>Why consider it:</b> you get the prosody of the source. If you record yourself reading the script (even in your weaker language, or with a cheap mic), VC preserves <i>your</i> emphasis, which TTS cannot guess. You can also pick a stock TTS voice whose pacing you like and "re-voice" it. <span class="ev p">Practice</span></li>
+<li><b>Why it is not the default:</b> accent, rhythm and pronunciation errors in the source come through unchanged; quality depends on matching pitch range; it adds a second model to keep consistent. <span class="ev p">Practice</span></li>
+<li>The <a href="https://arxiv.org/abs/2411.09943">Seed-VC paper</a> (Nov 2024) describes zero-shot VC with diffusion transformers. <span class="ev v">Verified</span></li>
+</ul>
+
+<h2 id="prosody-cross-lingual">6. Prosody, emotion, pacing and cross-lingual cloning</h2>
+<div class="cards">
+<div class="card"><h4>Prosody</h4><p>The melody, rhythm and stress of speech: which word gets emphasis, where pauses fall, rising or falling intonation. In teaching, prosody is what makes "this is the important part" audible.</p></div>
+<div class="card"><h4>Emotion and style</h4><p>Neutral, enthusiastic, calm, serious. Zero-shot models largely copy the emotion of your reference clip; newer models add tags (ElevenLabs v3/v4 audio tags), natural-language instructions, or a separate emotion reference (IndexTTS2).</p></div>
+<div class="card"><h4>Pacing</h4><p>Words per minute and pause length. Flow-matching models take an explicit duration; codec LMs follow the reference's pace and punctuation. Post-hoc time-stretching of more than about ±10% tends to sound processed. <span class="ev p">Practice</span></p></div>
+<div class="card"><h4>Cross-lingual cloning</h4><p>Your timbre speaking a language your reference clip is not in: e.g. an English reference producing Mandarin speech. Works because timbre and language are partly separated (section 4). Expect an "accent" effect: often the model's native-speaker accent for the target language, sometimes leaking your reference-language accent.</p></div>
+</div>
+<div class="callout think"><span class="title">What this means for English + Mandarin</span>
+<ul>
+<li>Record reference material in <b>both</b> languages if you can, even if one is short. A reference clip in the target language almost always gives more natural results than cross-lingual transfer. <span class="ev p">Practice</span></li>
+<li>Mandarin adds two specific risks: <b>tones</b> (a wrong tone is a wrong word) and <b>polyphonic characters</b> (多音字, e.g. 行 as xíng or háng), which the text front-end must resolve. Models trained heavily on Chinese data (CosyVoice, IndexTTS, Fish Speech, GPT-SoVITS, MiniMax, Volcengine) usually handle these better, and several accept pinyin overrides. <span class="ev i">Inference</span> (from model documentation; see page 7)</li>
+<li>Code-switching (English terms inside Mandarin sentences, which is normal in technical teaching) is a separate capability; test it explicitly in the hands-on experiment (page 11). <span class="ev p">Practice</span></li>
+</ul></div>
+
+<h2 id="long-form-drift">7. Why long-form narration drifts or degrades</h2>
+<p>A 15-minute lesson is far longer than anything these models generate in one pass. Long outputs fail in characteristic ways:</p>
+
+<figure class="diagram">
+<svg viewBox="0 0 900 220" role="img" aria-label="Long-form drift and chunking">
+  <defs><marker id="a7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-accent"/></marker></defs>
+  <text x="10" y="22" class="t-title">One long pass (bad)</text>
+  <rect x="10" y="32" width="880" height="36" rx="6" class="box"/>
+  <rect x="10" y="32" width="300" height="36" rx="6" class="box-ok"/><text x="20" y="55">good voice</text>
+  <rect x="310" y="32" width="300" height="36" class="box-c"/><text x="320" y="55" class="t-c">drifting: pitch, speed, timbre</text>
+  <rect x="610" y="32" width="280" height="36" rx="6" class="box-warn"/><text x="620" y="55">repeats, mumbles, noise</text>
+  <text x="10" y="104" class="t-title">Chunked with the same reference each time (good)</text>
+  <g>
+  <rect x="10" y="116" width="200" height="36" rx="6" class="box-ok"/><text x="20" y="139">chunk 1 (1–3 sentences)</text>
+  <rect x="230" y="116" width="200" height="36" rx="6" class="box-ok"/><text x="240" y="139">chunk 2</text>
+  <rect x="450" y="116" width="200" height="36" rx="6" class="box-warn"/><text x="460" y="139">chunk 3: fails check</text>
+  <rect x="670" y="116" width="220" height="36" rx="6" class="box-ok"/><text x="680" y="139">chunk 4</text>
+  </g>
+  <rect x="450" y="172" width="200" height="36" rx="6" class="box-ok"/><text x="460" y="195">chunk 3, regenerated</text>
+  <path d="M550,152 L550,169" class="line-accent" marker-end="url(#a7)"/>
+  <text x="670" y="195" class="t-muted">then join with pauses + loudness match</text>
+</svg>
+</figure>
+<ul>
+<li><b>Autoregressive error accumulation.</b> Each token is predicted from previous tokens. A slightly-off token makes the next prediction slightly worse; over thousands of tokens the voice wanders or loops. This mirrors <i>exposure bias</i> in LLMs. <span class="ev i">Inference</span> (well-known property of autoregressive sampling)</li>
+<li><b>Reference conditioning fades.</b> The further generation runs from the reference clip in the context, the less it constrains timbre. <span class="ev i">Inference</span></li>
+<li><b>Training length mismatch.</b> Most models are trained on utterances of roughly 2–30 seconds; inputs much longer than that are out of distribution. <span class="ev p">Practice</span> (stated in several model READMEs as a recommended maximum input length)</li>
+<li><b>Chunking creates its own problem:</b> each chunk restarts prosody, so sentence-final intonation, loudness and speed can jump between chunks. Fixes: always the same reference clip and settings, chunk at sentence or paragraph boundaries, pass previous/next text as context where the API supports it, and normalise loudness at assembly. <span class="ev p">Practice</span></li>
+</ul>
+<p>The pipeline on <a href="08-pipeline.html">page 8</a> is built around this: chunk, synthesise, transcribe-and-check, regenerate failures, then assemble.</p>
+
+<h2>Where to go next</h2>
+<div class="cards">
+<a class="card" href="02-cloud.html"><h4>Cloud services →</h4><p>ElevenLabs, Azure, Google, MiniMax, Fish Audio and others: what they need from you, cost and terms.</p></a>
+<a class="card" href="03-open-source.html"><h4>Open-source models →</h4><p>F5-TTS, CosyVoice, IndexTTS2, GPT-SoVITS, Chatterbox and newer: licences, hardware, Chinese support.</p></a>
+<a class="card" href="glossary.html"><h4>Glossary →</h4><p>Every term on this page in one or two sentences.</p></a>
+</div>
+
+<p class="page-meta">Paper IDs on this page were checked against the arXiv API on 2026-10-17.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Voice, Synthesised · Overview</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Start here</div>
+<h1>Your voice, synthesised</h1>
+<p class="lead">A vendor-neutral, evidence-based guide to making an AI narrate lessons, tutorials and explainer videos in <b>your own voice</b>, in English and Mandarin Chinese, including your voice in the language you recorded less of. Written for a software engineer who is new to speech AI. State of the field: <b>17 October 2026</b>.</p>
+
+<h2>Ten findings</h2>
+<ol>
+<li><b>It works, and quickly.</b> One to two minutes of clean audio gives a usable instant clone with the leading cloud services; 30 minutes to 3 hours gives a professional clone. Open models clone from 3–15 seconds. <span class="ev v">Verified</span> (vendor docs, READMEs)</li>
+<li><b>Best cloud quality an individual can buy</b>: ElevenLabs Eleven v4, Alibaba Qwen-Audio 3.1 and Cartesia Sonic 3.6 sit in the top tier of the independent cloned-voice arena (English voices only). <span class="ev v">Verified</span> (<a href="02-cloud.html">page 2</a>)</li>
+<li><b>Price per hour of narration</b> ranges from about <b>$0.82</b> (Gemini 3.8 Flash TTS) to about <b>$4–6</b> (Eleven v4, MiniMax HD) in English; Mandarin is 3–4× cheaper per hour when billed per character. <span class="ev v">Verified</span> prices · per-hour figures <span class="ev i">Inference</span></li>
+<li><b>Open models are as good on paper.</b> VoxCPM2, Fun-CosyVoice 3 and Qwen3-TTS (all Apache-2.0) report speaker similarity near or above the level of two real recordings of the same person on the standard benchmark. <span class="ev v">Verified</span> (self-reported, <a href="03-open-source.html">page 3</a>)</li>
+<li><b>Licences decide more than quality.</b> F5-TTS, XTTS-v2, Fish Audio S2-Pro and others have non-commercial weights. Code and weights licences often differ. <span class="ev v">Verified</span></li>
+<li><b>Cross-lingual cloning costs similarity.</b> Benchmarks show about 10 points lower similarity when the reference and the output are in different languages. Record a reference in each language. <span class="ev v">Verified</span> · advice <span class="ev i">Inference</span></li>
+<li><b>Mandarin needs pronunciation control.</b> Polyphones (行 háng / xíng) and tones are the main failure; IndexTTS and CosyVoice accept pinyin overrides; ElevenLabs v4 accepts dictionaries and inline IPA but not SSML breaks. <span class="ev v">Verified</span> (<a href="07-quality-control.html">page 7</a>)</li>
+<li><b>A course is a pipeline, not a clip.</b> Normalise, chunk, synthesise, check with ASR, regenerate, assemble, align, caption. An agent can automate almost all of it; ears are still needed for flagged chunks and emphasis. <span class="ev p">Practice</span> (<a href="08-pipeline.html">page 8</a>)</li>
+<li><b>Disclose it.</b> EU AI Act Art. 50 has applied since 2 Aug 2026; a cloned-voice tutorial very likely counts as a deep fake. YouTube exempts your own cloned voice, but Udemy, TikTok and Chinese rules require labels. <span class="ev v">Verified</span> rules · application <span class="ev i">Inference</span> (<a href="09-legal.html">page 9</a>)</li>
+<li><b>Protect yourself.</b> Turn off bank voice-ID; vendors take broad, often perpetual licences to your recordings; watermarks can be removed. <span class="ev v">Verified</span></li>
+</ol>
+
+<div class="callout key"><span class="title">If you read only one thing</span>
+Run the comparison on <a href="11-hands-on.html">page 11</a> with ElevenLabs v4, Gemini voice replication and one Apache-licensed local model (VoxCPM2 or Fun-CosyVoice 3). No benchmark measures how much a clone sounds like <i>you</i> in Mandarin; only your own test can. <span class="ev i">Inference</span></div>
+
+<h2>How this site labels evidence</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Label</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><span class="ev v">Verified</span></td><td>Read in a primary source (official docs, licence text, pricing page, law text, paper, GitHub API) on or near 2026-10-17. Benchmark numbers marked "as published" are verified as <i>published</i>; they are usually self-reported by the authors.</td></tr>
+<tr><td><span class="ev p">Practice</span></td><td>Common practice or rule of thumb in the field, widely documented but not a single authoritative source.</td></tr>
+<tr><td><span class="ev i">Inference</span></td><td>My own reasoning from the evidence: recommendations, thresholds, interpretations.</td></tr>
+<tr><td><span class="ev u">Unverified</span></td><td>Only secondary sources, conflicting sources, or not checkable during this research.</td></tr>
+<tr><td><span class="ev x">Experimental</span></td><td>Preview, beta, or brand-new software that may change quickly.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Every price and statistic carries a date. Where sources contradict each other, the page says so. The full method and list of conflicts is on <a href="sources.html">Sources &amp; method</a>.</p>
+
+<h2>Your situation, as assumed here</h2>
+<dl class="kv">
+<dt>Goal</dt><dd>Narration for teaching content, in your own voice, English and Mandarin, including cross-lingual.</dd>
+<dt>Hardware</dt><dd>Local paths assume a typical NVIDIA GPU with 8–24 GB; notes cover your current PC (Intel UHD graphics, 64 GB RAM: CPU only) and hourly cloud GPUs.</dd>
+<dt>Commercial use</dt><dd>Undecided, so every tool is rated for commercial use and non-commercial ones are flagged.</dd>
+<dt>Platform</dt><dd>Windows 11.</dd>
+</dl>
+
+<h2>Map of the site</h2>
+<div class="cards">
+<a class="card a" href="01-how-it-works.html"><h4>1 · How it works</h4><p>Classic vs neural TTS, zero-shot vs fine-tuning, speaker embeddings, codec LMs, flow matching, voice conversion, drift. Seven diagrams.</p></a>
+<a class="card b" href="02-cloud.html"><h4>2 · Cloud services</h4><p>ElevenLabs, Google, Azure, MiniMax, Fish, Cartesia, Chinese vendors, OpenAI's policy; prices per hour.</p></a>
+<a class="card b" href="03-open-source.html"><h4>3 · Open-source models</h4><p>VoxCPM2, CosyVoice 3, Qwen3-TTS, GPT-SoVITS, IndexTTS, F5-TTS and more; licences and hardware.</p></a>
+<a class="card b" href="04-voice-conversion.html"><h4>4 · Voice conversion</h4><p>RVC, Applio, MeanVC2, Seed-VC: read it yourself, convert the timbre.</p></a>
+<a class="card b" href="05-explorer.html"><h4>5 · Tool explorer</h4><p>Everything in one sortable, filterable table.</p></a>
+<a class="card c" href="06-recording.html"><h4>6 · Recording</h4><p>How much audio, mic, room, script, format, cleaning, consent checks.</p></a>
+<a class="card c" href="07-quality-control.html"><h4>7 · Quality &amp; control</h4><p>Similarity, WER/CER, MOS, blind A/B; failures and controls.</p></a>
+<a class="card c" href="08-pipeline.html"><h4>8 · Pipeline</h4><p>The agent-run workflow from script to captioned video; avatar note.</p></a>
+<a class="card c" href="09-legal.html"><h4>9 · Legal &amp; safety</h4><p>EU AI Act, platform rules, vendor terms, watermarks, bank voice-ID.</p></a>
+<a class="card d" href="10-decide.html"><h4>10 · Decide</h4><p>Three paths, cost calculator, "which setup fits me".</p></a>
+<a class="card d" href="11-hands-on.html"><h4>11 · Hands-on</h4><p>A comparison experiment and a ready coding-agent prompt.</p></a>
+<a class="card d" href="12-next.html"><h4>12 · Next discussion</h4><p>Five directions to decide on next.</p></a>
+</div>
+<p>Reference: <a href="glossary.html">Glossary</a> · <a href="sources.html">Sources &amp; method</a>.</p>
+
+<p class="page-meta">Static site: open index.html by double-clicking; no server, no build, no tracking. Light/dark theme toggle in the top bar.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

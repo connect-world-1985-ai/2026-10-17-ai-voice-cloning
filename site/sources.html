@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources &amp; method · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Reference</div>
+<h1>Sources and method</h1>
+<p class="lead">How the research was done, which sources the key claims rest on, where sources disagree, and what is still missing.</p>
+
+<h2>Method</h2>
+<ol>
+<li><b>Fresh research on 2026-10-17.</b> Five research helpers gathered fact sheets on cloud services, open-source models, voice conversion and recording, evaluation and pipelines, and law. The main agent read every fact sheet, re-checked the most important claims against primary sources, made all judgements and wrote every page.</li>
+<li><b>Primary sources first</b>: vendor documentation, pricing pages and terms; licence files; law texts and regulator guidance; arXiv papers (29 paper IDs checked against the arXiv API); GitHub repository data via the GitHub API (stars, licence, last push, archived flag). Secondary sources (blogs, news, search summaries) are labelled as such.</li>
+<li><b>Hugging Face</b> was unreachable from the research machine; model-card licence tags were read via a public mirror of the Hugging Face API (hf-mirror.com), which returns the same JSON.</li>
+<li><b>No invented numbers.</b> Where a value was not found it says "not stated" or "unverified". Per-hour prices are calculated from per-character list prices with stated assumptions.</li>
+<li><b>Benchmarks</b> are usually self-reported by model authors; they are marked "as published".</li>
+</ol>
+
+<h3>Claims the main agent re-checked personally</h3>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Claim</th><th>Source</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs API prices: v4 $0.08 and v4 Turbo $0.04 per 1k characters; Voice Changer $0.12/min</td><td><a href="https://elevenlabs.io/pricing/api">ElevenLabs API pricing</a></td><td>Confirmed</td></tr>
+<tr><td>Gemini voice replication: 10–30 s plus consent clip, storage and retention rules</td><td><a href="https://ai.google.dev/gemini-api/docs/voice-replication">Gemini API docs</a></td><td>Confirmed</td></tr>
+<tr><td>Cloned-voice arena ranks and Elo values used on pages 2, 3, 5</td><td><a href="https://artificialanalysis.ai/text-to-speech/leaderboard/controlled-voice">Artificial Analysis Controlled Voice</a></td><td>Confirmed (fetched twice)</td></tr>
+<tr><td>YouTube: own cloned voice for voice-overs needs no disclosure</td><td><a href="https://support.google.com/youtube/answer/14328491?hl=en">YouTube Help</a></td><td>Confirmed</td></tr>
+<tr><td>EU AI Act Art. 50 dates, professional-use criterion, deployer duties</td><td><a href="https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act">Commission FAQ</a></td><td>Confirmed</td></tr>
+<tr><td>F5-TTS weights CC-BY-NC; VoxCPM Apache-2.0 "free for commercial use"; VibeVoice TTS code removed</td><td>README files via GitHub API</td><td>Confirmed</td></tr>
+<tr><td>IndexTTS licence thresholds; Fish code licence USD 500k; Fish S2-Pro "No commercial rights"; XTTS-v2 licence covers outputs</td><td>Licence texts</td><td>Confirmed</td></tr>
+<tr><td>CosyVoice 3, Qwen3-TTS, VoxCPM2 weights Apache-2.0; F5-TTS cc-by-nc-4.0</td><td>Hugging Face API (mirror)</td><td>Confirmed</td></tr>
+<tr><td>OmniVoice weights non-commercial (helper claim)</td><td>OmniVoice README</td><td><b>Not confirmed</b>: no such statement found; marked unclear</td></tr>
+<tr><td>GPU rental prices (RTX 3090 $0.50/h, L4 $0.59/h, RTX 4090 $0.89/h)</td><td><a href="https://www.runpod.io/pricing">RunPod pricing</a></td><td>Confirmed</td></tr>
+<tr><td>GitHub stars, licences, last push for 34 repositories</td><td>GitHub API</td><td>Collected directly</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Key sources by topic</h2>
+<p>A selection; each page links its own sources inline. All accessed 2026-10-17.</p>
+<p><button class="chip" data-toggle-all="sources-all" type="button">Expand / collapse all</button></p>
+<div id="sources-all">
+<details open><summary><b>Foundations and papers</b></summary>
+<ul>
+<li>Seed-TTS (benchmark protocol and human baseline): <a href="https://arxiv.org/abs/2406.02430">arXiv 2406.02430</a>; <a href="https://github.com/BytedanceSpeech/seed-tts-eval">seed-tts-eval</a></li>
+<li>VALL-E <a href="https://arxiv.org/abs/2301.02111">2301.02111</a>; VALL-E 2 <a href="https://arxiv.org/abs/2406.05370">2406.05370</a>; Voicebox <a href="https://arxiv.org/abs/2306.15687">2306.15687</a>; Flow Matching <a href="https://arxiv.org/abs/2210.02747">2210.02747</a>; E2 TTS <a href="https://arxiv.org/abs/2406.18009">2406.18009</a>; F5-TTS <a href="https://arxiv.org/abs/2410.06885">2410.06885</a></li>
+<li>CosyVoice <a href="https://arxiv.org/abs/2407.05407">2407.05407</a>, CosyVoice 2 <a href="https://arxiv.org/abs/2412.10117">2412.10117</a>, CosyVoice 3 <a href="https://arxiv.org/abs/2505.17589">2505.17589</a>; IndexTTS <a href="https://arxiv.org/abs/2502.05512">2502.05512</a>, IndexTTS2 <a href="https://arxiv.org/abs/2506.21619">2506.21619</a>; MaskGCT <a href="https://arxiv.org/abs/2409.00750">2409.00750</a>; Spark-TTS <a href="https://arxiv.org/abs/2503.01710">2503.01710</a>; Llasa <a href="https://arxiv.org/abs/2502.04128">2502.04128</a>; Fish-Speech <a href="https://arxiv.org/abs/2411.01156">2411.01156</a>; XTTS <a href="https://arxiv.org/abs/2406.04904">2406.04904</a></li>
+<li>Codecs and vocoders: SoundStream <a href="https://arxiv.org/abs/2107.03312">2107.03312</a>; EnCodec <a href="https://arxiv.org/abs/2210.13438">2210.13438</a>; DAC <a href="https://arxiv.org/abs/2306.06546">2306.06546</a>; HiFi-GAN <a href="https://arxiv.org/abs/2010.05646">2010.05646</a>; WaveNet <a href="https://arxiv.org/abs/1609.03499">1609.03499</a></li>
+<li>Classic neural TTS: Tacotron 2 <a href="https://arxiv.org/abs/1712.05884">1712.05884</a>; FastSpeech 2 <a href="https://arxiv.org/abs/2006.04558">2006.04558</a>; VITS <a href="https://arxiv.org/abs/2106.06103">2106.06103</a>; Tortoise <a href="https://arxiv.org/abs/2305.07243">2305.07243</a></li>
+<li>Speaker embeddings: GE2E <a href="https://arxiv.org/abs/1710.10467">1710.10467</a>; ECAPA-TDNN <a href="https://arxiv.org/abs/2005.07143">2005.07143</a>; WavLM <a href="https://arxiv.org/abs/2110.13900">2110.13900</a>; Seed-VC <a href="https://arxiv.org/abs/2411.09943">2411.09943</a></li>
+</ul></details>
+<details><summary><b>Cloud services</b></summary>
+<ul>
+<li>ElevenLabs: <a href="https://elevenlabs.io/docs/models">models</a>, <a href="https://elevenlabs.io/pricing/api">API pricing</a>, <a href="https://elevenlabs.io/blog/eleven-v4">Eleven v4 launch</a>, <a href="https://elevenlabs.io/terms-of-use">Terms of Use (9 Oct 2026)</a>, <a href="https://elevenlabs.io/use-policy">Prohibited Use Policy</a></li>
+<li>Google: <a href="https://ai.google.dev/gemini-api/docs/voice-replication">Gemini voice replication</a>, <a href="https://cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice">Chirp 3 Instant Custom Voice</a></li>
+<li>Microsoft: <a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/personal-voice-overview">Personal Voice</a>, <a href="https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/speech-service/text-to-speech/data-privacy-security">data, privacy and security</a></li>
+<li><a href="https://platform.minimax.io/docs/guides/speech-voice-clone">MiniMax</a> · <a href="https://docs.fish.audio/features/voice-cloning">Fish Audio</a> · <a href="https://docs.cartesia.ai/build-with-cartesia/capability-guides/clone-voices">Cartesia</a> · <a href="https://inworld.ai/voice-cloning">Inworld</a> · <a href="https://www.alibabacloud.com/help/en/model-studio/voice-cloning-user-guide">Alibaba Model Studio</a> · <a href="https://developers.openai.com/api/docs/guides/custom-voices">OpenAI custom voices</a></li>
+<li>Independent ranking: <a href="https://artificialanalysis.ai/text-to-speech/leaderboard/controlled-voice">Artificial Analysis Controlled Voice Arena</a></li>
+</ul></details>
+<details><summary><b>Open-source models</b></summary>
+<ul>
+<li><a href="https://github.com/OpenBMB/VoxCPM">VoxCPM</a> · <a href="https://github.com/QwenAudio/CosyVoice">CosyVoice</a> · <a href="https://github.com/QwenLM/Qwen3-TTS">Qwen3-TTS</a> · <a href="https://github.com/RVC-Boss/GPT-SoVITS">GPT-SoVITS</a> · <a href="https://github.com/index-tts/index-tts">IndexTTS</a> · <a href="https://github.com/resemble-ai/chatterbox">Chatterbox</a></li>
+<li><a href="https://github.com/fishaudio/fish-speech">Fish Speech</a> · <a href="https://github.com/SWivid/F5-TTS">F5-TTS</a> · <a href="https://github.com/k2-fsa/OmniVoice">OmniVoice</a> · <a href="https://github.com/boson-ai/higgs-audio">Higgs Audio</a> · <a href="https://github.com/microsoft/VibeVoice">VibeVoice</a> · <a href="https://github.com/idiap/coqui-ai-TTS">coqui-tts (idiap)</a></li>
+<li><a href="https://huggingface.co/blog/open-tts-leaderboard">Hugging Face Open TTS Leaderboard blog (2026-09-30)</a></li>
+</ul></details>
+<details><summary><b>Voice conversion and recording</b></summary>
+<ul>
+<li><a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">RVC</a> · <a href="https://github.com/IAHispano/Applio">Applio</a> · <a href="https://github.com/ASLP-lab/MeanVC2">MeanVC2</a> · <a href="https://github.com/Plachtaa/seed-vc">Seed-VC</a></li>
+<li><a href="https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning">ElevenLabs voice cloning guide</a> · <a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/record-custom-voice-samples">Azure recording guide</a> · <a href="https://cloud.google.com/text-to-speech/custom-voice/docs/training-data">Google Custom Voice training data</a></li>
+</ul></details>
+<details><summary><b>Evaluation and pipeline</b></summary>
+<ul>
+<li><a href="https://github.com/sarulab-speech/UTMOSv2">UTMOSv2</a> · <a href="https://github.com/SYSTRAN/faster-whisper">faster-whisper</a> · <a href="https://github.com/modelscope/FunASR">FunASR</a> · <a href="https://github.com/wenet-e2e/WeTextProcessing">WeTextProcessing</a> · <a href="https://github.com/MahmoudAshraf97/ctc-forced-aligner">ctc-forced-aligner</a></li>
+<li>ElevenLabs <a href="https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices">best practices</a>, <a href="https://elevenlabs.io/docs/developers/guides/cookbooks/text-to-speech/request-stitching">request stitching</a>, <a href="https://elevenlabs.io/docs/api-reference/forced-alignment/create">forced alignment</a></li>
+<li>Azure <a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-pronunciation">SSML pronunciation and lexicons</a> · <a href="https://tech.ebu.ch/publications/r128">EBU R128</a> · <a href="https://partnerhelp.netflixstudios.com/hc/en-us/articles/215986007-Chinese-Simplified-Timed-Text-Style-Guide">Netflix Chinese (Simplified) timed-text guide</a> · <a href="https://github.com/remotion-dev/remotion/blob/main/LICENSE.md">Remotion licence</a></li>
+</ul></details>
+<details><summary><b>Law, policy and safety</b></summary>
+<ul>
+<li>EU: <a href="https://artificialintelligenceact.eu/article/50/">AI Act Art. 50</a>, <a href="https://digital-strategy.ec.europa.eu/en/faqs/transparency-obligations-under-article-50-ai-act">Commission FAQ</a>, <a href="https://digital-strategy.ec.europa.eu/en/policies/code-practice-ai-generated-content">Code of Practice</a>, <a href="https://www.edpb.europa.eu/system/files/2021-07/edpb_guidelines_202102_on_vva_v2.0_adopted_en.pdf">EDPB voice-assistant guidelines</a></li>
+<li>China: <a href="https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm">AI content labelling measures</a>, <a href="https://www.gov.cn/zhengce/zhengceku/2022-12/12/content_5731431.htm">Deep Synthesis provisions</a>, <a href="https://english.bjinternetcourt.gov.cn/2024-04/24/c_706.htm">Beijing Internet Court AI-voice case</a></li>
+<li>Germany: <a href="https://www.gesetze-im-internet.de/bdsg_2018/__26.html">§ 26 BDSG</a>, <a href="https://www.bmjv.de/SharedDocs/Pressemitteilungen/DE/2026/1007_Digitale_Gewalt.html">BMJV press release on § 201b StGB draft</a>. US: <a href="https://publications.tnsosfiles.com/acts/113/pub/pc0588.pdf">ELVIS Act</a>, <a href="https://www.congress.gov/bill/119th-congress/senate-bill/4591">NO FAKES Act (S. 4591)</a></li>
+<li>Platforms: <a href="https://support.google.com/youtube/answer/14328491?hl=en">YouTube</a>, <a href="https://support.tiktok.com/en/using-tiktok/creating-videos/ai-generated-content">TikTok</a>, <a href="https://support.udemy.com/hc/en-us/articles/30999984483607-Course-Quality-Checklist-Use-of-AI">Udemy</a></li>
+<li>Watermarks: <a href="https://github.com/facebookresearch/audioseal">AudioSeal</a>, <a href="https://arxiv.org/abs/2503.19176">SoK on audio watermark robustness</a>, <a href="https://arxiv.org/abs/2505.19663">RAW-Bench</a>. Voice-ID risk: <a href="https://www.vice.com/en/article/how-i-broke-into-a-bank-account-with-an-ai-generated-voice/">Vice 2023</a>, <a href="https://www.federalreserve.gov/mediacenter/files/capital-framework-conference-fireside-chat-transcript.pdf">Federal Reserve transcript 2025</a></li>
+</ul></details>
+</div>
+
+<h2 id="conflicts">Where sources disagree</h2>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Topic</th><th>Conflict</th><th>How the site handles it</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs cross-lingual accent</td><td>The v4 launch post claims a native accent in every language; the older PVC guide warns the source-language accent carries over.</td><td>Both stated; test it yourself (page 12, direction 4).</td></tr>
+<tr><td>ElevenLabs Creator allowance</td><td>Pricing page: 121k credits; API pricing page: "275k characters of TTS (v4) included".</td><td>Not used in the calculator.</td></tr>
+<tr><td>Fish Audio free tier</td><td>Terms of service: non-commercial; pricing page: "Commercial use allowed".</td><td>Marked conditional.</td></tr>
+<tr><td>Fish weights licence</td><td>README suggests the community licence covers weights; the S2-Pro and Drama 3 licence files say research only.</td><td>Licence files trusted: non-commercial.</td></tr>
+<tr><td>IndexTTS commercial use</td><td>Licence text: royalty-free below thresholds; README: "contact for commercial usage".</td><td>Marked conditional; email before launch.</td></tr>
+<tr><td>OmniVoice weights</td><td>Helper reported a CC-BY-NC statement; current README has none; Hugging Face card has no tag.</td><td>Marked unclear.</td></tr>
+<tr><td>Qwen3-TTS benchmark</td><td>Own README 0.77 / 1.24; VoxCPM's table 1.22 / 1.23.</td><td>Compiled table used, conflict noted.</td></tr>
+<tr><td>Google Chirp 3 HD SSML</td><td>One page says supported in Preview, another says not supported.</td><td>Marked unverified.</td></tr>
+<tr><td>Mandarin cloned-voice ranking</td><td>Only secondary reports of an Artificial Analysis Mandarin board (snapshot date unknown).</td><td>Marked unverified; not used for recommendations.</td></tr>
+<tr><td>Resemble ownership terms</td><td>CEO's 2024 testimony: "the user owns all rights"; current terms have no such clause (secondary review).</td><td>Moot: hosted product discontinued.</td></tr>
+<tr><td>YouTube loudness target</td><td>"−14 LUFS" widely quoted; no official YouTube page found.</td><td>−16 LUFS recommended instead.</td></tr>
+<tr><td>Deep-fake status of your own cloned voice</td><td>EU guidelines' podcast example suggests yes; their fictional-narrator example suggests no if there is no deception.</td><td>Disclose: resolves both readings.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="gaps">Known gaps</h2>
+<ul>
+<li><b>No hands-on testing.</b> No model was installed or run; quality statements come from benchmarks, arenas and documentation. Windows support for CosyVoice 3, Fish, Chatterbox and others is unverified in practice.</li>
+<li><b>No independent own-voice benchmark</b> exists for English plus Mandarin or for cross-lingual similarity; the CV3 cross-lingual table is compiled by one model team.</li>
+<li><b>VRAM and speed</b> figures are official only for a few models; others are secondary or missing.</li>
+<li><b>Sample-audio licences</b> on demo pages are not stated, so no audio is embedded; demo pages are linked instead.</li>
+<li><b>Vendor terms</b> for Inworld, Alibaba, Volcengine and the OpenAI TTS supplement were not read; Fish and Cartesia terms may be stale versions.</li>
+<li><b>Not researched in depth</b>: HeyGen Voice (#1 on the cloned board), StepAudio, Voxtral TTS, Breeze TTS 2, Supertone, Maya1, Magpie TTS, LongCat-Audio-DiT.</li>
+<li><b>Legal</b>: no authority has yet ruled on someone cloning <i>their own</i> voice under Art. 50; German judgments were read only via secondary summaries.</li>
+</ul>
+
+<p class="page-meta">Research notes and the tracker live in docs/memory/ next to this site, so the work can be resumed.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

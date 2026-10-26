@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Reference</div>
+<h1>Glossary</h1>
+<p class="lead">Every speech-AI term used in this guide, in one or two sentences. Type to filter.</p>
+
+<div class="toolbar"><input type="search" placeholder="Filter terms… (e.g. codec, WER, LUFS)" data-filter-for="gloss" aria-label="Filter glossary"></div>
+<div class="table-wrap">
+<table id="gloss" data-sortable class="compact">
+<thead><tr><th>Term</th><th data-nosort>Meaning</th><th>Where used</th></tr></thead>
+<tbody>
+<tr><td>A/B test (blind)</td><td>Listeners hear two clips in random order without knowing which tool made which, and pick the better one. The most reliable way to compare voices for your own taste.</td><td><a href="07-quality-control.html">7</a>, <a href="11-hands-on.html">11</a></td></tr>
+<tr><td>Acoustic model</td><td>The part of a TTS system that turns text (or text tokens) into an intermediate audio representation such as a mel spectrogram or codec tokens.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Alignment (forced)</td><td>Given audio and its known transcript, find the start and end time of each word or phoneme. Used for captions and syncing to slides.</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>ASR</td><td>Automatic speech recognition (speech-to-text), e.g. Whisper, Paraformer, SenseVoice. Used here to check that synthetic speech says what the script says.</td><td><a href="07-quality-control.html">7</a>, <a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Audio tags</td><td>Bracketed instructions inside the text, such as <code>[excited]</code> or <code>[whispers]</code>, that some models (e.g. ElevenLabs v3/v4) interpret as delivery directions.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Autoregressive (AR)</td><td>Generating output one step at a time, each step conditioned on the previous ones, like an LLM writing text. Natural but can repeat or skip.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>C2PA / Content Credentials</td><td>An open standard for attaching signed provenance metadata ("made with tool X") to media files, including audio.</td><td><a href="09-legal.html">9</a></td></tr>
+<tr><td>CER</td><td>Character error rate. Like WER but counted per character; the standard intelligibility metric for Chinese, which has no spaces between words.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Chunking</td><td>Splitting a long script into sentence- or paragraph-sized pieces that are synthesised separately, then joined.</td><td><a href="01-how-it-works.html">1</a>, <a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Code-switching</td><td>Mixing languages inside one sentence, e.g. English technical terms in Mandarin speech. A distinct capability to test.</td><td><a href="01-how-it-works.html">1</a>, <a href="11-hands-on.html">11</a></td></tr>
+<tr><td>Codec (neural audio codec)</td><td>A network that compresses audio into discrete integer tokens and back, e.g. SoundStream, EnCodec, DAC. The "tokeniser" of codec language models.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Codec language model</td><td>A transformer that predicts audio-codec tokens from text plus a voice prompt, like an LLM predicting words.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Cosine similarity</td><td>A score between −1 and 1 for how closely two embedding vectors point in the same direction. Used for speaker similarity.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Cross-lingual cloning</td><td>Your voice speaking a language that your reference audio is not in.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>dBFS</td><td>Decibels relative to full scale; 0 dBFS is the loudest a digital file can hold. Recording peaks are usually kept well below it.</td><td><a href="06-recording.html">6</a></td></tr>
+<tr><td>De-reverb</td><td>Processing that removes room echo from a recording. Over-use causes artefacts that a clone will copy.</td><td><a href="06-recording.html">6</a></td></tr>
+<tr><td>Deep fake (EU AI Act)</td><td>AI-generated or manipulated image, audio or video that resembles real persons, objects or events and would falsely appear authentic (Art. 3(60)).</td><td><a href="09-legal.html">9</a></td></tr>
+<tr><td>Diffusion model</td><td>A generative model that learns to turn noise into data over many denoising steps.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Drift</td><td>Gradual change of voice, pace or pitch over a long generation, or between sessions.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Embedding (speaker)</td><td>A fixed-length vector that summarises who is speaking, independent of the words.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>F0 / pitch</td><td>Fundamental frequency: how high or low the voice is at each moment. Voice conversion tracks and transfers it.</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>Fine-tuning</td><td>Further training a pretrained model on your recordings so its weights adapt to your voice.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Flow matching</td><td>A generative training method that learns a velocity field moving noise to data in few steps; used by F5-TTS, E2 TTS, CosyVoice's decoder.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>G2P</td><td>Grapheme-to-phoneme: converting spelling to pronunciation symbols. The source of many mispronunciations.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Hallucination (TTS)</td><td>Speech that does not match the text: skipped, repeated, or invented words; mumbling; long silences.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>HuBERT / ContentVec</td><td>Self-supervised speech models whose features capture "what is said" while discarding much of "who said it". Used as content encoders in voice conversion.</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>Instant voice clone (IVC)</td><td>Vendor name for zero-shot cloning from a short sample.</td><td><a href="02-cloud.html">2</a></td></tr>
+<tr><td>IPA</td><td>International Phonetic Alphabet. Used in SSML <code>&lt;phoneme&gt;</code> tags and pronunciation dictionaries.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Lexicon / pronunciation dictionary</td><td>A list mapping words to how they should be spoken (phonemes or a respelling alias), e.g. "Kubernetes" → "koo-ber-NET-eez".</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Lip-sync avatar</td><td>A video of a face whose mouth movements are generated to match an audio track.</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>LoRA</td><td>Low-rank adaptation: fine-tuning a small set of extra weights instead of the whole model; faster and lighter.</td><td><a href="03-open-source.html">3</a></td></tr>
+<tr><td>LUFS / LKFS</td><td>Loudness units relative to full scale, the perceptual loudness measure in ITU-R BS.1770 and EBU R128. Narration is normalised to a target LUFS.</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Mel spectrogram</td><td>A time-frequency picture of audio on a perceptual (mel) frequency scale; the classic intermediate representation in TTS.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>MOS</td><td>Mean opinion score: listeners rate naturalness 1–5; the average is the MOS. CMOS compares two systems; SMOS rates speaker similarity.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Non-autoregressive (NAR)</td><td>Generating the whole output in parallel rather than step by step (e.g. flow matching). Faster, fewer skipped words.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Normalisation (text)</td><td>Rewriting text into speakable words before TTS: "3.5 GB" → "three point five gigabytes", "2026" → "twenty twenty-six".</td><td><a href="07-quality-control.html">7</a>, <a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Normalisation (loudness)</td><td>Adjusting gain so every file has the same perceived loudness (target LUFS) and no peaks above a true-peak limit.</td><td><a href="06-recording.html">6</a>, <a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Personal Voice (Azure)</td><td>Microsoft's limited-access zero-shot voice cloning feature with mandatory consent recording.</td><td><a href="02-cloud.html">2</a></td></tr>
+<tr><td>Phoneme</td><td>The smallest sound unit that distinguishes words, e.g. /k/ in "cat".</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Pinyin</td><td>Romanised spelling of Mandarin with tone numbers or marks (e.g. <code>hang2</code>); several Chinese-capable models accept it to fix polyphones.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Polyphone (多音字)</td><td>A Chinese character with more than one reading depending on context, e.g. 行 xíng / háng.</td><td><a href="01-how-it-works.html">1</a>, <a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Professional voice clone (PVC)</td><td>Vendor name for a fine-tuned voice trained on longer recordings, usually with identity verification.</td><td><a href="02-cloud.html">2</a></td></tr>
+<tr><td>Prosody</td><td>The melody, rhythm, stress and pausing of speech.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Reference clip / prompt audio</td><td>The short recording of you that a zero-shot model imitates.</td><td><a href="01-how-it-works.html">1</a>, <a href="06-recording.html">6</a></td></tr>
+<tr><td>Room tone</td><td>The quiet background sound of a room; consistent room tone makes joins between chunks inaudible.</td><td><a href="06-recording.html">6</a>, <a href="08-pipeline.html">8</a></td></tr>
+<tr><td>RTF</td><td>Real-time factor: processing time divided by audio duration. RTF 0.1 means 10 s of compute per 100 s of audio.</td><td><a href="03-open-source.html">3</a></td></tr>
+<tr><td>RVC</td><td>Retrieval-based Voice Conversion, a popular open-source voice-conversion system trained on minutes of a target voice.</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>Seed-TTS-eval</td><td>ByteDance's public test set (English and Chinese, plus a "hard" set) for zero-shot TTS, reporting WER/CER and speaker similarity; many papers report on it.</td><td><a href="03-open-source.html">3</a>, <a href="07-quality-control.html">7</a></td></tr>
+<tr><td>SNR</td><td>Signal-to-noise ratio: how much louder your voice is than the background noise, in dB.</td><td><a href="06-recording.html">6</a></td></tr>
+<tr><td>Speaker verification</td><td>Deciding whether two clips are the same person. Its models double as similarity scorers, and as bank "voice ID".</td><td><a href="07-quality-control.html">7</a>, <a href="09-legal.html">9</a></td></tr>
+<tr><td>SRT / WebVTT</td><td>Plain-text subtitle formats with timestamps; generated from word timings.</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>SSML</td><td>Speech Synthesis Markup Language: XML tags for pauses (<code>&lt;break&gt;</code>), pronunciation (<code>&lt;phoneme&gt;</code>), rate and pitch (<code>&lt;prosody&gt;</code>). Support varies by vendor and model.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Timbre</td><td>The "colour" of a voice that lets you recognise a person independent of pitch and words.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>True peak (dBTP)</td><td>The highest level of the reconstructed analogue waveform, which can exceed sample peaks; limited to about −1 dBTP for delivery.</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>TTS</td><td>Text-to-speech.</td><td>everywhere</td></tr>
+<tr><td>Viseme</td><td>The mouth shape that corresponds to a speech sound; used to drive lip-sync.</td><td><a href="08-pipeline.html">8</a></td></tr>
+<tr><td>Vocoder</td><td>A model that turns a spectrogram into a waveform, e.g. HiFi-GAN, BigVGAN, Vocos.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+<tr><td>Voice conversion (VC)</td><td>Speech-to-speech transformation that keeps the words and timing but changes the voice.</td><td><a href="04-voice-conversion.html">4</a></td></tr>
+<tr><td>Watermark (audio)</td><td>An inaudible signal embedded in generated audio that a detector can later find, e.g. SynthID, AudioSeal, PerTh.</td><td><a href="09-legal.html">9</a></td></tr>
+<tr><td>WER</td><td>Word error rate: (substitutions + deletions + insertions) ÷ words in the reference. Computed by transcribing synthetic audio and comparing with the script.</td><td><a href="07-quality-control.html">7</a></td></tr>
+<tr><td>Zero-shot</td><td>Cloning a voice from a short sample at inference time, with no training on that voice.</td><td><a href="01-how-it-works.html">1</a></td></tr>
+</tbody>
+</table>
+</div>
+
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice conversion · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 4 · The landscape</div>
+<h1>Voice conversion: speak it (or let a stock voice speak it), then make it you</h1>
+<p class="lead">Voice conversion (VC) keeps the words, timing and intonation of an input recording and swaps the timbre for yours. For teaching it is a <b>complement</b> to text-to-speech, not a replacement: it is how you get exactly the emphasis you want, or repair a sentence without re-recording a session.</p>
+
+<div class="callout key"><span class="title">Bottom line (October 2026)</span>
+<ul>
+<li>For narration, VC is a <b>second tool</b>, used when TTS prosody is not good enough or to re-voice a stock voice. Most people should start with TTS cloning (pages 2–3) and add VC later. <span class="ev i">Inference</span></li>
+<li>The established local route on Windows + NVIDIA is <b>RVC</b> or its actively maintained fork <b>Applio</b> (both MIT), trained on about 10–30 minutes of your voice. <span class="ev v">Verified</span> (repositories, 2026-10-17)</li>
+<li><b>Seed-VC</b>, the best-known zero-shot open VC, is <b>archived</b> (last push 2025-04-20, GPL-3.0); <b>so-vits-svc</b> is archived and its fork says it is no longer maintained. <span class="ev v">Verified</span> (GitHub API, 2026-10-17)</li>
+<li>Cloud: <b>ElevenLabs Voice Changer</b> works with your own clone, $0.12 per minute via the API, up to 5 minutes per request. <span class="ev v">Verified</span> (ElevenLabs API pricing and docs, read 2026-10-17)</li>
+</ul></div>
+
+<h2>How it works, in one picture</h2>
+<p>The diagram on <a href="01-how-it-works.html#voice-conversion">page 1</a> shows the pipeline. In short:</p>
+<ol class="stepper">
+<li><b>Content encoder.</b> A self-supervised speech model (HuBERT, ContentVec, WavLM, or a Whisper encoder) turns the source audio into frame-by-frame features that carry <i>what is said</i> but little of <i>who says it</i>.</li>
+<li><b>Pitch (F0).</b> Extracted separately (RVC uses RMVPE) so the intonation survives. It is usually shifted to your typical range.</li>
+<li><b>Your voice.</b> Either a model trained on your recordings (RVC, Applio), a speaker embedding from a short reference clip (zero-shot: Seed-VC, OpenVoice, CosyVoice VC, MeanVC, Chatterbox VC), or a lookup into your reference audio (kNN-VC replaces each frame with the average of its closest matches in your recordings).</li>
+<li><b>Decoder and vocoder</b> render the waveform. RVC adds a <b>retrieval index</b> built from your training features; at inference it blends source features with the nearest stored features of your voice, pulling the timbre closer to real you.</li>
+</ol>
+<p class="small muted">Sources: RVC, Applio, kNN-VC, Seed-VC READMEs (read 2026-10-17); <a href="https://arxiv.org/abs/2411.09943">Seed-VC paper</a>. <span class="ev v">Verified</span></p>
+
+<h2>Three ways VC fits the teaching workflow</h2>
+<div class="cards">
+<div class="card d"><h4>1. Your performance, your best voice</h4><p>Record yourself reading the script quickly, on any mic, maybe on a tired day. Convert it with a model trained on your best session. You keep your own emphasis and pacing, which TTS can only guess. <span class="ev p">Practice</span></p></div>
+<div class="card b"><h4>2. Re-voice a stock TTS voice</h4><p>Generate the lesson with a stock voice whose prosody you like (for Mandarin: a native-speaker voice), then convert it to your timbre. Native pronunciation, your timbre. <span class="ev i">Inference</span></p></div>
+<div class="card a"><h4>3. Repair a single line</h4><p>A sentence in a finished video changes. Record it on your laptop mic, convert it, splice it in. ElevenLabs describes Voice Changer as "preserving the tone and delivery of the original voice", useful for fixing pronunciations. <span class="ev v">Verified</span> (ElevenLabs docs)</p></div>
+</div>
+
+<div class="callout warn"><span class="title">The accent comes from the source, not from you</span>
+<p>VC changes timbre, not pronunciation. If the source is a native Mandarin TTS voice, the result has native pronunciation in your timbre; if the source is you speaking your weaker language, your accent stays. Whether option 2 is still "you" is an ethical choice: disclose it the same way as any synthetic narration (<a href="09-legal.html">page 9</a>). <span class="ev i">Inference</span></p></div>
+
+<h2>Local and open-source tools</h2>
+<p>All GitHub figures were read via the GitHub API on 2026-10-17. "Weights licence" means the pretrained model files, which can differ from the code licence; Hugging Face model cards could not be reached during research, so weight licences marked "unverified" must be checked before commercial use.</p>
+<div class="toolbar"><input type="search" placeholder="Filter VC tools…" data-filter-for="vc-tools" aria-label="Filter VC tools"></div>
+<div class="table-wrap">
+<table id="vc-tools" data-sortable class="compact">
+<thead><tr><th>Tool</th><th>Stars</th><th>Licence (code)</th><th>Last push</th><th>Status</th><th>Needs from you</th><th>Zero-shot</th><th>Real-time</th><th data-nosort>Notes</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">RVC WebUI</a></td><td data-v="38790">38,790</td><td><span class="lic-ok">MIT</span></td><td>2026-08-04</td><td>Low-cadence maintained (release 2026-07-21)</td><td>≥10 min clean speech (README)</td><td>No</td><td>Yes, 90–170 ms</td><td>Largest community. Windows native; AMD/Intel via DirectML. Training: about 8 GB VRAM comfortable <span class="ev u">Unverified</span> (community wikis). Uses HuBERT/ContentVec and RMVPE weights whose licences need checking.</td></tr>
+<tr><td><a href="https://github.com/IAHispano/Applio">Applio</a></td><td data-v="3846">3,846</td><td><span class="lic-ok">MIT</span></td><td>2026-10-17</td><td>Active (v3.7.0, 2026-10-16)</td><td>10–30 min "clean and varied"</td><td>No</td><td>Yes</td><td>RVC fork with friendlier UI, Windows builds, NVIDIA RTX 20xx+ recommended for training. README asks commercial users to contact the team for the official build's terms.</td></tr>
+<tr><td><a href="https://github.com/ASLP-lab/MeanVC2">MeanVC2</a></td><td data-v="171">171</td><td><span class="lic-cond">Apache-2.0 per README</span> (no licence file detected)</td><td>2026-09-13</td><td>New (2026); <span class="ev x">Experimental</span></td><td>A reference clip</td><td>Yes</td><td>Yes, 110 ms</td><td>18M parameters; RTF &lt; 0.633 on a single CPU core; prebuilt CPU-only Windows .exe. The best CPU-only option found. <a href="https://aslp-lab.github.io/MeanVC2/">Demo page</a>.</td></tr>
+<tr><td><a href="https://github.com/ASLP-lab/MeanVC">MeanVC</a></td><td data-v="309">309</td><td><span class="lic-ok">Apache-2.0</span></td><td>2026-07-31</td><td>Research, 2025</td><td>A reference clip</td><td>Yes</td><td>Yes</td><td>14M parameters, streaming. <a href="https://aslp-lab.github.io/MeanVC/">Demo page</a>.</td></tr>
+<tr><td><a href="https://github.com/myshell-ai/OpenVoice">OpenVoice v2</a></td><td data-v="37911">37,911</td><td><span class="lic-ok">MIT (code + weights)</span></td><td>2025-04-19</td><td>Stale</td><td>A short clip</td><td>Yes</td><td>Unverified</td><td>README: "Free for both commercial and research use". Tone-colour converter over a base TTS; EN/ES/FR/ZH/JA/KO.</td></tr>
+<tr><td><a href="https://github.com/resemble-ai/chatterbox">Chatterbox VC</a></td><td data-v="27023">27,023</td><td><span class="lic-ok">MIT</span></td><td>2026-07-21</td><td>Maintained</td><td>A reference clip</td><td>Yes</td><td>Unverified</td><td><b>Every output carries Resemble's PerTh watermark.</b> Same repo as the Chatterbox TTS.</td></tr>
+<tr><td><a href="https://github.com/QwenAudio/CosyVoice">CosyVoice (VC mode)</a></td><td data-v="24018">24,018</td><td><span class="lic-ok">Apache-2.0</span></td><td>2026-05-25</td><td>Maintained (moved to QwenAudio org)</td><td>A reference clip</td><td>Yes</td><td>Streaming flag</td><td><code>inference_vc(source, prompt)</code> with the CosyVoice-300M model; weight licence unverified.</td></tr>
+<tr><td><a href="https://github.com/open-mmlab/Amphion">Amphion Vevo / Vevo2</a></td><td data-v="10311">10,311</td><td><span class="lic-ok">MIT (code)</span></td><td>2026-03-25</td><td>Research</td><td>A reference clip</td><td>Yes</td><td>No</td><td>Trained on Emilia (CC BY-NC 4.0): <span class="lic-no">treat weights as non-commercial until checked</span>.</td></tr>
+<tr><td><a href="https://github.com/bshall/knn-vc">kNN-VC</a></td><td data-v="526">526</td><td><span class="lic-ok">MIT</span></td><td>2026-01-16</td><td>Research</td><td>Up to ~5 min reference</td><td>Yes</td><td>No</td><td>No training at all; gains "diminish beyond 5 minutes". Good for a quick experiment.</td></tr>
+<tr><td><a href="https://github.com/Plachtaa/seed-vc">Seed-VC</a></td><td data-v="3897">3,897</td><td><span class="lic-cond">GPL-3.0</span></td><td>2025-04-20</td><td class="status-dead">Archived</td><td>1–30 s</td><td>Yes</td><td>Yes, ~430 ms</td><td>Still usable, but no fixes; copyleft if you redistribute. <a href="https://plachtaa.github.io/seed-vc/">Demo page</a>.</td></tr>
+<tr><td><a href="https://github.com/svc-develop-team/so-vits-svc">so-vits-svc</a></td><td data-v="28073">28,073</td><td><span class="lic-cond">AGPL-3.0</span></td><td>2023-11-11</td><td class="status-dead">Archived</td><td>Training set</td><td>No</td><td>-</td><td>Singing-focused. The <a href="https://github.com/voicepaw/so-vits-svc-fork">fork</a> README says "No Longer Maintained" and points to Applio.</td></tr>
+<tr><td><a href="https://github.com/RVC-Boss/GPT-SoVITS">GPT-SoVITS</a></td><td data-v="62997">62,997</td><td><span class="lic-ok">MIT (code)</span></td><td>2026-10-08</td><td>Active</td><td>5 s / 1 min</td><td>TTS: yes</td><td>-</td><td>Mainly a TTS (page 3); its to-do list lists zero-shot and few-shot VC. Whether VC is exposed in the UI: <span class="ev u">Unverified</span>.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Cloud and consumer speech-to-speech</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Service</th><th>Price (read 2026-10-17)</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><a href="https://elevenlabs.io/docs/overview/capabilities/voice-changer">ElevenLabs Voice Changer</a></td><td>API $0.12 / min <span class="ev v">Verified</span></td><td>Up to 5 min per request; models <code>eleven_multilingual_sts_v2</code> and <code>eleven_english_sts_v2</code>; target can be your instant or professional clone; optional background-noise removal.</td></tr>
+<tr><td class="status-dead">Resemble AI speech-to-speech</td><td>-</td><td>Resemble's docs now say its hosted voice products are "no longer offered as commercial paid products" (<a href="https://docs.resemble.ai/voice-archive.md">voice archive page</a>). The open-source Chatterbox VC above stays available. <span class="ev v">Verified</span> (research helper, 2026-10-17)</td></tr>
+<tr><td>Voice.ai, Voicemod</td><td>Consumer subscriptions</td><td>Real-time "voice changers" for streaming and calls; not a narration tool. Voicemod does not clone your own voice from a short sample <span class="ev u">Unverified</span>.</td></tr>
+<tr><td>Fish Audio</td><td>-</td><td>A dedicated speech-to-speech product could not be confirmed. <span class="ev u">Unverified</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Licence traps in the building blocks</h2>
+<p>A VC tool's MIT licence does not cover the pretrained pieces it downloads. For commercial output, check each one:</p>
+<ul>
+<li><b>Content encoders.</b> ContentVec repo is MIT; HuBERT base comes from fairseq (MIT, now archived). Explicit weight licence statements: <span class="ev u">Unverified</span>.</li>
+<li><b>Pitch extractor.</b> The RMVPE weights RVC downloads were trained by a repository with <b>no licence file</b>; another RMVPE implementation is Apache-2.0. <span class="ev v">Verified</span> (GitHub, 2026-10-17)</li>
+<li><b>Training data of pretrained models.</b> Emilia (used by Vevo) is CC BY-NC 4.0. A non-commercial dataset does not automatically make the weights non-commercial, but it is a risk flag. <span class="ev i">Inference</span></li>
+<li>The cleanest documented commercial chain found: Applio/RVC (MIT) + your own data; or MeanVC/MeanVC2 (Apache-2.0 per README); or OpenVoice v2 (MIT including weights per README). <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>When to choose VC over TTS</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Situation</th><th>Better choice</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Hours of routine narration from scripts</td><td>TTS clone</td><td>No performance needed; agent can run unattended.</td></tr>
+<tr><td>A key explanation where emphasis must be exactly right</td><td>VC of your own reading</td><td>Your prosody, your best timbre.</td></tr>
+<tr><td>Your weaker language</td><td>TTS cloned from a reference in that language; VC from a native stock voice as an experiment</td><td>TTS handles pronunciation; VC copies the source's accent.</td></tr>
+<tr><td>Fixing one sentence in a published video</td><td>VC, or TTS with the same reference and settings</td><td>Either matches if the settings registry (page 8) is kept.</td></tr>
+<tr><td>Live streaming in your "studio" voice</td><td>Real-time VC (RVC/Applio, MeanVC2)</td><td>90–170 ms latency is fine for streaming.</td></tr>
+</tbody>
+</table>
+</div>
+
+<p class="page-meta">Research notes: r3-vc-recording.md (2026-10-17). GitHub figures re-checked by the main agent for RVC, Applio, Seed-VC, so-vits-svc, MeanVC, MeanVC2, kNN-VC.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

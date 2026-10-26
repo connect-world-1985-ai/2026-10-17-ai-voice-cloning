@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open-source models · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 3 · The landscape</div>
+<h1>Open-source voice-cloning models</h1>
+<p class="lead">Open models now match or beat closed ones on the standard benchmark, and they keep your voice on your own machine. The catch is not quality. It is licences (many strong models forbid commercial use), hardware (most want an NVIDIA GPU), and Windows support.</p>
+
+<div class="callout key"><span class="title">Bottom line (state on 2026-10-17)</span>
+<ul>
+<li><b>Commercially clean with English, Mandarin and cross-lingual cloning</b> (Apache-2.0 or MIT for code <i>and</i> weights): <b>VoxCPM2</b>, <b>Fun-CosyVoice 3 (0.5B)</b>, <b>Qwen3-TTS</b>, <b>GPT-SoVITS</b>, <b>Chatterbox Multilingual</b>. <span class="ev v">Verified</span> (licence texts and Hugging Face tags; main agent re-checked VoxCPM, CosyVoice 3, Qwen3-TTS)</li>
+<li><b>Non-commercial weights</b>, fine for experiments but not for a paid course: F5-TTS, XTTS-v2 (its licence explicitly covers outputs), Fish Audio S2-Pro / Drama 3, Spark-TTS, MaskGCT, Llasa. <span class="ev v">Verified</span> (main agent re-read F5, XTTS, Fish licence texts)</li>
+<li><b>Easiest start on Windows</b>: GPT-SoVITS, the only one with an official one-click Windows package, and it can fine-tune on about a minute of your voice. <span class="ev v">Verified</span> (README)</li>
+<li><b>Your current PC</b> (Intel UHD graphics, no NVIDIA GPU) can run only a few of these, slowly. Plan on a 8–24 GB NVIDIA card or an hourly GPU rental; see <a href="#hardware">hardware</a> below. <span class="ev i">Inference</span></li>
+</ul></div>
+
+<h2>The recommended shortlist</h2>
+<div class="cards">
+<div class="card a"><h4>VoxCPM2 (OpenBMB)</h4><p>Apache-2.0. 2B, 30 languages, 48 kHz, ~8 GB VRAM. Highest self-reported similarity of the commercially usable models (SIM 75.3 EN / 79.5 ZH). Cross-lingual without language tags; LoRA fine-tuning; OpenAI-compatible server via vLLM-Omni. <a href="https://openbmb.github.io/voxcpm2-demopage/">Demo page</a></p></div>
+<div class="card b"><h4>Fun-CosyVoice 3 0.5B (Alibaba)</h4><p>Apache-2.0. Explicit cross-lingual mode, instructions for speed and emotion, pinyin and phoneme fixes for technical terms, 18+ Chinese dialects, FastAPI/gRPC servers. Linux-first: on Windows expect WSL2. <a href="https://funaudiollm.github.io/cosyvoice3/">Demo page</a></p></div>
+<div class="card c"><h4>Qwen3-TTS 1.7B (Alibaba Qwen)</h4><p>Apache-2.0. Clones from 3 s plus transcript; very low self-reported error rates; about 5–6 GB VRAM (secondary). Repository quiet since 2026-03-17. Use 1.7B rather than 0.6B for long narration (secondary report).</p></div>
+<div class="card d"><h4>GPT-SoVITS</h4><p>MIT. Official Windows one-click package, built-in slicing, ASR and labelling tools, fine-tune on ~1 minute or more of your recordings. Strong Chinese heritage. The path if zero-shot is not "you" enough.</p></div>
+</div>
+<p><b>Also worth a look:</b> <b>IndexTTS-2.5</b> (bilibili) has the best self-reported cross-lingual similarity and fine control of duration and emotion; its licence is royalty-free below 100 million monthly users or RMB 1 billion revenue, but its README says to contact bilibili for commercial use, so ask before launching a paid product. <b>Chatterbox</b> (MIT) is the simplest install, but every output carries an inaudible watermark and its accent leaks when the reference language differs from the target. <span class="ev v">Verified</span></p>
+
+<h2>Comparison of the main models</h2>
+<p>The full list, with cloud services and voice-conversion tools, is in the <a href="05-explorer.html">tool explorer</a>.</p>
+<div class="toolbar"><input type="search" placeholder="Filter models… (e.g. Apache, non-commercial, Windows)" data-filter-for="open" aria-label="Filter open models"></div>
+<div class="table-wrap">
+<table id="open" data-sortable class="compact">
+<thead><tr><th>Model</th><th>Weights licence</th><th>Commercial</th><th>SIM EN</th><th>SIM ZH</th><th>Cross-lingual</th><th>VRAM</th><th>Windows</th><th>Stars</th><th>Last push</th></tr></thead>
+<tbody>
+<tr><td><a href="https://github.com/OpenBMB/VoxCPM">VoxCPM2</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>75.3</td><td>79.5</td><td>Yes</td><td data-v="8">~8 GB</td><td>pip</td><td data-v="39459">39,459</td><td>2026-10-08</td></tr>
+<tr><td><a href="https://github.com/QwenAudio/CosyVoice">Fun-CosyVoice 3 0.5B</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>71.8</td><td>78.0</td><td>Yes (mode)</td><td data-v="99">not stated</td><td>WSL2 likely</td><td data-v="24018">24,018</td><td>2026-05-25</td></tr>
+<tr><td><a href="https://github.com/QwenLM/Qwen3-TTS">Qwen3-TTS 1.7B</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>71.7</td><td>77.0</td><td>Yes</td><td data-v="6">~5–6 GB <small>(secondary)</small></td><td>pip</td><td data-v="13829">13,829</td><td>2026-03-17</td></tr>
+<tr><td><a href="https://github.com/RVC-Boss/GPT-SoVITS">GPT-SoVITS</a></td><td>MIT</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>-</td><td>-</td><td>Yes</td><td data-v="99">not stated</td><td><b>one-click</b></td><td data-v="62997">62,997</td><td>2026-10-08</td></tr>
+<tr><td><a href="https://github.com/resemble-ai/chatterbox">Chatterbox Multilingual V3</a></td><td>MIT (watermarked output)</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>-</td><td>-</td><td>Partial (accent leaks)</td><td data-v="99">not stated</td><td>pip</td><td data-v="27023">27,023</td><td>2026-07-21</td></tr>
+<tr><td><a href="https://github.com/index-tts/index-tts">IndexTTS2 / 2.5</a></td><td>bilibili Model Use License</td><td data-v="2"><span class="lic-cond">Conditional</span></td><td>70.6</td><td>76.5</td><td>Yes (best zh→en)</td><td data-v="8">≥8 GB</td><td>uv install</td><td data-v="24536">24,536</td><td>2026-09-29</td></tr>
+<tr><td><a href="https://github.com/boson-ai/higgs-audio">Higgs TTS 3</a></td><td>Non-commercial + Creator Use Grant</td><td data-v="2"><span class="lic-cond">Conditional</span></td><td>-</td><td>-</td><td>Yes</td><td data-v="99">not stated (4B)</td><td>unverified</td><td data-v="8371">8,371</td><td>2026-06-05</td></tr>
+<tr><td><a href="https://github.com/FireRedTeam/FireRedTTS2">FireRedTTS-2</a></td><td>Apache-2.0</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>66.5</td><td>73.6</td><td>Yes (weak)</td><td data-v="9">9 GB</td><td>unverified</td><td data-v="1432">1,432</td><td>2025-10-26</td></tr>
+<tr><td><a href="https://github.com/myshell-ai/OpenVoice">OpenVoice V2</a></td><td>MIT</td><td data-v="1"><span class="lic-ok">Yes</span></td><td>-</td><td>-</td><td>Yes</td><td data-v="4">low</td><td>unverified</td><td data-v="37911">37,911</td><td>2025-04-19</td></tr>
+<tr><td><a href="https://github.com/bytedance/MegaTTS3">MegaTTS3</a></td><td>Apache-2.0, encoder withheld</td><td data-v="2"><span class="lic-cond">Impractical</span></td><td>77.1</td><td>79.0</td><td>Yes</td><td data-v="99">not stated</td><td>testing</td><td data-v="6098">6,098</td><td>2026-06-15</td></tr>
+<tr><td><a href="https://github.com/fishaudio/fish-speech">Fish Audio S2-Pro / Drama 3</a></td><td>Fish Audio Research License</td><td data-v="4"><span class="lic-no">No</span></td><td>-</td><td>-</td><td>Yes</td><td data-v="24">large (4B / MoE)</td><td>unverified</td><td data-v="33228">33,228</td><td>2026-10-14</td></tr>
+<tr><td><a href="https://github.com/SWivid/F5-TTS">F5-TTS</a></td><td>CC-BY-NC-4.0</td><td data-v="4"><span class="lic-no">No</span></td><td>67.0</td><td>76.0</td><td>unverified</td><td data-v="2">~2 GB <small>(secondary)</small></td><td>pip</td><td data-v="15415">15,415</td><td>2026-10-14</td></tr>
+<tr><td><a href="https://github.com/k2-fsa/OmniVoice">OmniVoice</a></td><td>Unclear (see below)</td><td data-v="3"><span class="lic-cond">Unclear</span></td><td>-</td><td>-</td><td>Yes</td><td data-v="99">not stated</td><td>unverified</td><td data-v="14682">14,682</td><td>2026-10-12</td></tr>
+<tr><td><a href="https://github.com/idiap/coqui-ai-TTS">XTTS-v2 (idiap fork)</a></td><td>Coqui Public Model License</td><td data-v="4"><span class="lic-no">No (incl. outputs)</span></td><td>-</td><td>-</td><td>Yes</td><td data-v="99">not stated</td><td>Windows wheels</td><td data-v="2337">2,337</td><td>2026-10-16</td></tr>
+<tr><td><a href="https://github.com/SparkAudio/Spark-TTS">Spark-TTS</a></td><td>CC-BY-NC-SA-4.0</td><td data-v="4"><span class="lic-no">No</span></td><td>57.3</td><td>66.0</td><td>Yes</td><td data-v="99">-</td><td>guide in issue</td><td data-v="10984">10,984</td><td>2025-04-09</td></tr>
+<tr><td><a href="https://github.com/open-mmlab/Amphion">MaskGCT</a></td><td>CC-BY-NC-4.0</td><td data-v="4"><span class="lic-no">No</span></td><td>71.7</td><td>77.4</td><td>Yes</td><td data-v="99">-</td><td>unverified</td><td data-v="10311">10,311</td><td>2026-03-25</td></tr>
+<tr><td><a href="https://github.com/microsoft/VibeVoice" class="status-dead">VibeVoice TTS</a></td><td>MIT, TTS code withdrawn</td><td data-v="4"><span class="lic-no">Research only</span></td><td>68.9</td><td>74.4</td><td>Yes</td><td data-v="99">-</td><td>-</td><td data-v="54856">54,856</td><td>2026-10-08</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">SIM = Seed-TTS-eval speaker similarity ×100, self-reported by model authors (VoxCPM and CosyVoice README tables, 2026-10-17); human recordings score 73.4 EN / 75.5 ZH. GitHub figures via the GitHub API on 2026-10-17. VRAM figures are official only for VoxCPM and FireRedTTS-2. <span class="ev v">Verified</span> (as published)</p>
+
+<h2>Benchmarks: what they say and what they do not</h2>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Model</th><th>EN WER %</th><th>EN SIM</th><th>ZH CER %</th><th>ZH SIM</th><th>Hard ZH CER %</th><th>zh→en WER % / SIM</th></tr></thead>
+<tbody>
+<tr><td>Seed-TTS (closed reference)</td><td>2.25</td><td>76.2</td><td>1.12</td><td>79.6</td><td>7.59</td><td>-</td></tr>
+<tr><td>VoxCPM2</td><td>1.84</td><td>75.3</td><td>0.97</td><td>79.5</td><td>8.13</td><td data-v="4.48">4.48 / 64.3</td></tr>
+<tr><td>Qwen3-TTS 1.7B</td><td>1.23</td><td>71.7</td><td>1.22</td><td>77.0</td><td>6.76</td><td data-v="5.74">5.74 / 63.0</td></tr>
+<tr><td>Fun-CosyVoice 3 0.5B</td><td>2.24</td><td>71.8</td><td>1.21</td><td>78.0</td><td>6.71</td><td data-v="3.23">3.23 / 62.8</td></tr>
+<tr><td>IndexTTS2 (2.5-RL for zh→en)</td><td>2.23</td><td>70.6</td><td>1.03</td><td>76.5</td><td>7.12</td><td data-v="3.55">3.55 / 67.5</td></tr>
+<tr><td>Fish Audio S2-Pro</td><td>0.99</td><td>-</td><td>0.54</td><td>-</td><td>5.99</td><td data-v="4.14">4.14 / 55.9</td></tr>
+<tr><td>F5-TTS</td><td>2.00</td><td>67.0</td><td>1.53</td><td>76.0</td><td>8.67</td><td>-</td></tr>
+<tr><td>Higgs Audio v2</td><td>2.44</td><td>67.7</td><td>1.50</td><td>74.0</td><td>55.07</td><td>-</td></tr>
+<tr><td>Human recordings</td><td>2.14</td><td>73.4</td><td>1.26</td><td>75.5</td><td>-</td><td>-</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Seed-TTS-eval columns as compiled in the VoxCPM README (CosyVoice rows from the CosyVoice README); zh→en column from the CV3-Eval table compiled by the IndexTTS team. All self-reported or compiled by a competitor, read 2026-10-17. Qwen3-TTS's own README reports 1.24 EN / 0.77 ZH, a conflict between runs. <span class="ev v">Verified</span> (as published)</p>
+<div class="callout think"><span class="title">Reading the benchmarks</span>
+<ul>
+<li><b>Error rates no longer separate the top models</b>: almost all are at or below human level on read sentences. Similarity and your own listening matter more. <span class="ev i">Inference</span></li>
+<li><b>Cross-lingual similarity drops</b> by about 10 points for every model (zh→en SIM 56–68 versus 71–80 within one language). Expect your "other language" voice to sound less like you. No English→Chinese numbers were found. <span class="ev v">Verified</span> (CV3 table) · interpretation <span class="ev i">Inference</span></li>
+<li><b>Arenas with listener votes are English-only and mostly use stock voices.</b> On the independent cloned-voice board, the best open models listed rank far below the top cloud services (Chatterbox 930, XTTS-v2 830 versus Eleven v4 1159). Most of the shortlist above is not on that board at all. <span class="ev v">Verified</span></li>
+</ul></div>
+
+<h2 id="licences">Licence traps</h2>
+<ul>
+<li><b>Code licence ≠ weights licence.</b> F5-TTS: "Our code is released under MIT License. The pre-trained models are licensed under the CC-BY-NC license due to the training data Emilia". The same pattern applies to Spark-TTS, MaskGCT and others. <span class="ev v">Verified</span> (main agent re-read the README)</li>
+<li><b>XTTS-v2 covers outputs explicitly</b>: "This license allows only non-commercial use of a machine learning model and its outputs." Coqui has closed, so there is no one to buy a commercial licence from. <span class="ev v">Verified</span> (licence text)</li>
+<li><b>Fish Audio: the code licence is not the weights licence.</b> The code licence allows commercial use "only while Your Annual Revenue is less than USD 500,000", but the S2-Pro weights licence says "No commercial rights are granted under this Agreement." <span class="ev v">Verified</span> (both texts)</li>
+<li><b>IndexTTS</b>: royalty-free use, a separate licence above 100 million monthly active users or RMB 1 billion annual revenue, and a ban on using it or its outputs "to improve any AI model, except … non-commercial AI models". The README adds "For commercial usage and cooperation, please contact". For an individual's course the text appears to allow it; confirm by email. <span class="ev v">Verified</span> (licence text) · reading <span class="ev i">Inference</span></li>
+<li><b>OmniVoice: unclear.</b> A research helper reported a non-commercial weights statement in the README; the main agent found no such statement in the current README on 2026-10-17; the repository is Apache-2.0, the Hugging Face card has no licence tag, and it was trained partly on Emilia (non-commercial). Treat it as non-commercial until clarified. <span class="ev u">Unverified</span></li>
+<li><b>Higgs TTS 3</b>: research and non-commercial, plus a Creator Use Grant allowing monetised videos and podcasts on <i>channels you own</i> if you credit "Boson AI's Higgs Audio". A course on a platform you do not own is unclear. <span class="ev v">Verified</span> (helper read the licence)</li>
+<li><b>Whether non-commercial terms reach the audio you generate</b> is legally debated. The conservative reading: if commercial use is possible, use only "Yes" models. <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>Withdrawn, stale and limited</h2>
+<ul>
+<li><b>VibeVoice TTS (Microsoft)</b>: "we have removed the VibeVoice-TTS code from this repository" (2025-09-05), after misuse; README: "intended for research and development purposes only". Only community forks remain. Avoid for a long-term pipeline. <span class="ev v">Verified</span> (main agent re-read the README)</li>
+<li><b>Coqui TTS</b>: the original repository has been unmaintained since 2024-08; the <a href="https://github.com/idiap/coqui-ai-TTS">idiap fork</a> (<code>coqui-tts</code>, Windows wheels) is maintained. <span class="ev v">Verified</span></li>
+<li><b>MegaTTS3</b>: Apache-2.0, but the voice encoder is not released; you must upload a sample to a Google Drive folder to get usable voice latents. That defeats the point of a private local clone. <span class="ev v">Verified</span> (README)</li>
+<li><b>No Chinese, or no cloning</b>: Kyutai Pocket TTS (CPU-first, English and European languages), Sesame CSM, Dia2 and Orpheus (English-centric), Kokoro (excellent but preset voices only). <span class="ev v">Verified</span></li>
+<li><b>Stale</b> (no push for 12+ months): Spark-TTS, Zonos, OpenVoice V2, StyleTTS 2, Sesame CSM. <span class="ev v">Verified</span> (GitHub API)</li>
+</ul>
+
+<h2 id="hardware">Hardware: what runs where</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Setup</th><th>What is realistic</th></tr></thead>
+<tbody>
+<tr><td><b>Your PC today</b>: Intel UHD graphics, 64 GB RAM</td><td>CPU only. GPT-SoVITS has a CPU install option (self-reported RTF 0.53 on an Apple M4 CPU; x86 laptop CPUs are likely slower). Chatterbox runs on CPU. VoxCPM has a GGUF build (RTF ~1.8 on an M4 Pro, so slower than real time). MeanVC2 voice conversion ships a CPU-only Windows .exe. Expect minutes of compute per minute of audio. <span class="ev u">Unverified</span> on x86</td></tr>
+<tr><td><b>8 GB NVIDIA</b> (e.g. RTX 4060)</td><td>VoxCPM2 (~8 GB, tight), Qwen3-TTS 1.7B, GPT-SoVITS, Chatterbox; IndexTTS2 borderline. <span class="ev v">Verified</span> (VoxCPM) · others <span class="ev u">Unverified</span></td></tr>
+<tr><td><b>12–16 GB</b></td><td>All of the shortlist comfortably, plus FireRedTTS-2 (9 GB). <span class="ev i">Inference</span></td></tr>
+<tr><td><b>24 GB</b> (RTX 3090 / 4090)</td><td>Everything here, including 4B models (Fish S2-Pro, Higgs TTS 3) for evaluation. <span class="ev i">Inference</span></td></tr>
+<tr><td><b>Rented GPU</b></td><td>On 2026-10-17 RunPod listed an RTX 3090 (24 GB) at $0.50/h, an L4 (24 GB) at $0.59/h and an RTX 4090 (24 GB) at $0.89/h. At a real-time factor of 0.3, one hour of narration needs about 20 minutes of GPU time plus setup and re-takes. <span class="ev v">Verified</span> (prices) · runtime <span class="ev i">Inference</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">Speed figures are self-reported on high-end GPUs (VoxCPM2 RTF ~0.30 on an RTX 4090; IndexTTS2.5 0.21; GPT-SoVITS v2ProPlus 0.014). Your numbers will differ.</p>
+
+<h2>Listen before you install</h2>
+<p>Official demo pages with audio samples (licences for the samples were not stated, so they are linked, not embedded):</p>
+<ul>
+<li><a href="https://openbmb.github.io/voxcpm2-demopage/">VoxCPM2 demo</a> · <a href="https://funaudiollm.github.io/cosyvoice3/">CosyVoice 3 demo</a> · <a href="https://qwen.ai/blog?id=qwen3tts-0115">Qwen3-TTS blog</a></li>
+<li><a href="https://index-tts.github.io/index-tts2-5.github.io/">IndexTTS-2.5 demo</a> · <a href="https://resemble-ai.github.io/chatterbox_demopage/">Chatterbox demo</a> · <a href="https://lj1995-gpt-sovits-proplus.hf.space/">GPT-SoVITS Hugging Face Space</a></li>
+<li><a href="https://swivid.github.io/F5-TTS/">F5-TTS demo</a> · <a href="https://zhu-han.github.io/omnivoice">OmniVoice demo</a> · <a href="https://sparkaudio.github.io/spark-tts/">Spark-TTS demo</a> · <a href="https://fireredteam.github.io/demos/firered_tts_2/">FireRedTTS-2 demo</a></li>
+</ul>
+<p>Demo pages show each model at its best, with clean reference clips chosen by the authors. They tell you the ceiling, not how your voice will sound. <span class="ev i">Inference</span></p>
+
+<p class="page-meta">Research note: r2-open-source.md (2026-10-17); licence claims for F5-TTS, VoxCPM, IndexTTS, VibeVoice, Fish, XTTS-v2, CosyVoice 3, Qwen3-TTS and OmniVoice re-checked by the main agent the same day.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

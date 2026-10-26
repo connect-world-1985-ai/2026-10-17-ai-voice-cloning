@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legal, ethics &amp; safety · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 9 · Doing it well</div>
+<h1>Legal, ethics and safety</h1>
+<p class="lead">Cloning your <i>own</i> voice is legal almost everywhere. The questions that remain are: what you must tell your audience, what you hand over to the vendor, how you keep the clone from being used against you, and where the line is with other people's voices.</p>
+
+<div class="callout warn"><span class="title">Not legal advice</span>
+These are research notes for a tutorial, read on 2026-10-17. Laws differ by country and change often. For paid courses, company training, or anything involving other people's voices, check with a qualified lawyer and, in a company, with the data protection officer and works council.</div>
+
+<div class="callout key"><span class="title">Bottom line</span>
+<ol>
+<li><b>Disclose every time.</b> One spoken sentence at the start ("This narration uses an AI-generated version of my voice"), a visible label on video, and a line in the description. That covers the EU AI Act, Chinese rules, TikTok, Udemy and LinkedIn at almost no cost. <span class="ev i">Inference</span></li>
+<li><b>Read the licence you grant the vendor.</b> ElevenLabs, Cartesia and Fish Audio take broad, mostly perpetual licences to your recordings; Microsoft says it does not train on them. <span class="ev v">Verified</span></li>
+<li><b>Turn off voice-ID at your bank</b> once a clone of you exists (or once you have published a lot of clean audio). <span class="ev i">Inference</span>, based on documented bypasses</li>
+<li><b>Never clone anyone else</b> without explicit, written, purpose-specific consent. <span class="ev v">Verified</span> (vendor policies, court cases)</li>
+</ol></div>
+
+<h2 id="own-voice">Rights in your own voice</h2>
+<div class="cards">
+<div class="card a"><h4>EU: GDPR</h4><p>Your voice is personal data. The EDPB calls voice data "inherently biometric"; processing it to <i>identify</i> you is special-category data under Art. 9. Whether a TTS voice model (built to generate, not identify) is Art. 9 data is unsettled; Resemble treats it as such. Safest: treat clone data as sensitive. <span class="ev v">Verified</span> · classification <span class="ev i">Inference</span></p></div>
+<div class="card b"><h4>Germany</h4><p>No special voice statute; the voice is protected by the general personality right. <b>LG Berlin II, 20 Aug 2025 (2 O 202/24)</b>: an AI imitation of a well-known dubbing voice in commercial YouTube videos was treated like a human impersonation; €4,000 notional licence fee. <span class="ev u">Unverified</span> (secondary reports of the judgment)</p></div>
+<div class="card c"><h4>China</h4><p><b>Beijing Internet Court, 23 Apr 2024</b>: a person's voice rights extend to an AI voice that the public can identify by timbre, intonation and style. Owning the copyright in recordings did <i>not</i> include the right to clone the voice. ¥250,000 damages. <span class="ev v">Verified</span> (court's English page)</p></div>
+<div class="card d"><h4>United States</h4><p>Right of publicity is state law. Tennessee's <b>ELVIS Act</b> (in force 1 Jul 2024) explicitly protects voice, including simulations. The federal <b>NO FAKES Act</b> is <b>not law</b>: stalled in the Senate after an objection on 30 Sep 2026. <span class="ev v">Verified</span> (Act text, Congress.gov) · stall <span class="ev u">Unverified</span> (press)</p></div>
+</div>
+<div class="callout think"><span class="title">Two practical lessons</span>
+<ul>
+<li><b>A recording contract is not a cloning licence</b> (Beijing case). Do not build your clone from studio or employer recordings someone else holds rights to; record a dedicated set yourself (<a href="06-recording.html">page 6</a>). <span class="ev i">Inference</span></li>
+<li><b>If the clone is made at work, for company training, on company accounts, the company is the deployer and the data controller.</b> Agree in writing: scope, duration, who may generate audio with it, and deletion when you leave. <span class="ev i">Inference</span></li>
+</ul></div>
+
+<h2 id="eu-ai-act">EU AI Act Article 50: is your narration a "deep fake"?</h2>
+<h3>The rules and dates</h3>
+<ul>
+<li><b>Art. 50(4)</b>: deployers of an AI system that generates audio "constituting a deep fake" must disclose that it is artificially generated. <b>Art. 3(60)</b> defines a deep fake as AI-generated audio (or image, video) that "resembles existing persons … and would falsely appear to a person to be authentic or truthful". <span class="ev v">Verified</span></li>
+<li><b>Applies from 2 August 2026.</b> The Digital Omnibus (in force 27 Jul 2026) delayed only the <i>provider</i> duty to machine-mark outputs (Art. 50(2)) to 2 December 2026, and only for systems already on the market. <b>The deployer disclosure duty was not delayed.</b> <span class="ev v">Verified</span> (Commission FAQ, 24 Jul 2026, read by the main agent)</li>
+<li><b>Personal use is excluded, but "professional" is broad.</b> The Commission's guidelines say any activity giving "an economic benefit on a regular basis" counts as professional. A monetised channel or a paid course is professional. <span class="ev v">Verified</span></li>
+<li><b>Machine-readable marks are not enough for deployers</b>; the disclosure must be perceivable by people. Fines up to €15 M or 3 % of worldwide turnover. <span class="ev v">Verified</span></li>
+</ul>
+
+<h3>Applying it to a tutorial in your own voice</h3>
+<ol class="stepper">
+<li><b>Resembles an existing person?</b> Yes, that is the point of a clone. The Commission's guidelines (20 Jul 2026) name "voice" explicitly.</li>
+<li><b>Would it falsely appear authentic?</b> This is the deciding question. Authenticity covers the "creation process (including … the involvement of real human beings)". A listener who hears your voice assumes you recorded it, even when every word is yours. The guidelines' closest example, <i>a newspaper podcast with cloned voices of its regular presenters</i>, is classed as a deep fake; so is <i>a synthetic CEO avatar congratulating employees</i>, so internal company content is not exempt.</li>
+<li><b>Exceptions?</b> The creative/artistic exception excludes content that is mainly "informative or commercial", which tutorials are. The human-review exception exists only for text.</li>
+<li><b>Counter-argument.</b> The guidelines say voice replication for fictional narrators is <i>not</i> a deep fake "when there is no deception as to the identity of the narrators". If your audience knows the narration is synthetic, there is no false appearance; the disclosure itself creates that knowledge.</li>
+</ol>
+<div class="callout key"><span class="title">Practical reading</span>
+Treat cloned-voice tutorials published to EU audiences as Art. 50(4) deep fakes and disclose. The final <b>Code of Practice on transparency</b> (10 Jun 2026) recommends, for audio-only content, "a short audible disclaimer in plain and simple natural language … at the beginning", in the content's language or English; for video, the EU "AI" icon or equivalent. <span class="ev i">Inference</span> (no authority has ruled on someone cloning <i>themselves</i>) · Code text <span class="ev v">Verified</span> (research helper)</div>
+
+<h2 id="platforms">Platform rules</h2>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Platform</th><th>Rule for a clone of <i>your own</i> voice</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>YouTube</td><td>"Cloning one's own voice to create voice overs or dubs" is listed as <b>not needing disclosure</b>. Disclosure is needed when AI makes a real person appear to say something they did not. May auto-label content with C2PA metadata.</td><td><span class="ev v">Verified</span> (main agent read the help page)</td></tr>
+<tr><td>TikTok</td><td>Label required for AI content with realistic images, <b>audio</b> or video. Auto-labels C2PA content; labels cannot be removed after posting.</td><td><span class="ev v">Verified</span></td></tr>
+<tr><td>Udemy</td><td>AI narration allowed, but not "entirely AI-generated" courses. The course description must <b>begin</b> with: "This course contains the use of artificial intelligence."</td><td><span class="ev v">Verified</span></td></tr>
+<tr><td>LinkedIn</td><td>No synthetic media depicting a person saying something they did not say "without clearly disclosing" it. Shows C2PA Content Credentials.</td><td><span class="ev v">Verified</span></td></tr>
+<tr><td>Coursera</td><td>No public instructor rule found. Coursera itself AI-dubs instructors in their own voice, with a note to learners.</td><td><span class="ev u">Unverified</span></td></tr>
+<tr><td>Bilibili, Douyin, WeChat Channels</td><td>Chinese national labelling rules apply (below); users must self-declare AI content.</td><td><span class="ev v">Verified</span> (law)</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small">YouTube's exemption is a platform policy; it does not remove an EU legal duty. Switching YouTube's "altered or synthetic content" toggle on voluntarily, or saying it in the audio, covers both. <span class="ev i">Inference</span></p>
+
+<h2 id="china">China: labelling rules for Mandarin content</h2>
+<ul>
+<li><b>Measures for Labeling AI-Generated Synthetic Content</b> (人工智能生成合成内容标识办法), effective <b>1 September 2025</b>. Audio needs an explicit label: a spoken notice or an audio-rhythm cue at the start, end or a suitable middle point; files also carry an implicit label in metadata. <b>Art. 10: users publishing AI content must proactively declare it</b> and use the platform's labelling function. <span class="ev v">Verified</span> (CAC text)</li>
+<li>The companion national standard (GB 45438-2025, read in its draft form) says a spoken label should contain "人工智能" or "AI" plus "生成" and/or "合成"; the rhythm cue is "短长 短短" (Morse code for "AI"). <span class="ev u">Unverified</span> (draft text on a secondary host)</li>
+<li>The 2023 Deep Synthesis Provisions require separate consent before editing someone's voice, and conspicuous labels for voice imitation that may confuse the public. <span class="ev v">Verified</span></li>
+<li>A suitable opening line: "本课程旁白使用人工智能合成的本人声音。" (This course's narration uses an AI-synthesised version of my own voice.) <span class="ev i">Inference</span></li>
+</ul>
+
+<h2 id="vendor-terms">What you hand over to the vendor</h2>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Vendor</th><th>Your outputs</th><th>Licence you grant / training</th><th>Deletion &amp; retention</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs<br><small>terms 9 Oct 2026</small></td><td>"you retain all rights in and to your Output". Free plan non-commercial.</td><td><b>"Perpetual and irrevocable"</b>, worldwide licence to your content, including "your voice", to improve services and develop new products; they will not "commercialize your voice on a standalone basis without your permission". Training opt-out in settings, forward only.</td><td>Delete voice models in the account; voice-derived data kept up to 3 years after your last interaction; backups up to 30 days. Zero retention is Enterprise only.</td></tr>
+<tr><td>Microsoft Azure</td><td>"exclusive usage rights" to your voice model.</td><td>Training data "isn't used by Microsoft to train or improve any Microsoft text to speech voice models". Microsoft may keep a copy for security and integrity.</td><td>Prompt audio deletable via API; consent data kept "as long as necessary".</td></tr>
+<tr><td>Google</td><td>Vertex Pre-GA terms allow commercial use.</td><td>Gemini API free tier: content used to improve products; paid tier: not.</td><td>Stored voices kept 1 year after last use; stateless voice keys valid 7 days. Chirp 3 clone-specific terms <span class="ev u">Unverified</span>.</td></tr>
+<tr><td>Cartesia</td><td>Claims no ownership of outputs.</td><td>Trains on inputs and outputs by default under a perpetual licence; opt-out form, forward only.</td><td>Zero data retention "is not available for voice cloning".</td></tr>
+<tr><td>Fish Audio</td><td>Paid: commercial. Free: ToS says non-commercial, pricing page says "Commercial use allowed" (conflict).</td><td>Content may be used to train models; perpetual, irrevocable licence to submissions.</td><td>Complete deletion "may not be possible". Check your clone is private, not a public voice.</td></tr>
+<tr><td>MiniMax</td><td>You own output IP; base licence non-commercial unless paid terms say otherwise.</td><td>Licence to use input and output for product improvement <i>and brand promotion</i>.</td><td><span class="ev u">Unverified</span></td></tr>
+<tr><td>Open-source, run locally</td><td>Depends on the weights licence (<a href="03-open-source.html">page 3</a>).</td><td>Nothing leaves your machine.</td><td>Entirely your responsibility.</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Vendor terms as fetched on 2026-10-17 by a research helper; ElevenLabs quotations re-read on the Terms of Use page dated 9 Oct 2026. Fish (dated 2024-08-18) and Cartesia (2024-06-14) terms may be stale. <span class="ev v">Verified</span> unless marked.</p>
+<div class="callout think"><span class="title">The pattern</span>
+You usually keep the outputs. The vendor usually gets a broad, often perpetual licence to your recordings. "Delete my voice" removes the model from your account; <b>it does not undo past training</b>. If that matters to you, choose Azure, a vendor with zero retention, or a local model. <span class="ev i">Inference</span></div>
+
+<h2 id="watermarks">Watermarking and provenance</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Technology</th><th>What it is</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Google SynthID (audio)</td><td>Inaudible watermark; also used inside ElevenLabs audio</td><td>Detector portal opened to everyone on 7 Oct 2026. <span class="ev v">Verified</span> (Google blog, helper)</td></tr>
+<tr><td>Resemble PerTh</td><td>Neural watermark; on every Chatterbox output</td><td>Vendor: "No watermark is unconditionally unremovable". A competitor's tests defeat it with a notch filter. <span class="ev u">Unverified</span> (competitor)</td></tr>
+<tr><td>Meta AudioSeal</td><td>Open-source, sample-level watermark</td><td>MIT including weights since 2 Apr 2024; you can add it to your own output. <span class="ev v">Verified</span></td></tr>
+<tr><td>Azure Personal Voice</td><td>Automatic watermark identifying the voice</td><td>Detection only for eligible customers; vendor claims &gt; 99.7 %.</td></tr>
+<tr><td>C2PA Content Credentials</td><td>Signed provenance <i>metadata</i>, not a watermark</td><td>WAV, MP3, FLAC, M4A supported; stripped by re-encoding. Read by YouTube, TikTok, LinkedIn.</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>No watermark survives every attack.</b> A 2025 systematisation study (<a href="https://arxiv.org/abs/2503.19176">arXiv 2503.19176</a>) tested 9 open schemes against 109 attack configurations: "None of the surveyed watermarking schemes is robust enough to withstand all tested distortions". RAW-Bench (<a href="https://arxiv.org/abs/2505.19663">arXiv 2505.19663</a>) found neural codecs the hardest attack. Watermarks help honest attribution; they do not stop an impersonator, which is why the human-perceivable disclosure matters. <span class="ev v">Verified</span> (paper abstracts)</p>
+
+<h2 id="security">Protecting your voice data</h2>
+<p>Modern zero-shot models need 5–30 seconds of clean audio. Your clean training set, your local fine-tuned model, a Google voice-cloning key or an Azure speaker profile ID is a <b>ready-made impersonation kit</b>. <span class="ev i">Inference</span></p>
+<ul>
+<li><b>Storage</b>: encrypted at rest (BitLocker on Windows); never in a git repository, a public cloud folder or on Hugging Face. <span class="ev p">Practice</span></li>
+<li><b>Access</b>: separate vendor account with passkey or app-based MFA; API keys and voice keys in a secret manager, rotated. <span class="ev p">Practice</span></li>
+<li><b>Vendor settings on day 1</b>: opt out of training, keep the clone private, use a paid tier where the free tier trains on your data. <span class="ev v">Verified</span> (settings exist as described)</li>
+<li><b>When you stop</b>: delete the model, history and uploaded samples at the vendor; send a GDPR Art. 17 erasure request if needed; delete local copies. <span class="ev p">Practice</span></li>
+<li>Reports of a large 2026 "ElevenLabs breach" on low-quality sites were not confirmed by any primary source and are excluded here. <span class="ev u">Unverified</span></li>
+</ul>
+
+<h2 id="bank-voice-id">Bank voice-ID is broken</h2>
+<ul>
+<li><b>Feb 2023</b>: a Vice journalist cloned his own voice with a free tool and got into his Lloyds Bank phone account via "Voice ID" (after several attempts; date of birth also required). <span class="ev v">Verified</span> (article)</li>
+<li><b>22 Jul 2025</b>: Sam Altman at a Federal Reserve conference: institutions still accepting a voice print to move money is "a crazy thing to still be doing. AI has fully defeated that." <span class="ev v">Verified</span> (Fed transcript)</li>
+<li><b>Nov 2024</b>: FinCEN alert on deepfake media used to bypass identity verification; <b>May 2025</b>: FBI warning about AI voice messages impersonating senior US officials. <span class="ev v">Verified</span></li>
+<li>HSBC UK and Barclays still offer voice ID (Barclays: "you can switch it off at any time"); AWS ended Amazon Connect Voice ID on 20 May 2026. <span class="ev v">Verified</span></li>
+</ul>
+<div class="callout key"><span class="title">Do this</span>
+Switch off voice-ID at banks, telcos and company helpdesks; use app, passkey or PIN authentication. Agree a family and team "safe word" or call-back rule. Tell your company's finance and IT teams that your voice is now easy to synthesise. <span class="ev i">Inference</span></div>
+
+<h2 id="not-allowed">What is not allowed</h2>
+<ul>
+<li><b>Cloning anyone without consent.</b> Every vendor forbids it (ElevenLabs: "without their explicit and informed consent"); Azure, Google and OpenAI enforce it with a recorded consent statement. It can infringe personality rights (Berlin 2025, Beijing 2024, ELVIS Act) and breach GDPR. <span class="ev v">Verified</span></li>
+<li><b>Germany, pending</b>: draft § 201b StGB (cabinet 7 Oct 2026) would criminalise distributing deceptive deep fakes that seriously damage someone's reputation; consent makes it lawful. <b>Not yet law.</b> <span class="ev v">Verified</span> (ministry press release)</li>
+<li><b>Colleagues' voices for company training</b>: in Germany, employee consent must be in writing or electronic, with a notice of purpose and withdrawal (§ 26 BDSG), and German data protection authorities see consent in employment as rarely valid. Plan for withdrawal and for the person leaving. <span class="ev v">Verified</span> (law text)</li>
+<li><b>US robocalls</b>: AI voices count as "artificial or prerecorded voice" under the TCPA (FCC, Feb 2024); calls need prior consent. <span class="ev v">Verified</span></li>
+<li><b>Vendor policies</b> also forbid impersonating officials or candidates, political campaigning without written consent, fraud, removing watermarks, and samples of minors (ElevenLabs Prohibited Use Policy, 9 Oct 2026). <span class="ev v">Verified</span></li>
+</ul>
+
+<h2 id="checklist">Checklist</h2>
+<ol>
+<li>Decide whose content it is: yours (you are deployer and controller) or your employer's (get it in writing).</li>
+<li>Use a paid plan for commercial use; opt out of training on day 1; read the licence you grant.</li>
+<li>Record a dedicated set yourself, for this purpose only.</li>
+<li>Encrypt and protect the recordings, models and keys like passwords.</li>
+<li>Disclose every time: spoken line at the start, visible label, description line; Udemy's exact sentence; Chinese 声明 on Chinese platforms.</li>
+<li>Keep vendor watermarks and C2PA metadata intact; optionally add AudioSeal.</li>
+<li>Never clone anyone else without written, purpose-specific consent.</li>
+<li>Turn off voice-ID; set up a safe word; brief finance and IT.</li>
+<li>When you stop: delete at the vendor, request erasure, delete local copies.</li>
+<li>Watch: § 201b StGB, NO FAKES Act, the GDPR Digital Omnibus.</li>
+</ol>
+
+<p class="page-meta">Research note: r5-legal.md (2026-10-17). Commission FAQ and YouTube policy re-read by the main agent on the same day.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

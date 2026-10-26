@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The narration pipeline · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 8 · Doing it well</div>
+<h1>An agent-run narration pipeline</h1>
+<p class="lead">For a course rather than a single clip, the work becomes a build pipeline: script in, checked audio, captions and timed video out. A coding agent can write and run almost all of it. This page describes the stages, the tools and settings for each, and where you still have to listen.</p>
+
+<div class="callout key"><span class="title">Bottom line</span>
+<ul>
+<li>Treat narration like a <b>compiled artefact</b>: the script is the source; everything else is regenerated from it plus a pinned settings file. <span class="ev p">Practice</span></li>
+<li>The core loop is <b>normalise → chunk → synthesise → ASR check → regenerate failures → assemble</b>. Each chunk is cached by a hash, so a fix touches only that chunk. <span class="ev p">Practice</span></li>
+<li><b>Generate audio per slide</b>. Then each slide's duration is simply the length of its audio, and most synchronisation work disappears. <span class="ev i">Inference</span></li>
+<li><b>Pin model IDs.</b> ElevenLabs removed its v1 models on 2026-07-09; a course recorded on "latest" cannot be patched consistently later. <span class="ev v">Verified</span> (ElevenLabs changelog)</li>
+</ul></div>
+
+<h2>The whole pipeline at a glance</h2>
+<figure class="diagram">
+<svg viewBox="0 0 900 300" role="img" aria-label="Narration pipeline with a check-and-regenerate loop">
+  <defs>
+    <marker id="p8a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>
+    <marker id="p8l" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="arrowhead-loop"/></marker>
+  </defs>
+  <rect x="10" y="20" width="120" height="56" rx="8" class="box-a"/><text x="22" y="44" class="t-title">Script</text><text x="22" y="64" class="t-muted">display text</text>
+  <rect x="160" y="20" width="120" height="56" rx="8" class="box-a"/><text x="172" y="44" class="t-title">1 Normalise</text><text x="172" y="64" class="t-muted">spoken text</text>
+  <rect x="310" y="20" width="120" height="56" rx="8" class="box-a"/><text x="322" y="44" class="t-title">2 Chunk</text><text x="322" y="64" class="t-muted">1–3 sentences</text>
+  <rect x="460" y="20" width="130" height="56" rx="8" class="box-b"/><text x="472" y="44" class="t-title">3 Synthesise</text><text x="472" y="64" class="t-muted">cached by hash</text>
+  <rect x="620" y="20" width="130" height="56" rx="8" class="box-b"/><text x="632" y="44" class="t-title">4 Check</text><text x="632" y="64" class="t-muted">ASR, duration, SIM</text>
+  <rect x="780" y="20" width="110" height="56" rx="8" class="box-warn"/><text x="792" y="44" class="t-title">Human</text><text x="792" y="64" class="t-muted">flags + 10 %</text>
+  <path d="M130,48 L157,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M280,48 L307,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M430,48 L457,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M590,48 L617,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M750,48 L777,48" class="line" marker-end="url(#p8a)"/>
+  <path d="M685,76 C685,120 525,120 525,80" class="line-loop" marker-end="url(#p8l)"/>
+  <text x="540" y="128" class="t-muted">fail → new seed (max 3) → rewrite / lexicon</text>
+  <rect x="10" y="170" width="150" height="56" rx="8" class="box-c"/><text x="22" y="194" class="t-title">5 Assemble</text><text x="22" y="214" class="t-muted">pauses, fades</text>
+  <rect x="190" y="170" width="150" height="56" rx="8" class="box-c"/><text x="202" y="194" class="t-title">6 Loudness</text><text x="202" y="214" class="t-muted">−16 LUFS</text>
+  <rect x="370" y="170" width="150" height="56" rx="8" class="box-c"/><text x="382" y="194" class="t-title">7 Align</text><text x="382" y="214" class="t-muted">word timestamps</text>
+  <rect x="550" y="170" width="150" height="56" rx="8" class="box-d"/><text x="562" y="194" class="t-title">8 Captions</text><text x="562" y="214" class="t-muted">SRT / VTT</text>
+  <rect x="730" y="170" width="160" height="56" rx="8" class="box-d"/><text x="742" y="194" class="t-title">9 Video</text><text x="742" y="214" class="t-muted">slides / screen</text>
+  <path d="M160,198 L187,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M340,198 L367,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M520,198 L547,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M700,198 L727,198" class="line" marker-end="url(#p8a)"/>
+  <path d="M835,76 C835,140 85,130 85,167" class="line" marker-end="url(#p8a)"/>
+  <text x="10" y="262" class="t-muted">Everything is a pure function of: script + settings.yaml (pinned model, voice, lexicon version, reference clip hash) + manifest (cache keys, request IDs, costs).</text>
+</svg>
+</figure>
+
+<h2>1. Normalise: from display script to spoken script</h2>
+<ul>
+<li>Expand numbers, versions, units, currencies and dates; spell out acronyms the way you say them; replace code with a spoken paraphrase. Store both versions; captions use the display text. <span class="ev p">Practice</span></li>
+<li>Tools: <b>WeTextProcessing</b> for Mandarin and English (Apache-2.0), <b>NeMo text processing</b> (Apache-2.0) or <b>num2words</b> (LGPL-2.1) for English, plus an LLM pass with explicit rules. <span class="ev v">Verified</span> (licences, 2026-10-17)</li>
+<li>Keep a <b>project lexicon</b> (YAML in the repo). The agent compiles it to an ElevenLabs pronunciation dictionary (versioned), an Azure PLS lexicon, or inline pinyin/IPA for open models. Details on <a href="07-quality-control.html">page 7</a>.</li>
+<li>Mixed-language sentences ("我们用 <code>kubectl</code> 部署") are normal in bilingual teaching. Test them early with each tool; some models switch accent mid-sentence. <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>2. Chunk</h2>
+<ul>
+<li>One chunk = 1–3 sentences (≈100–400 characters), never across a slide marker such as <code>&lt;!-- slide 3 --&gt;</code>. <span class="ev p">Practice</span></li>
+<li>Write chunks to <code>chunks.jsonl</code> with slide number, language, spoken text and display text.</li>
+<li>Vendor limits to respect: Eleven v4 10,000 characters per request, v3 5,000; Gemini TTS 8,192 input tokens per request. <span class="ev v">Verified</span></li>
+</ul>
+
+<h2>3. Synthesise</h2>
+<ul>
+<li><b>Cache key</b> = hash(spoken text + model ID + voice ID + settings + lexicon version + seed + reference-clip hash). If the file exists, skip the call. <span class="ev p">Practice</span></li>
+<li><b>ElevenLabs</b>: pass <code>previous_request_ids</code> / <code>next_request_ids</code> (up to 3 each, ≤ 2 hours old, not on v3) or <code>previous_text</code> / <code>next_text</code> for continuity. To regenerate a middle chunk, pass its neighbours' request IDs. Store the <code>request-id</code> and <code>character-cost</code> response headers in the manifest. <span class="ev v">Verified</span></li>
+<li><b>Open models</b>: same golden reference clip and transcript for every chunk; generate per chunk rather than relying on a model's own long-text mode. <span class="ev p">Practice</span></li>
+<li>Generate WAV (PCM) at one sample rate throughout, e.g. 48 kHz mono; encode once at the end. <span class="ev p">Practice</span></li>
+</ul>
+
+<h2>4. Check and regenerate</h2>
+<p>Per chunk, in this order (cheapest first):</p>
+<ol class="stepper">
+<li><b>Signal checks</b>: duration ratio 0.7–1.4 of expected, no clipping, leading/trailing silence within limits.</li>
+<li><b>ASR check</b>: faster-whisper large-v3 (EN) or Paraformer-zh / SenseVoice (ZH); WER ≤ 5 % EN, CER ≤ 3 % ZH after normalisation; every protected term present.</li>
+<li><b>Similarity</b>: SIM ≥ your baseline − 0.10 (same embedding model as the baseline).</li>
+<li><b>Triage score</b>: UTMOSv2 to sort what you listen to first.</li>
+<li><b>On failure</b>: new seed, up to 3 times; then rewrite the sentence or add a lexicon entry; then flag for you.</li>
+</ol>
+<p class="small muted">All thresholds are suggestions derived from benchmark human baselines (page 7), not standards. <span class="ev i">Inference</span></p>
+
+<h2>5. Assemble</h2>
+<ul>
+<li>Trim each chunk's own leading and trailing silence first (ffmpeg <code>silenceremove</code> or pydub <code>detect_leading_silence</code>), then insert controlled pauses: ≈300 ms between sentences, ≈800 ms between paragraphs, ≈1.5 s at slide changes. <span class="ev p">Practice</span> (rules of thumb)</li>
+<li>5–10 ms fades at every cut to avoid clicks; crossfade (10–30 ms) only inside a continuous paragraph. <span class="ev p">Practice</span></li>
+<li><b>pydub</b> (MIT) is the simplest library for this; the ffmpeg concat demuxer requires identical formats. <span class="ev v">Verified</span> (licence)</li>
+</ul>
+
+<h2>6. Loudness</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Target</th><th>Value</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>EBU R128 (broadcast)</td><td>−23 LUFS integrated, −1 dBTP</td><td><span class="ev v">Verified</span></td></tr>
+<tr><td>AES TD1008 (streaming speech)</td><td>−18 LUFS for speech/talk</td><td><span class="ev u">Unverified</span> (AES page seen only as a search snippet)</td></tr>
+<tr><td>Apple Podcasts</td><td>−16 LUFS ±1, −1 dBTP</td><td><span class="ev u">Unverified</span> (secondary)</td></tr>
+<tr><td>Spotify playback normalisation</td><td>−14 LUFS (Normal mode)</td><td><span class="ev v">Verified</span> (Spotify for Artists)</td></tr>
+<tr><td>YouTube</td><td>"−14 LUFS" is widely quoted; no official YouTube page found</td><td><span class="ev u">Unverified</span></td></tr>
+</tbody>
+</table>
+</div>
+<p><b>Practical choice for lessons: −16 LUFS integrated, −1.5 dBTP true peak.</b> Platforms that normalise only turn loud content down, so a slightly quieter master is safe. Use two-pass ffmpeg <code>loudnorm</code> (or the <code>ffmpeg-normalize</code> wrapper) and measure with <code>pyloudnorm</code> (MIT) for the QA report. <span class="ev i">Inference</span></p>
+
+<h2 id="word-timestamps">7. Word timestamps (forced alignment)</h2>
+<p>You already know exactly what was said, so <b>align the audio to the spoken script</b> rather than relying on ASR timestamps, which are less precise. <span class="ev p">Practice</span></p>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Tool</th><th>Output</th><th>Notes (2026-10-17)</th></tr></thead>
+<tbody>
+<tr><td><b>ElevenLabs Forced Alignment API</b></td><td>Characters and words with start/end, plus a per-word <code>loss</code> (confidence)</td><td>Works on any audio, including other vendors' and local output. The per-word loss doubles as a pronunciation check. <span class="ev v">Verified</span></td></tr>
+<tr><td>ElevenLabs TTS with timestamps</td><td>Character-level alignment of the generated audio</td><td>Whether v4 works on this endpoint: <span class="ev u">Unverified</span></td></tr>
+<tr><td>Azure <code>WordBoundary</code> events</td><td>Word, punctuation and sentence offsets</td><td>Native in the Speech SDK. <span class="ev v">Verified</span></td></tr>
+<tr><td>MiniMax async TTS</td><td>Word-level subtitles</td><td><span class="ev v">Verified</span> (docs)</td></tr>
+<tr><td><b>ctc-forced-aligner</b></td><td>Your script aligned to audio; 1,100+ languages; <code>--romanize</code> for Chinese</td><td>BSD-2. Default model is MMS-based; check that model's licence before commercial use. <span class="ev v">Verified</span> (repo) · model licence <span class="ev u">Unverified</span></td></tr>
+<tr><td>Montreal Forced Aligner</td><td>Word and phone level</td><td>MIT; needs an acoustic model and dictionary (Mandarin models exist). <span class="ev p">Practice</span></td></tr>
+<tr><td>WhisperX / faster-whisper</td><td>ASR plus alignment / cross-attention timestamps</td><td>Fine when you do not have the script, e.g. for screen recordings with live speech.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>8. Captions</h2>
+<ul>
+<li>Group words into cues by punctuation, maximum characters and maximum duration; end each cue at the last word's end plus ≤ 200 ms, never overlapping the next. <span class="ev p">Practice</span></li>
+<li>Line limits from Netflix's style guides: <b>Simplified Chinese 16 characters per line</b> (18 in exceptions), 2 lines maximum, up to 9 characters per second for adults; most other languages ≈<b>42 characters per line</b>. <span class="ev v">Verified</span></li>
+<li>Caption text comes from the <i>display</i> script (digits, code formatting), timed from the spoken-script alignment, mapped by word index.</li>
+<li>Bilingual courses: keep separate caption files per language; burn in only when the platform cannot show sidecar VTT. <span class="ev p">Practice</span></li>
+</ul>
+
+<h2>9. Syncing to slides and screen recordings</h2>
+<div data-tabs>
+<div class="tabs"><button data-tab="slides">Slides</button><button data-tab="screen">Screen recordings</button><button data-tab="tools">Rendering tools</button></div>
+<div class="tab-panel" data-panel="slides">
+<p><b>Audio per slide.</b> Write markers such as <code>&lt;!-- slide 3 --&gt;</code> or <code>[[click]]</code> into the script. Each slide's duration = its audio + padding. No alignment needed, and regenerating one slide changes only that slide. For in-slide builds (bullets appearing), use the word timestamps of the first word of each bullet. <span class="ev i">Inference</span></p>
+</div>
+<div class="tab-panel" data-panel="screen">
+<ul>
+<li><b>Audio first</b>: generate narration, then cut or retime the recording to fit (ffmpeg <code>setpts</code> to speed up, <code>tpad</code> to freeze a frame). Best for tutorials you can re-record cheaply.</li>
+<li><b>Video first</b>: list the events in the recording (clicks, scene changes, e.g. via PySceneDetect), then fit narration chunks into the gaps, adjusting speed slightly (ElevenLabs <code>speed</code>, IndexTTS duration factor). Flag any chunk needing more than ±10 % speed change for a rewrite. <span class="ev i">Inference</span></li>
+</ul>
+</div>
+<div class="tab-panel" data-panel="tools">
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Tool</th><th>How sync works</th><th>Licence (2026-10-17)</th></tr></thead>
+<tbody>
+<tr><td>Remotion (React → MP4)</td><td>Each slide is a <code>&lt;Sequence from={frame}&gt;</code>; frames = seconds × fps from the audio timings.</td><td class="lic-cond">Custom: free for individuals and companies with ≤ 3 employees; paid company licence above that</td></tr>
+<tr><td>MoviePy (Python)</td><td><code>ImageClip(slide).with_duration(d)</code> + <code>AudioFileClip</code>, then concatenate.</td><td class="lic-ok">MIT</td></tr>
+<tr><td>ffmpeg only</td><td>PNG per slide with a <code>duration</code> line in a concat list, then mux the audio.</td><td class="lic-cond">LGPL/GPL depending on build</td></tr>
+<tr><td>Marp CLI</td><td>Markdown → PNG slides; then MoviePy or ffmpeg.</td><td class="lic-ok">MIT</td></tr>
+<tr><td>reveal.js</td><td>HTML slides; narration via plugin or headless-browser capture.</td><td class="lic-ok">MIT</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<h2>Consistency over a long course</h2>
+<ul>
+<li><b>Pin everything</b> in <code>settings.yaml</code>: vendor, exact <code>model_id</code> (e.g. <code>eleven_v4</code>, never "latest"), voice ID, voice settings, dictionary ID <i>and</i> version, reference-clip hash, seed policy, output format, loudness target; for open models also the git commit and checkpoint hash. <span class="ev p">Practice</span></li>
+<li><b>Vendors deprecate models.</b> ElevenLabs removed <code>eleven_monolingual_v1</code>, <code>eleven_multilingual_v1</code> and <code>scribe_v1</code> on 2026-07-09; and it says "All our Default voices will expire on December 31, 2026" (irrelevant for your clone, relevant if you use a stock voice as a fallback). <span class="ev v">Verified</span> (changelog, help centre via research helper)</li>
+<li><b>Keep the master WAVs</b> of everything published, so old lessons never need regenerating. After a model change, regenerate whole lessons, not single chunks, so one lesson never mixes two model versions. <span class="ev p">Practice</span></li>
+<li>Record a fresh real sample every few months. Your real voice changes too, and the baseline SIM tells you whether the clone still matches you. <span class="ev i">Inference</span></li>
+<li>Plot SIM, speaking rate and loudness per chunk across a lesson; outliers are regeneration candidates. <span class="ev p">Practice</span></li>
+</ul>
+
+<h2>Suggested repository layout</h2>
+<pre><code>course/
+  settings.yaml            # pinned vendor, model_id, voice_id, settings, lexicon version, ref hash
+  lexicon.yaml             # term -> alias / IPA / pinyin, per language
+  refs/                    # golden reference clips + transcripts (encrypted, not in git)
+  lessons/07-docker/
+    script.md              # display text with slide markers and language tags
+    build/
+      spoken.txt
+      chunks.jsonl
+      wav/&lt;hash&gt;.wav
+      qc.csv               # WER/CER, duration ratio, SIM, UTMOS, attempts, flagged
+      lesson.wav           # assembled, -16 LUFS
+      words.json           # forced alignment
+      lesson.zh.vtt / lesson.en.vtt
+      lesson.mp4
+  manifest.sqlite          # cache keys, request IDs, character costs</code></pre>
+<p>A ready-to-paste prompt that asks a coding agent to build exactly this is on <a href="11-hands-on.html#agent-prompt">page 11</a>.</p>
+
+<h2>What the agent automates and what you do</h2>
+<div class="cards">
+<div class="card b"><h4>Agent</h4><p>Normalisation, lexicon compilation, chunking, API calls, caching, cost tracking, ASR/duration/SIM checks, retries, assembly, loudness, alignment, captions, rendering, QA report.</p></div>
+<div class="card c"><h4>You</h4><p>Approve new lexicon entries; listen to every flagged chunk plus a random 10 %; judge emphasis and tone; watch the first finished lesson end to end; blind A/B when anything in <code>settings.yaml</code> changes.</p></div>
+</div>
+
+<h2 id="avatar">A note on lip-synced avatars</h2>
+<p>Once narration is synthetic, a talking-head video of you can be too. Optional; slides plus voice is the simpler baseline.</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Option</th><th>What it does</th><th>Facts (2026-10-17)</th><th>Licence / consent</th></tr></thead>
+<tbody>
+<tr><td>LatentSync (ByteDance)</td><td>Re-lip-syncs an existing video of you to new audio</td><td>v1.5 (better Chinese) ≈8 GB VRAM; v1.6 (512×512) ≈18 GB; last push 2025-06</td><td class="lic-ok">Apache-2.0</td></tr>
+<tr><td>MuseTalk (Tencent Music)</td><td>Real-time lip-sync</td><td>v1.5, 2025-03</td><td class="lic-cond">MIT LICENSE file; check bundled model licences</td></tr>
+<tr><td>Wav2Lip</td><td>Classic lip-sync</td><td>No licence file</td><td class="lic-no">Non-commercial / research only (README)</td></tr>
+<tr><td>HeyGen</td><td>Hosted digital twin</td><td>Creator $29/month; API Avatar IV ≈ $0.05 per second</td><td>Consent flow <span class="ev u">Unverified</span></td></tr>
+<tr><td>Synthesia</td><td>Hosted personal avatar</td><td>Personal avatars from Starter; 1–5 min single-take footage</td><td>Live consent video with on-screen passcode; cannot be uploaded</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">From the evaluation-and-pipeline research note; vendor prices via official pages found through search. <span class="ev v">Verified</span> unless marked. A synthetic video of you is very likely a deep fake under the EU AI Act; see <a href="09-legal.html#eu-ai-act">page 9</a>.</p>
+
+<p class="page-meta">Research note: r4-eval-pipeline.md (2026-10-17).</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

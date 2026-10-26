@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud services · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 2 · The landscape</div>
+<h1>Cloud voice-cloning services</h1>
+<p class="lead">Hosted services are the fastest route to a good result: upload a few minutes of yourself, call an API, get speech. The differences that matter for you are who lets an individual in, how well they do Mandarin, what they do with your voice data, and what an hour of narration costs.</p>
+
+<div class="callout key"><span class="title">Bottom line (state on 2026-10-17)</span>
+<ul>
+<li><b>ElevenLabs</b> is the most complete self-serve option for an individual: instant clone from the $6 Starter plan, professional clone (own voice only) from the $22 Creator plan, Mandarin and English on Eleven v4, good API. About <b>$4–5 per English hour</b> and <b>about $1.20 per Mandarin hour</b> at API list price. <span class="ev v">Verified</span> (pricing page, docs)</li>
+<li><b>Google Gemini 3.8 Flash TTS</b> can now replicate a voice self-serve from 10–30 s plus a spoken consent clip, at about <b>$0.82 per audio hour</b> in any language (price doubles from 2027-01-01). Much cheaper, ranked lower on the independent cloned-voice arena. <span class="ev v">Verified</span> (Google docs) · <span class="ev x">Experimental</span> (Preview)</li>
+<li><b>Gated or gone</b>: Azure Personal Voice and Google Chirp 3 custom voice need approval; OpenAI custom voices are sales-only; Resemble's hosted platform, LMNT and PlayHT are no longer options. <span class="ev v">Verified</span></li>
+<li>No leaderboard measures how much a clone sounds like <i>you</i>. You must test with your own voice (<a href="11-hands-on.html">page 11</a>). <span class="ev i">Inference</span></li>
+</ul></div>
+
+<h2>How to read the price column</h2>
+<p>All "per hour" figures are list prices for one hour of <b>finished narration</b>, excluding tax and one-off voice fees, computed with these assumptions:</p>
+<ul>
+<li><b>English</b>: about 9,000 words ≈ 50,000–60,000 billable characters per hour. Artificial Analysis uses 49,500; ElevenLabs' own calculator assumes 1,000 characters ≈ 1 minute. <span class="ev i">Inference</span></li>
+<li><b>Mandarin</b>: normal Mandarin speech is about 240 characters (syllables) per minute, so ≈ 15,000 billable characters per hour including punctuation. Teaching is often slower. <span class="ev u">Unverified</span> (Chinese secondary sources on speaking rate)</li>
+<li>Whether a vendor counts one Chinese character as one billable character is not always documented; the Mandarin figures assume 1:1. Fish Audio bills UTF-8 bytes (3 bytes per Chinese character). Gemini bills audio duration, so language does not matter. <span class="ev u">Unverified</span> for most vendors</li>
+</ul>
+<p>Try your own numbers in the <a href="10-decide.html#cost-calculator">cost calculator</a>.</p>
+
+<h2>Comparison</h2>
+<div class="toolbar"><input type="search" placeholder="Filter services… (e.g. Mandarin, gated, timestamps)" data-filter-for="cloud" aria-label="Filter cloud services"></div>
+<div class="table-wrap">
+<table id="cloud" data-sortable class="compact">
+<thead><tr><th>Service</th><th>Clone types &amp; audio of you</th><th>Who can use it</th><th>Mandarin / cross-lingual</th><th>List price (2026-10-17)</th><th>EN $/h</th><th>ZH $/h</th><th data-nosort>Agent / API fit</th></tr></thead>
+<tbody>
+<tr><td><b><a href="https://elevenlabs.io/docs/models">ElevenLabs</a></b><br><small>Eleven v4, v4 Turbo, v3, Multilingual v2</small></td><td>Instant: 1–2 min recommended (v4 blog claims 10 s). Professional: 30 min min., 1–3 h recommended, trains in 3–6 h.</td><td>Self-serve. Instant from Starter ($6/mo). Professional from Creator ($22/mo), own voice only, voice-captcha check.</td><td>Yes (zh, and Cantonese on v4). v4 claims native accent cross-lingually; the older PVC guide warns of source-language accent.</td><td>API: v4 $0.08 / 1k chars; v4 Turbo $0.04 / 1k <span class="ev v">Verified</span></td><td data-v="4.4">4.00–4.80<br><small>Turbo 2.00–2.40</small></td><td data-v="1.2">1.20<br><small>Turbo 0.60</small></td><td>Excellent: REST + SDKs, character timestamps, forced-alignment endpoint, pronunciation dictionaries, request stitching, 10,000 chars/request on v4.</td></tr>
+<tr><td><b><a href="https://ai.google.dev/gemini-api/docs/voice-replication">Google Gemini 3.8 Flash TTS</a></b><br><small>voice replication, Preview</small></td><td>10–30 s reference + a consent recording of a fixed sentence, same speaker.</td><td>Self-serve (Gemini API, AI Studio, Vertex). Pre-GA terms allow commercial use on Vertex.</td><td>Yes (130 languages; consent sentence available in zh-CN). Cross-lingual quality: <span class="ev u">Unverified</span>.</td><td>$0.50 / 1M text tokens in + $9.00 / 1M audio tokens out (25 tokens/s) until 2026-12-31; doubles 2027-01-01; batch half <span class="ev v">Verified</span></td><td data-v="0.82">≈0.82<br><small>2027: ≈1.64</small></td><td data-v="0.82">≈0.82</td><td>Good: google-genai SDK, REST, Batch API; 200 stored voices/project, 1-year retention, or stateless 7-day keys. Word timestamps: <span class="ev u">Unverified</span>. Free tier data "used to improve our products".</td></tr>
+<tr><td><b><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/personal-voice-overview">Azure Personal Voice</a></b></td><td>5–90 s + recorded consent statement.</td><td><b>Limited Access</b>: application and approval; published content allowed only for listed use cases (business content, media dubbing, video translation…).</td><td>Yes; one voice speaks ~100 languages with automatic language detection.</td><td>$24 / 1M chars (Azure Retail Prices API) <span class="ev v">Verified</span></td><td data-v="1.32">1.20–1.44</td><td data-v="0.36">0.36</td><td>Best SSML and lexicon support, word-boundary and viseme events; outputs are watermarked. Approval for an individual educator: <span class="ev u">Unverified</span>.</td></tr>
+<tr><td><b>Azure Custom Neural Voice</b><br><small>professional voice</small></td><td>300–2,000 studio utterances; 20–40 compute hours training.</td><td>Only customers managed by a Microsoft account team.</td><td>Yes; bilingual zh/en training; "cross lingual" method retired 2026-08-25.</td><td>$24 / 1M chars + training $52/h + hosting $4.032/h</td><td data-v="99">1.20–1.44 + hosting</td><td data-v="99">0.36 + hosting</td><td>Not realistic for an individual.</td></tr>
+<tr><td><b><a href="https://cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice">Google Chirp 3 Instant Custom Voice</a></b></td><td>Up to 10 s + consent clip.</td><td><b>Allow-listed</b> via sales.</td><td>Mandarin yes, but <b>no English→Chinese transfer</b> (en-US to de/es/fr/pt only).</td><td>$60 / 1M chars</td><td data-v="3.3">3.00–3.60</td><td data-v="0.9">0.90</td><td>Good API; gated.</td></tr>
+<tr><td><b><a href="https://platform.minimax.io/docs/guides/speech-voice-clone">MiniMax</a></b><br><small>speech-2.8-hd / turbo</small></td><td>10 s – 5 min file + optional prompt clip.</td><td>Self-serve (international platform). No consent recording documented.</td><td>Yes (Chinese vendor). Cross-lingual via <code>language_boost</code>: <span class="ev u">Unverified</span> quality.</td><td>hd $100 / 1M chars; turbo $60 / 1M; $1.50 per cloned voice</td><td data-v="5.5">5.00–6.00<br><small>turbo 3.00–3.60</small></td><td data-v="1.5">1.50<br><small>turbo 0.90</small></td><td>Good: async jobs up to 1M chars, <b>word-level subtitles</b>, pronunciation dictionary.</td></tr>
+<tr><td><b><a href="https://docs.fish.audio/features/voice-cloning">Fish Audio</a></b><br><small>S2.1-Pro</small></td><td>≥10 s per clip, 1–2 min better; professional clone in web app.</td><td>Self-serve.</td><td>Yes (83 languages). Cross-lingual: <span class="ev u">Unverified</span>.</td><td>$15 / 1M UTF-8 bytes</td><td data-v="0.83">0.75–0.90</td><td data-v="0.68">≈0.68</td><td>REST + Python SDK, emotion tags. ToS allows training on your content; free tier commercial status conflicts between pages.</td></tr>
+<tr><td><b><a href="https://docs.cartesia.ai/build-with-cartesia/capability-guides/clone-voices">Cartesia</a></b><br><small>Sonic 3.6</small></td><td>Instant 10–60 s; professional 30 min+.</td><td>Self-serve. Instant from $5 Pro; professional from $49 Startup.</td><td>Yes; clone in your own language, then "Add Voice Accents" for others.</td><td>Credits: 1 per char; Startup $49 / 1.25M</td><td data-v="2.15">≈1.96–2.35</td><td data-v="0.59">≈0.59</td><td>Good API/WebSocket. Trains on inputs/outputs unless you opt out; zero retention not available for cloning.</td></tr>
+<tr><td><b><a href="https://inworld.ai/voice-cloning">Inworld</a></b><br><small>Realtime TTS-2</small></td><td>Instant 3–30 s; professional (beta) 10 min+.</td><td>Self-serve; plan eligibility for professional conflicts between pages.</td><td>Yes. Reported #1 on the Artificial Analysis Mandarin cloned-voice board <span class="ev u">Unverified</span> (secondary).</td><td>$25 / 1M chars on demand; cloning free</td><td data-v="1.38">1.25–1.50</td><td data-v="0.38">0.38</td><td>API + portal; terms not checked.</td></tr>
+<tr><td><b><a href="https://www.alibabacloud.com/help/en/model-studio/voice-cloning-user-guide">Alibaba Model Studio</a></b><br><small>Qwen-Audio-TTS / CosyVoice</small></td><td>10–20 s recommended, max 60 s.</td><td>Self-serve; international region has 3.0 models, the leaderboard-ranked 3.1 is China region.</td><td>Mandarin + 20 dialects; clones for 17 languages.</td><td>3.0-plus $0.20 / 10k chars (international)</td><td data-v="1.1">1.00–1.20</td><td data-v="0.3">0.30</td><td>DashScope REST/WebSocket; voices bound to one model, deleted after 1 year unused.</td></tr>
+<tr><td><b>Volcengine Doubao voice clone 2.0</b><br><small>ByteDance, China</small></td><td>"5 s" recording.</td><td>China account; real-name verification likely.</td><td>Yes; advertises Chinese-only speaker → English/Japanese.</td><td>3 CNY / 10k chars + 138 CNY per voice</td><td data-v="2.3">≈2.3</td><td data-v="0.63">≈0.63</td><td>Chinese docs and console only.</td></tr>
+<tr><td><b>Tencent Cloud one-sentence clone</b></td><td>"One sentence".</td><td>Real-name verified Tencent Cloud account.</td><td>Yes.</td><td>8 CNY / 10k chars + 39 CNY per voice</td><td data-v="99">-</td><td data-v="1.7">≈1.7</td><td>Chinese only.</td></tr>
+<tr><td><b><a href="https://developers.openai.com/api/docs/guides/custom-voices">OpenAI custom voices</a></b></td><td>10–30 s + exact consent phrase.</td><td><b>Eligible customers only, via sales.</b> Ordinary organisations get "no access" (community reports).</td><td>Consent phrase exists in Chinese; custom voice can speak other languages.</td><td>gpt-4o-mini-tts $0.60 / 1M text in + $12 / 1M audio out</td><td data-v="99">-</td><td data-v="99">-</td><td>Good API, not accessible to an individual today. OpenAI's terms: the customer owns all output.</td></tr>
+<tr><td class="status-dead">Resemble AI (hosted)</td><td colspan="7">Hosted voice platform "no longer offered as commercial paid products"; its open-source Chatterbox stays MIT (page 3). <span class="ev v">Verified</span></td></tr>
+<tr><td class="status-dead">LMNT</td><td colspan="7">"LMNT has shut down" (pricing page). <span class="ev v">Verified</span></td></tr>
+<tr><td class="status-dead">PlayHT</td><td colspan="7">Shut down in 2025 after the team joined Meta. <span class="ev u">Unverified</span> (secondary, not re-checked)</td></tr>
+<tr><td>Murf · Speechify · WellSaid · Hume</td><td colspan="7">Murf cloning is Enterprise-only; Speechify cloning needs a $5,000/year commitment; WellSaid has no self-serve cloning; Hume's pricing page now sells an evaluation platform, so Octave's status is unclear. <span class="ev u">Unverified</span> in part</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">"-" or a sort value of 99 means no comparable per-hour figure. Prices from each vendor's pricing page or docs, read 2026-10-17 by a research helper; ElevenLabs and the Gemini voice-replication docs re-checked by the main agent on the same day. CNY at an assumed 7.1 per USD.</p>
+
+<h2>Independent quality evidence</h2>
+<p><a href="https://artificialanalysis.ai/text-to-speech/leaderboard/controlled-voice">Artificial Analysis' Controlled Voice Arena</a> is the closest thing to an independent cloning benchmark: every model clones the <i>same</i> eight professionally recorded voices (4 US, 4 UK English), and paid listeners vote blind on which sample sounds more natural. It does <b>not</b> measure how similar the clone is to the original speaker. <span class="ev v">Verified</span> (methodology page)</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Rank</th><th>Model</th><th>Elo (±95%)</th><th>Vendor API $/1M chars</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>HeyGen Voice</td><td data-v="1198">1198 ±15</td><td data-v="30">30.0</td></tr>
+<tr><td>2</td><td>Qwen-Audio-3.1-TTS-Plus (Alibaba)</td><td data-v="1186">1186 ±14</td><td data-v="19.3">19.3</td></tr>
+<tr><td>3</td><td>Eleven v4 Turbo</td><td data-v="1162">1162 ±14</td><td data-v="40">40.0</td></tr>
+<tr><td>4</td><td>Eleven v4</td><td data-v="1159">1159 ±14</td><td data-v="80">80.0</td></tr>
+<tr><td>5</td><td>Cartesia Sonic 3.6</td><td data-v="1149">1149 ±14</td><td data-v="49">49.0</td></tr>
+<tr><td>6</td><td>Inworld Realtime TTS-2</td><td data-v="1144">1144 ±13</td><td data-v="20.8">20.8</td></tr>
+<tr><td>14</td><td>Fish Audio Drama 3 Preview</td><td data-v="1059">1059 ±15</td><td data-v="15">15.0</td></tr>
+<tr><td>18</td><td>Gemini 3.8 Flash TTS</td><td data-v="1050">1050 ±13</td><td data-v="16.5">16.5</td></tr>
+<tr><td>21</td><td>MiniMax Speech 2.8 HD</td><td data-v="1020">1020 ±13</td><td data-v="100">100.0</td></tr>
+<tr><td>34</td><td>Higgs Audio V3 TTS</td><td data-v="960">960 ±14</td><td data-v="15">15.0</td></tr>
+<tr><td>39</td><td>Chatterbox (open)</td><td data-v="930">930 ±14</td><td data-v="25">25.0</td></tr>
+<tr><td>42</td><td>XTTS v2 (open)</td><td data-v="830">830 ±17</td><td data-v="40.4">40.4</td></tr>
+<tr><td>43</td><td>OpenVoice v2 (open)</td><td data-v="807">807 ±18</td><td data-v="8.3">8.3</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Read by the main agent on 2026-10-17. Selected rows of 43. The price column is Artificial Analysis' "model creator's API" price; for open models that is a hosted API, not the cost of running it yourself. The board is anchored at OpenAudio S1 = 1000. <span class="ev v">Verified</span></p>
+<ul>
+<li><b>Two different boards.</b> ElevenLabs advertises v4 as "#1 on Artificial Analysis". That is the <i>preset-voice</i> board. On the cloned-voice board v4 is #3–4, statistically tied with v4 Turbo and Sonic 3.6. <span class="ev v">Verified</span></li>
+<li><b>English only.</b> The board uses English reference voices. A Mandarin cloned-voice board exists; secondary reports name Inworld TTS-2, Cartesia Sonic 3.6 and StepAudio 2.5 as the top three, but the table could not be fetched and probably predates Eleven v4. <span class="ev u">Unverified</span></li>
+<li><b>Gaps of 10–20 Elo are within the confidence intervals.</b> Treat the top six as one tier and decide by your own listening, Mandarin quality, terms and price. <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>Per-service notes</h2>
+
+<h3>ElevenLabs</h3>
+<ul>
+<li><b>Models</b> (docs, 2026-10-17): <code>eleven_v4</code> (90+ languages including Mandarin and Cantonese, 10,000 characters per request), <code>eleven_v4_turbo</code> (~100 ms latency), <code>eleven_v3</code> (5,000 characters), <code>eleven_multilingual_v2</code>, <code>eleven_flash_v2_5</code>. v4 was published 2026-09-28. <span class="ev v">Verified</span></li>
+<li><b>Instant clone</b>: confirm a "right and consent" checkbox; 1–2 minutes works best; more than 3 minutes "can even be detrimental". <span class="ev v">Verified</span></li>
+<li><b>Professional clone</b>: "For now, we only allow you to clone your own voice"; you pass a voice-captcha by reading lines; 30 minutes minimum, ideally 2–3 hours. Slots: Creator/Pro 1, Scale 3, Business 10. <span class="ev v">Verified</span></li>
+<li><b>Commercial use</b>: the free plan is non-commercial and requires "elevenlabs.io" or "11.ai" in the title of published content; any paid plan includes a commercial licence, which survives cancellation for content made while subscribed. <span class="ev v">Verified</span> (help centre)</li>
+<li><b>Plans</b> (monthly): Free 10k credits, Starter $6 / 30k, Creator $22 / 121k, Pro $99 / 600k, Scale $299 / 1.8M, Business $990 / 6M. The API pricing page shows Creator "275k characters of TTS (v4) included", a conflict with 121k credits. <span class="ev v">Verified</span>, conflict unresolved</li>
+<li><b>Data</b>: you retain rights in your output; you grant ElevenLabs a perpetual licence to use your voice to improve and develop services, with a promise not to "commercialize your voice on a standalone basis without your permission"; opt-out of training in settings (not retroactive). Details on <a href="09-legal.html#vendor-terms">page 9</a>. <span class="ev v">Verified</span> (Terms of Use, 9 Oct 2026)</li>
+<li><b>Listen</b>: the <a href="https://elevenlabs.io/blog/eleven-v4">Eleven v4 launch post</a> contains a real-voice versus v4-clone pair.</li>
+</ul>
+
+<h3>Google: two different products</h3>
+<ul>
+<li><b>Gemini 3.8 Flash TTS voice replication</b> (docs last updated 2026-09-24): <code>POST /v1beta/voices</code> with a 10–30 s reference and a consent clip of the same adult reading a fixed sentence (Chinese version: "我是此声音的拥有者并授权谷歌使用此声音创建语音合成模型"). Google rejects the request if the consent transcript does not match. Recommended format 24 kHz mono 16-bit WAV. <span class="ev v">Verified</span> (main agent read the docs)</li>
+<li>Pricing tier matters for privacy: on the Gemini API <b>free tier</b>, content is "used to improve our products"; on the paid tier, it is not. Do not clone your voice on the free tier. <span class="ev v">Verified</span> (helper, Gemini pricing page)</li>
+<li><b>Chirp 3 Instant Custom Voice</b> is a separate Cloud TTS product: allow-listed, $60 per 1M characters, and it cannot carry an English clone into Chinese. <span class="ev v">Verified</span></li>
+<li><b>Listen / try</b>: Google AI Studio has an interactive "Voice Replication" page where you can record yourself and audition the result.</li>
+</ul>
+
+<h3>Microsoft Azure</h3>
+<ul>
+<li>Personal Voice is technically ideal (5–90 s, about 100 languages, $24 per 1M characters, watermarked output), but it is <b>Limited Access</b>, built for apps that let their own users clone themselves, and published content is allowed only in listed use cases such as business content and media dubbing. Whether an individual's YouTube course qualifies depends on Microsoft's approval. <span class="ev v">Verified</span> (transparency note) · eligibility <span class="ev u">Unverified</span></li>
+<li>Microsoft states customer training data "isn't used by Microsoft to train or improve any Microsoft text to speech voice models". <span class="ev v">Verified</span></li>
+</ul>
+
+<h3>Chinese vendors</h3>
+<ul>
+<li><b>MiniMax</b> has a strong reputation for Mandarin and the most automation-friendly long-form API (1M characters per async job, word-level subtitles), but is the most expensive per character and documents no consent step. Its Chinese terms give you the IP in outputs but a non-commercial base licence unless paid terms say otherwise. <span class="ev v">Verified</span> · paid commercial clause <span class="ev u">Unverified</span></li>
+<li><b>Alibaba</b>'s Qwen-Audio-3.1 is #2 on the English cloned-voice board, but the international region offers only 3.0 models. Check the region before relying on that ranking. <span class="ev v">Verified</span></li>
+<li><b>Volcengine</b> (ByteDance) and <b>Tencent</b> are cheap and Mandarin-native but need Chinese accounts with real-name verification, and their documentation is in Chinese. <span class="ev v">Verified</span> (Tencent); <span class="ev u">Unverified</span> (Volcengine real-name)</li>
+<li>Content published on Chinese platforms must carry AI labels since 1 Sep 2025 (<a href="09-legal.html#china">page 9</a>).</li>
+</ul>
+
+<h3>OpenAI's policy on custom voices</h3>
+<p>OpenAI previewed "Voice Engine" in 2024 and held back a broad release. As of October 2026 the API has custom-voice endpoints (<code>/v1/audio/voice_consents</code>, <code>/v1/audio/voices</code>) usable with gpt-4o-mini-tts and Realtime, but "Custom voices created from recordings are limited to eligible customers. Contact our sales team." A sample of up to 30 s and an exact consent phrase are required; at most 20 such voices per organisation. Normal developer organisations report "no access". <span class="ev v">Verified</span> (OpenAI custom-voices guide) · access reports <span class="ev u">Unverified</span> (community forum)</p>
+
+<h2>Consent and data use at a glance</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Service</th><th>Identity / consent check</th><th>Output ownership &amp; commercial use</th><th>Training on your voice</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs</td><td>Instant: checkbox. Professional: voice-captcha, own voice only.</td><td>You keep rights in output; commercial only on paid plans.</td><td>Perpetual licence to improve services; opt-out available, not retroactive.</td></tr>
+<tr><td>Azure</td><td>Recorded consent statement, speaker match, Limited Access approval.</td><td>Exclusive usage rights to your model.</td><td>Not used to train Microsoft voices.</td></tr>
+<tr><td>Google Gemini</td><td>Consent clip with fixed sentence, matched to the speaker.</td><td>Vertex Pre-GA terms allow commercial use.</td><td>Free tier: yes. Paid tier: no.</td></tr>
+<tr><td>MiniMax</td><td>None documented.</td><td>You own output IP; base licence non-commercial unless paid terms say otherwise.</td><td>Licence to improve products and for brand promotion.</td></tr>
+<tr><td>Fish Audio</td><td>Professional clone "verified" (method unclear).</td><td>Paid: commercial. Free: conflicting pages.</td><td>Terms allow training on content.</td></tr>
+<tr><td>Cartesia</td><td>"Only clone your own voice or a voice you have explicit permission to clone."</td><td>Cartesia claims no ownership of outputs.</td><td>Yes by default; opt-out form; no zero-retention for clones.</td></tr>
+<tr><td>OpenAI</td><td>Exact consent phrase recording.</td><td>Customer owns output.</td><td><span class="ev u">Unverified</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Vendor terms read 2026-10-17. Terms change; re-read before signing up. <span class="ev v">Verified</span> unless marked.</p>
+
+<p class="page-meta">Research notes: r1-cloud.md and r5-legal.md (2026-10-17).</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

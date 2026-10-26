@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recording &amp; cleaning your voice · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 6 · Doing it well</div>
+<h1>Recording and cleaning your voice</h1>
+<p class="lead">The clone can only be as good as the recording. A clone faithfully copies your room echo, your laptop fan, your tired Friday voice, and every artefact a noise remover added. This page is the checklist for getting one clean master recording you can reuse with every tool.</p>
+
+<div class="callout key"><span class="title">The short version</span>
+<ol>
+<li>Record <b>one master set per language</b>: about 60–120 minutes of clean speech each, as <b>48 kHz, 24-bit, mono WAV</b>. Slice it for each tool. <span class="ev i">Inference</span> (from the vendor minimums below)</li>
+<li><b>Consistency beats quantity</b>: same room, mic, distance (~20 cm), gain and speaking persona in every session. <span class="ev v">Verified</span> (ElevenLabs, Azure, Google recording guides)</li>
+<li><b>Read your real teaching material</b>, in your real teaching voice, plus a set of phonetically balanced sentences. <span class="ev v">Verified</span> (ElevenLabs, Azure)</li>
+<li><b>Clean as little as possible.</b> Fix the room, not the file. <span class="ev v">Verified</span> (Applio, ElevenLabs docs)</li>
+</ol></div>
+
+<h2>How much audio each approach needs</h2>
+<p>Quoted from vendor or project documentation, read 2026-10-17. <span class="ev v">Verified</span> unless marked.</p>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>System</th><th>Type</th><th>Audio of you</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Google Chirp 3 Instant Custom Voice</td><td>Instant</td><td>Reference up to 10 s + a consent clip up to 10 s</td><td><a href="https://docs.cloud.google.com/text-to-speech/docs/chirp3-instant-custom-voice">Google docs</a></td></tr>
+<tr><td>GPT-SoVITS (zero-shot)</td><td>Zero-shot</td><td>5 s</td><td><a href="https://github.com/RVC-Boss/GPT-SoVITS">README</a></td></tr>
+<tr><td>Seed-VC</td><td>Zero-shot VC</td><td>1–30 s</td><td><a href="https://github.com/Plachtaa/seed-vc">README</a></td></tr>
+<tr><td>Azure Personal Voice</td><td>Instant (gated)</td><td>5–90 s + spoken consent statement</td><td><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/personal-voice-create-voice">Microsoft Learn</a></td></tr>
+<tr><td>ElevenLabs Instant Voice Clone</td><td>Instant</td><td>1–2 min; "more than 2–3 minutes … little improvement and can … be detrimental"</td><td><a href="https://elevenlabs.io/docs/eleven-creative/voices/voice-cloning">ElevenLabs docs</a></td></tr>
+<tr><td>GPT-SoVITS (few-shot)</td><td>Fine-tune</td><td>1 min</td><td>README</td></tr>
+<tr><td>RVC</td><td>Fine-tune VC</td><td>≥10 min low-noise speech</td><td><a href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">README</a></td></tr>
+<tr><td>Resemble speech-to-speech target <small>(hosted product since discontinued)</small></td><td>Clone</td><td>10+ min</td><td><a href="https://docs.resemble.ai/voice-generation/speech-to-speech">Resemble docs</a></td></tr>
+<tr><td>Google Custom Voice (full)</td><td>Fine-tune</td><td>~500 recordings, ~20–30 min</td><td><a href="https://cloud.google.com/text-to-speech/custom-voice/docs/training-data">Google docs</a></td></tr>
+<tr><td>Azure Professional Voice</td><td>Fine-tune</td><td>300 utterances for "reasonable"; 1,000–2,000 for persona voices</td><td><a href="https://learn.microsoft.com/en-us/azure/ai-services/speech-service/record-custom-voice-samples">Microsoft Learn</a></td></tr>
+<tr><td>ElevenLabs Professional Voice Clone</td><td>Fine-tune</td><td>30–180 min, "ideally 2+ hours"</td><td>ElevenLabs docs</td></tr>
+</tbody>
+</table>
+</div>
+<p>RVC community guides suggest 10–30 minutes as a sweet spot with little gain after 1–2 hours. <span class="ev u">Unverified</span> (secondary)</p>
+
+<h2>Microphone and placement</h2>
+<div class="cards">
+<div class="card"><h4>USB condenser</h4><p>Simplest: plug in and record. Picks up the room, so it needs a quiet, soft room. Roughly USD 50–150. <span class="ev u">Unverified</span> (price class)</p></div>
+<div class="card"><h4>XLR condenser + audio interface</h4><p>Lower noise and more control. ElevenLabs says an XLR mic costing $150–300 is "sufficient for most voiceover work" and names setups like a Focusrite interface with an AT2020 or Rode NT1 at $300–500 total. <span class="ev v">Verified</span> (ElevenLabs docs; examples, not endorsements)</p></div>
+<div class="card"><h4>Dynamic mic</h4><p>Rejects room sound better, so it is often the better choice in an untreated home office, but needs more gain. Roughly USD 100–400. <span class="ev p">Practice</span></p></div>
+<div class="card"><h4>Not your laptop or headset mic</h4><p>Fine for a first zero-shot experiment, not for the master recording. The clone will sound like a laptop. <span class="ev p">Practice</span></p></div>
+</div>
+<ul>
+<li><b>Distance:</b> "about two fists away … approximately 20 cm (7–8 in), with a pop filter"; speaking slightly off-axis reduces plosives. Mark the spot so it is the same every session. <span class="ev v">Verified</span> (ElevenLabs)</li>
+<li><b>Pop filter:</b> required by ElevenLabs, because plosives and breaths "cause issues with the cloning process". <span class="ev v">Verified</span></li>
+</ul>
+
+<h2>Levels and noise</h2>
+<p>Sources differ in detail; all agree you must never reach 0 dBFS (clipping cannot be undone).</p>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Source</th><th>Peak level</th><th>Average / noise</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs PVC guide</td><td>−6 to −3 dB</td><td>Average about −18 dB</td></tr>
+<tr><td>Azure Professional Voice</td><td>−6 to −3 dB</td><td>SNR above 35 dB ("below 20 can result in obvious noise"); noise before speech below −70 dB; at most 4:1 compression; 100–200 ms silence at edges</td></tr>
+<tr><td>ACX audiobook standard (benchmark)</td><td>≤ −3 dB</td><td>RMS −23 to −18 dB; noise floor ≤ −60 dB</td></tr>
+<tr><td>Google full custom voice</td><td>-</td><td>Average −23 LUFS ±2</td></tr>
+<tr><td>Sound On Sound (24-bit capture)</td><td>Around −10 dBFS</td><td>Average −18 to −20 dBFS; about 12 dB safety margin</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout think"><span class="title">How to reconcile them</span>
+<p>Vendors state <i>delivery</i> levels; audio engineers state <i>capture</i> levels. Record at 24-bit with normal lines peaking about −12 to −10 dBFS and the loudest about −6 dBFS, then raise to the vendor's target afterwards. At 24-bit this costs nothing in noise. <span class="ev i">Inference</span></p></div>
+
+<h2>The room</h2>
+<ul>
+<li>Deaden reflections: a vocal booth, or a DIY "blanket fort, or closet" (ElevenLabs' words). A small room full of clothes beats a big empty office. <span class="ev v">Verified</span> (ElevenLabs)</li>
+<li>Turn off fans and air conditioning, keep the PC away from the mic, record at quiet times.</li>
+<li>Record 10 seconds of silence (room tone) at the start of every session, for checking the noise floor and for filling gaps later. <span class="ev p">Practice</span></li>
+</ul>
+
+<h2>Consistency across sessions</h2>
+<p>This matters more than any single setting. Azure: recordings for one voice "should all sound like they were made on the same day in the same room". ElevenLabs: keep one energy level and one accent; "you can't mix and match or the AI can become unstable". <span class="ev v">Verified</span></p>
+<p><b>Google's "match file" method</b> is the most concrete technique: at the start of the project, record a few reference lines; at the start of every later session, listen to them and match volume, energy, cadence and articulation before continuing. <span class="ev v">Verified</span> (Google custom voice docs)</p>
+<p>Professional voice talents manage about 2–3 hours of recording a day, 3–4 days a week (Azure guidance). Plan the master recording over several short sessions. <span class="ev v">Verified</span></p>
+
+<h2>What to read</h2>
+<h3>Your teaching material first</h3>
+<p>A clone copies "cadence, tonality, performance style, the length of your pauses … 'uhms' and 'ahs'" (ElevenLabs). So read real lesson scripts, with the English technical terms, numbers and code identifiers you will actually say. Azure suggests mixing general sentences with domain sentences you will use. <span class="ev v">Verified</span></p>
+<h3>English phonetic coverage</h3>
+<ul>
+<li><a href="http://festvox.org/cmu_arctic/">CMU ARCTIC</a>: 1,132 prompts selected for diphone coverage, from out-of-copyright texts; the licence permits commercial use with attribution. Azure calls it "an excellent starting point". <span class="ev v">Verified</span></li>
+<li><a href="https://www.cs.columbia.edu/~hgs/audio/harvard.html">Harvard sentences</a>: 720 sentences in 72 lists of 10. <span class="ev v">Verified</span></li>
+<li>The Rainbow Passage is a common warm-up, but a 2022 ASHA study found it covers only about 36% of English consonant contexts, so it is not truly balanced. <span class="ev v">Verified</span></li>
+</ul>
+<h3>Mandarin phonetic coverage</h3>
+<ul>
+<li>Cover all four tones and the neutral tone, tone sandhi (third-tone pairs, 一 and 不), retroflex versus dental initials (zh/ch/sh versus z/c/s), n versus l, front versus back nasals (-n/-ng), and erhua (儿化) only if you use it consistently. <span class="ev p">Practice</span> (general phonetics, not from a single source)</li>
+<li>Include Mandarin sentences with embedded English technical terms, because that is how you will teach. <span class="ev p">Practice</span></li>
+<li>Public Mandarin corpora such as AISHELL-3 are a useful <i>style</i> model, but note the licence conflict: OpenSLR lists Apache-2.0, while AISHELL's own site says research use only and "commercial usage is not allowed". Write your own sentences if commercial. <span class="ev v">Verified</span> (both pages)</li>
+</ul>
+<h3>Script hygiene</h3>
+<ul>
+<li>2–15 seconds per sentence; mostly statements, with some questions and exclamations; no duplicates (Azure). <span class="ev v">Verified</span></li>
+<li>Write numbers and acronyms in the training transcript the way you say them ("nine one one", "A P I"). <span class="ev v">Verified</span> (Azure)</li>
+<li>One persona per dataset. If you want a separate "excited" style, record it as a separate set. <span class="ev v">Verified</span> (Azure, ElevenLabs)</li>
+</ul>
+
+<h2>English and Mandarin: record both</h2>
+<p>ElevenLabs states that the accent comes from the voice samples and that a clone made from English "will very likely have an English accent" in another language. So record a separate set per language. With ElevenLabs Professional cloning this can mean two clones, or one in your main teaching language plus accepting an accent in the other. Azure requires the consent statement in the same language as the training data. <span class="ev v">Verified</span></p>
+<ul>
+<li>Same mic, room, distance and gain for both languages; alternate English and Mandarin blocks within a session so timbre stays matched. <span class="ev p">Practice</span></li>
+<li>Label every file with its language.</li>
+<li>For voice conversion the <i>source</i> speech sets the accent, so a single target model trained on both languages works (page 4). <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>File format</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th>Vendor / tool</th><th>Requirement (read 2026-10-17)</th></tr></thead>
+<tbody>
+<tr><td>ElevenLabs</td><td>Record WAV 44.1/48 kHz, ≥24-bit; upload as MP3 ≥192 kbps is fine ("WAV usually do not improve clone quality")</td></tr>
+<tr><td>Azure Professional Voice</td><td>WAV mono 24 kHz 16-bit specification; 48 kHz/24-bit accepted and downsampled</td></tr>
+<tr><td>Google custom voice</td><td>48 kHz/24-bit WAV; "Do not up-sample"</td></tr>
+<tr><td>RVC / Applio</td><td>Lossless WAV/FLAC; resampled to the model's rate</td></tr>
+</tbody>
+</table>
+</div>
+<p><b>Recommendation:</b> capture 48 kHz, 24-bit, mono WAV; never edit the originals; make per-vendor copies. <span class="ev i">Inference</span></p>
+
+<h2>Cleaning: as little as possible</h2>
+<div class="callout warn"><span class="title">The clone learns the artefacts</span>
+<p>Applio: "Avoid strong gating, compression, denoising, or reverb removal simply because they are available." ElevenLabs: "You don't need any fancy post-processing, plugins, denoisers." Aggressive noise reduction sounds "watery" or metallic, and the model will reproduce that in every sentence. Always A/B the processed file against the original. <span class="ev v">Verified</span></p></div>
+<h3>Suggested order</h3>
+<ol class="stepper">
+<li>Listen through; delete takes with mistakes, clipping, coughs or other voices.</li>
+<li>High-pass filter around 70–80 Hz to remove rumble. <span class="ev p">Practice</span></li>
+<li>Light noise reduction <i>only</i> if the noise floor misses your target (e.g. SNR &gt; 35 dB).</li>
+<li>De-reverb only if the room is clearly audible; better, re-record somewhere deader.</li>
+<li>Gentle de-essing and mouth-click removal if needed.</li>
+<li>Trim edges to 100–200 ms of silence; slice into 2–15 s clips.</li>
+<li>Consistent level per clip (peak normalisation), not aggressive loudness processing.</li>
+<li>Transcribe (Whisper for English, FunASR/Paraformer for Chinese) and <b>proofread</b> the transcripts.</li>
+<li>Hold a few clips out for evaluation (page 7).</li>
+</ol>
+<h3>Tools</h3>
+<div class="table-wrap">
+<table data-sortable class="compact">
+<thead><tr><th>Task</th><th>Tool</th><th>Status / licence (2026-10-17)</th><th data-nosort>Notes</th></tr></thead>
+<tbody>
+<tr><td>Noise reduction</td><td><a href="https://manual.audacityteam.org/man/noise_reduction.html">Audacity Noise Reduction</a></td><td>Free</td><td>Profile ≥0.5 s of pure noise; lower settings if it sounds "watery".</td></tr>
+<tr><td>Noise reduction (neural)</td><td><a href="https://github.com/xiph/rnnoise">RNNoise</a></td><td>BSD-3; push 2025-02</td><td>Low CPU, modest quality.</td></tr>
+<tr><td>Noise reduction (neural)</td><td><a href="https://github.com/Rikorose/DeepFilterNet">DeepFilterNet</a></td><td>MIT/Apache; last push 2024-10 (stale)</td><td>48 kHz; Windows supported.</td></tr>
+<tr><td>Denoise + enhance</td><td><a href="https://github.com/resemble-ai/resemble-enhance">Resemble Enhance</a></td><td>MIT; last push 2024-12 (stale)</td><td>The enhancer can change timbre: do not use on training data without A/B.</td></tr>
+<tr><td>Hosted "studio sound"</td><td><a href="https://podcast.adobe.com/en/features">Adobe Podcast Enhance Speech</a></td><td>Free tier and Premium</td><td>Free tier has no strength control: high over-processing risk for training data.</td></tr>
+<tr><td>Pro repair suite</td><td><a href="https://www.izotope.com/products/rx-standard">iZotope RX 12</a></td><td>Standard $399, Advanced $1,399</td><td>Dialogue Isolate, De-reverb, De-ess, De-click.</td></tr>
+<tr><td>Separation / de-reverb models</td><td><a href="https://github.com/Anjok07/ultimatevocalremovergui">UVR</a></td><td>MIT; active</td><td>GUI over MDX/Demucs/Roformer models (model licences vary). GPT-SoVITS bundles UVR5 for de-reverb.</td></tr>
+<tr><td>Slicing</td><td><a href="https://github.com/openvpi/audio-slicer">audio-slicer</a></td><td>MIT</td><td>RMS-based; GPT-SoVITS and Applio include their own slicers.</td></tr>
+<tr><td>Transcribe (EN)</td><td><a href="https://github.com/SYSTRAN/faster-whisper">faster-whisper</a></td><td>MIT; active</td><td>GPT-SoVITS uses Faster Whisper large-v3 for English.</td></tr>
+<tr><td>Transcribe (ZH)</td><td><a href="https://github.com/modelscope/FunASR">FunASR</a></td><td>Code MIT; models under a custom attribution licence</td><td>Paraformer-large + VAD + punctuation, as used by GPT-SoVITS.</td></tr>
+</tbody>
+</table>
+</div>
+<p class="small muted">Prices: iZotope store, 2026-10-17. Stars and push dates: GitHub API, 2026-10-17. <span class="ev v">Verified</span></p>
+
+<h2>Identity and consent checks vendors require</h2>
+<p>Every serious vendor makes you prove the voice is yours. Expect to do this once per voice. Full vendor details are on <a href="02-cloud.html">page 2</a> and the legal background on <a href="09-legal.html">page 9</a>.</p>
+<ul>
+<li><b>Azure Personal Voice</b>: a gated (application-only) service; you record a spoken consent statement in the same language and environment as the voice sample. <span class="ev v">Verified</span></li>
+<li><b>Google Chirp 3 Instant Custom Voice</b>: a consent clip of up to 10 s recorded in the same environment as the reference. <span class="ev v">Verified</span></li>
+<li><b>ElevenLabs Professional Voice Clone</b>: you must verify you are the voice owner by reading a prompt; someone else cannot create a PVC of you even with your consent. Instant clones require a checkbox confirmation of rights. <span class="ev v">Verified</span> (ElevenLabs help centre)</li>
+<li><b>Open-source local models</b>: no checks at all. That puts the responsibility, and the security of your recordings, entirely on you. <span class="ev i">Inference</span></li>
+</ul>
+
+<h2>Recording-day checklist</h2>
+<pre><code>[ ] quiet time booked; fans/AC off; phone silent
+[ ] mic at marked spot (~20 cm), pop filter, same gain as last session
+[ ] 48 kHz / 24-bit / mono WAV; peaks −12…−6 dBFS on a test read
+[ ] 10 s room tone recorded
+[ ] listened to the "match file" and matched energy and pace
+[ ] blocks: lesson script (EN) · balanced sentences (EN) · lesson script (ZH) · balanced sentences (ZH)
+[ ] water, breaks every 20–30 min; stop when the voice tires
+[ ] files named  YYYYMMDD_lang_block_take.wav ; originals backed up, encrypted</code></pre>
+
+<p class="page-meta">Research notes: r3-vc-recording.md (2026-10-17), main sources ElevenLabs voice-cloning docs, Microsoft Learn recording guide, Google custom-voice docs, ACX.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Directions for our next discussion · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 12 · Decide &amp; start</div>
+<h1>Five directions for our next discussion</h1>
+<p class="lead">This research answers "what exists and how does it work". The next step depends on choices only you can make. Each direction below states the decision it needs, what we would do, and what we would learn.</p>
+
+<div class="cards">
+<a class="card a" href="#d1"><h4>1 · Run the bake-off on your voice</h4><p>The single most informative next step.</p></a>
+<a class="card b" href="#d2"><h4>2 · Settle commercial use and the vendor licence</h4><p>Decides which tools stay on the list.</p></a>
+<a class="card c" href="#d3"><h4>3 · Build the pipeline for one real lesson</h4><p>Proves the workflow end to end.</p></a>
+<a class="card d" href="#d4"><h4>4 · Solve the cross-lingual question</h4><p>Your voice in the language you recorded less of.</p></a>
+<a class="card a" href="#d5"><h4>5 · Decide on hardware: buy, rent or cloud-only</h4><p>Only matters if local wins the bake-off.</p></a>
+</div>
+
+<h2 id="d1">1. Run the bake-off on your own voice</h2>
+<ul>
+<li><b>Why first</b>: every leaderboard on this site uses other people's voices, and the main independent board is English-only. Similarity to <i>you</i>, and Mandarin quality for <i>your</i> voice, can only be measured with your recordings. <span class="ev i">Inference</span></li>
+<li><b>Decision needed</b>: which 3–4 tools, and whether you are willing to upload 1–2 minutes of your voice to one or two cloud vendors (read their licences on <a href="09-legal.html#vendor-terms">page 9</a> first).</li>
+<li><b>What we would do</b>: follow the experiment on <a href="11-hands-on.html">page 11</a>: same three paragraphs (English, Mandarin, mixed technical), same reference clip, automatic scores plus a blind A/B session.</li>
+<li><b>What we learn</b>: a ranked shortlist backed by your ears, plus real per-chunk failure rates for your technical vocabulary.</li>
+</ul>
+
+<h2 id="d2">2. Settle commercial use and the vendor licence</h2>
+<ul>
+<li><b>Why</b>: "maybe commercial" keeps every option open but makes the open-weight landscape murky; several strong models have non-commercial or revenue-limited weights (<a href="03-open-source.html">page 3</a>). On the cloud side, the question is whether you accept a perpetual licence to your voice (ElevenLabs, Cartesia, Fish) or prefer a vendor that does not train on it. <span class="ev v">Verified</span> (licence texts)</li>
+<li><b>Decision needed</b>: is this personal, employer, or your own paid product? Who owns the content? Does a perpetual vendor licence to your voice bother you?</li>
+<li><b>What we would do</b>: a one-page decision record per tool (licence, terms clause, risk), and, if it is company content, a short agreement draft for you and your employer on scope, deletion and who may generate with the clone.</li>
+</ul>
+
+<h2 id="d3">3. Build the pipeline for one real lesson</h2>
+<ul>
+<li><b>Why</b>: the gap between a nice demo clip and a 15-minute lesson with slides, captions and consistent pacing is where most of the work is (<a href="08-pipeline.html">page 8</a>).</li>
+<li><b>Decision needed</b>: which lesson (ideally one with technical terms, numbers and some Mandarin), which slide tool (Marp, reveal.js, PowerPoint export), and which TTS from the bake-off.</li>
+<li><b>What we would do</b>: give a coding agent the prompt on <a href="11-hands-on.html#agent-prompt">page 11</a>, then review the QA report together: failure rate per check, time spent listening, cost per finished minute.</li>
+<li><b>What we learn</b>: real numbers for "human minutes per finished minute", which decides whether a 40-lesson course is realistic.</li>
+</ul>
+
+<h2 id="d4">4. Solve the cross-lingual question</h2>
+<ul>
+<li><b>Why</b>: you want your voice in the language you have recorded less of. Vendors disagree on how well this works (ElevenLabs' v4 launch claims a native accent; its own older PVC guide warns the source accent carries over; Google Chirp 3 cannot transfer English to Chinese at all). No independent cross-lingual similarity benchmark was found. <span class="ev v">Verified</span> (vendor docs) · benchmark gap <span class="ev u">Unverified</span></li>
+<li><b>Decision needed</b>: which accent you want when "you" speak the other language: your own natural accent, or a native one.</li>
+<li><b>What we would do</b>: three reference conditions per tool (English reference, Mandarin reference, a mixed reference), scored by a native listener for accent and by SIM for identity.</li>
+<li><b>Also worth testing</b>: record yourself reading the target-language script as well as you can, then use voice conversion (<a href="04-voice-conversion.html">page 4</a>) to fix only the timbre, keeping your real prosody.</li>
+</ul>
+
+<h2 id="d5">5. Decide on hardware: buy, rent or cloud-only</h2>
+<ul>
+<li><b>Why</b>: your current PC has an Intel UHD integrated GPU and 64 GB RAM. That runs CPU-only models slowly; GPU-hungry models will not be practical. <span class="ev i">Inference</span></li>
+<li><b>Options</b>: (a) cloud TTS only; (b) rent a GPU by the hour for batch rendering (on 2026-10-17 RunPod listed an RTX 3090 at $0.50/h and an RTX 4090 at $0.89/h) <span class="ev v">Verified</span>; (c) buy a 16–24 GB NVIDIA card.</li>
+<li><b>Decision needed</b>: only after the bake-off. If a cloud tool wins on quality, hardware is irrelevant; if a local model wins, the <a href="10-decide.html#cost-calculator">cost calculator</a> shows how many hours of narration make buying worthwhile.</li>
+</ul>
+
+<div class="callout think"><span class="title">Smaller questions to keep in mind</span>
+<ul>
+<li>Do you want a lip-synced avatar of yourself, or are slides plus voice enough (<a href="08-pipeline.html#avatar">page 8</a>)?</li>
+<li>Which platforms will publish the course? That decides disclosure wording (Udemy's exact sentence, Chinese labels; <a href="09-legal.html#platforms">page 9</a>).</li>
+<li>Should old lessons ever be regenerated when a better model appears, or frozen as published?</li>
+</ul></div>
+
+<p class="page-meta">Written 2026-10-17 by the main agent from the full research set.</p>
+</div></main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decide · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 10 · Decide &amp; start</div>
+<h1>Choosing a setup</h1>
+<p class="lead">Three ready-made paths, a cost calculator for any number of hours, and a short questionnaire that recommends a setup. Treat each recommendation as the shortlist for your own comparison test (<a href="11-hands-on.html">page 11</a>), not as a final verdict.</p>
+
+<h2>Free and local, or paid cloud?</h2>
+<div class="table-wrap">
+<table class="compact">
+<thead><tr><th></th><th>Paid cloud</th><th>Free local (open weights)</th></tr></thead>
+<tbody>
+<tr><td><b>Quality today</b></td><td>Top of the independent cloned-voice board (Eleven v4, Qwen-Audio 3.1, Sonic 3.6). <span class="ev v">Verified</span></td><td>Benchmark numbers as good as closed models, but few open models are on the listener-vote board. <span class="ev v">Verified</span></td></tr>
+<tr><td><b>Your voice data</b></td><td>Uploaded; most vendors take a broad licence to it (<a href="09-legal.html#vendor-terms">page 9</a>).</td><td>Never leaves your machine.</td></tr>
+<tr><td><b>Cost</b></td><td>About $0.80–6 per English hour; Mandarin cheaper per hour when billed per character.</td><td>Free software; you pay for a GPU (buy or rent).</td></tr>
+<tr><td><b>Effort</b></td><td>Minutes to first result.</td><td>Hours to days: Python, CUDA, model downloads; Windows support varies.</td></tr>
+<tr><td><b>Long-term stability</b></td><td>Vendors change models and prices, and shut down (Resemble hosted, LMNT, PlayHT).</td><td>A pinned model never changes, but projects go stale or are withdrawn (VibeVoice).</td></tr>
+<tr><td><b>Commercial use</b></td><td>Yes on paid plans.</td><td>Only with Apache/MIT weights; many strong models are non-commercial.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="paths">Three paths</h2>
+<div data-tabs>
+<div class="tabs"><button data-tab="beginner">Beginner</button><button data-tab="local">Fully local and free</button><button data-tab="best">Best quality</button></div>
+<div class="tab-panel" data-panel="beginner">
+<ol class="stepper">
+<li><b>ElevenLabs Starter ($6/month)</b>: Instant Voice Clone from 1–2 minutes of clean audio per language. Turn off "Improve the models for everyone" on day 1.</li>
+<li>Generate a lesson in the web app with Eleven v4; add problem words to a pronunciation dictionary.</li>
+<li>For a cheap comparison, also try <b>Gemini 3.8 Flash TTS voice replication</b> on the paid tier (about $0.82 per audio hour).</li>
+<li>When it works, move to the API and the pipeline on <a href="08-pipeline.html">page 8</a>; upgrade to Creator ($22) for a Professional Voice Clone if Instant is not close enough.</li>
+</ol>
+<p class="small">Why: fastest to a good result, Mandarin and English, commercial on any paid plan, best API for automation. <span class="ev v">Verified</span> (prices and features) · choice <span class="ev i">Inference</span></p>
+</div>
+<div class="tab-panel" data-panel="local">
+<ol class="stepper">
+<li><b>Hardware</b>: an NVIDIA card with 8 GB or more, or an hourly rental (RTX 3090 about $0.50/h on RunPod, 2026-10-17). Your current Intel-graphics PC can run only CPU paths, slowly.</li>
+<li><b>Start with GPT-SoVITS</b> (MIT): the official Windows one-click package; zero-shot from 5 s, then fine-tune on a few minutes of your voice.</li>
+<li><b>Compare with VoxCPM2</b> (Apache-2.0, ~8 GB) for zero-shot similarity, and <b>Fun-CosyVoice 3</b> (Apache-2.0) if you need pinyin overrides and instruction control.</li>
+<li>Build the pipeline around the winner; all three have Python APIs, VoxCPM2 and CosyVoice 3 also HTTP servers.</li>
+</ol>
+<p class="small">Why: commercially clean licences, Mandarin-strong, your voice stays local. <span class="ev v">Verified</span> (licences) · choice <span class="ev i">Inference</span></p>
+</div>
+<div class="tab-panel" data-panel="best">
+<ol class="stepper">
+<li><b>Record properly</b> (<a href="06-recording.html">page 6</a>): 1–3 hours of clean audio in your main language, 30+ minutes in the other.</li>
+<li><b>ElevenLabs Creator ($22/month) Professional Voice Clone</b> on Eleven v4, trained on that set.</li>
+<li><b>Test the runners-up</b> for Mandarin specifically: MiniMax Speech 2.8 HD, Alibaba Qwen-Audio, Cartesia Sonic 3.6; independent Mandarin rankings are only secondary reports, so trust your own A/B test.</li>
+<li>Pipeline with dictionaries, request stitching, ASR checks and forced alignment (<a href="08-pipeline.html">page 8</a>); human listening on flagged chunks.</li>
+</ol>
+<p class="small">Why: highest independent listener ratings among services an individual can use, plus a clone trained on far more of your voice. <span class="ev v">Verified</span> (arena, plan features) · choice <span class="ev i">Inference</span></p>
+</div>
+</div>
+
+<h2 id="cost-calculator">Cost calculator</h2>
+<p>List prices read 2026-10-17, excluding tax, subscriptions and free allowances. Change the assumptions to match your scripts.</p>
+<div class="form-grid">
+<label>Hours of finished narration<input type="number" id="c-hours" value="10" min="0" step="0.5"></label>
+<label>Share in Mandarin (%)<input type="number" id="c-zh" value="30" min="0" max="100" step="5"></label>
+<label>English characters per hour<input type="number" id="c-en-cph" value="55000" min="1000" step="1000"></label>
+<label>Mandarin characters per hour<input type="number" id="c-zh-cph" value="15000" min="1000" step="500"></label>
+<label>Re-takes and edits overhead (%)<input type="number" id="c-over" value="30" min="0" max="300" step="5"></label>
+<label>Local: real-time factor (compute ÷ audio)<input type="number" id="c-rtf" value="0.3" min="0.01" step="0.05"></label>
+<label>Local: rented GPU price ($/h)<input type="number" id="c-gpu" value="0.50" min="0" step="0.05"></label>
+<label>Local: setup and idle GPU hours<input type="number" id="c-setup" value="3" min="0" step="0.5"></label>
+</div>
+<div class="table-wrap">
+<table id="cost-table" data-sortable class="compact">
+<thead><tr><th>Option</th><th>Billing basis</th><th>Total (USD)</th><th data-nosort class="bar-cell">Relative</th><th data-nosort>Notes</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<p class="small muted">Assumptions: CNY at 7.1 per USD; Gemini audio at 25 tokens per second; Fish billed per UTF-8 byte (3 bytes per Chinese character); one-off voice fees included once. ElevenLabs API usage needs a subscription; subscription credits (e.g. 121k on Creator) are not deducted here. Local options exclude your own time and electricity. The default real-time factor 0.3 is VoxCPM2's self-reported RTX 4090 figure; your card may be slower. <span class="ev i">Inference</span> (calculation) from <span class="ev v">Verified</span> prices</p>
+<div class="callout think"><span class="title">Buying versus renting a GPU</span>
+At $0.50 per GPU hour and a real-time factor of 0.3 with 30 % re-takes, one finished hour of narration costs about 0.39 GPU hours, roughly $0.20. Even 100 hours of narration costs well under $100 in rental. A card bought mainly for narration rarely pays for itself; buy one only if you also want fast local experiments or fine-tuning. <span class="ev i">Inference</span></div>
+
+<h2 id="helper">Which setup fits me?</h2>
+<p>Answer six questions. The recommendation updates as you go.</p>
+<form id="helper-form" onsubmit="return false">
+<fieldset class="q"><legend>1. Could this become commercial (paid course, monetised channel, company training)?</legend>
+<label><input type="radio" name="com" value="yes"> Yes</label>
+<label><input type="radio" name="com" value="maybe" checked> Maybe</label>
+<label><input type="radio" name="com" value="no"> No, personal or learning only</label>
+</fieldset>
+<fieldset class="q"><legend>2. What hardware can you use?</legend>
+<label><input type="radio" name="hw" value="none" checked> Only my current PC (no NVIDIA GPU)</label>
+<label><input type="radio" name="hw" value="rent"> I'm willing to rent a cloud GPU by the hour</label>
+<label><input type="radio" name="hw" value="8"> An NVIDIA GPU with 8–12 GB</label>
+<label><input type="radio" name="hw" value="16"> An NVIDIA GPU with 16–24 GB</label>
+</fieldset>
+<fieldset class="q"><legend>3. Where may your voice recordings go?</legend>
+<label><input type="radio" name="priv" value="local"> Nowhere: they must stay on my machine</label>
+<label><input type="radio" name="priv" value="notrain"> To a vendor, but not used for training</label>
+<label><input type="radio" name="priv" value="any" checked> Any reputable vendor (with training opt-out)</label>
+</fieldset>
+<fieldset class="q"><legend>4. Budget?</legend>
+<label><input type="radio" name="bud" value="free"> Free only</label>
+<label><input type="radio" name="bud" value="small" checked> Up to about $25 per month</label>
+<label><input type="radio" name="bud" value="any"> Whatever gives the best result</label>
+</fieldset>
+<fieldset class="q"><legend>5. What matters most?</legend>
+<label><input type="radio" name="pri" value="easy" checked> Getting started easily</label>
+<label><input type="radio" name="pri" value="like"> Sounding as much like me as possible</label>
+<label><input type="radio" name="pri" value="control"> Control and automation (pronunciation, timing, API)</label>
+</fieldset>
+<fieldset class="q"><legend>6. Language mix?</legend>
+<label><input type="radio" name="lang" value="en"> Mostly English</label>
+<label><input type="radio" name="lang" value="both" checked> Both, including cross-lingual</label>
+<label><input type="radio" name="lang" value="zh"> Mostly Mandarin</label>
+</fieldset>
+</form>
+<div class="result-box" id="helper-result" aria-live="polite"></div>
+<p class="small muted">Rules written by the main agent from the evidence on pages 2–4 and 9. <span class="ev i">Inference</span></p>
+
+<p class="page-meta">Prices: page 2 (cloud) and RunPod pricing page, both read 2026-10-17.</p>
+</div></main>
+<script>
+window.PAGE_INIT = function () {
+  /* ---------- cost calculator ---------- */
+  var CNY = 7.1;
+  var OPTIONS = [
+    { name: "ElevenLabs Eleven v4", basis: "$80 / 1M chars", perM: 80, notes: "Needs a subscription for API use." },
+    { name: "ElevenLabs Eleven v4 Turbo", basis: "$40 / 1M chars", perM: 40, notes: "Slightly lower quality tier, same price as Flash." },
+    { name: "Gemini 3.8 Flash TTS (2026 price)", basis: "≈$0.82 per audio hour", perHour: 0.82, notes: "Price doubles from 2027-01-01; batch is half." },
+    { name: "Gemini 3.8 Flash TTS (2027 price)", basis: "≈$1.64 per audio hour", perHour: 1.64, notes: "" },
+    { name: "Azure Personal Voice", basis: "$24 / 1M chars", perM: 24, notes: "Gated: Limited Access approval." },
+    { name: "Google Chirp 3 Instant Custom Voice", basis: "$60 / 1M chars", perM: 60, notes: "Allow-listed; no EN→ZH transfer." },
+    { name: "MiniMax Speech 2.8 HD", basis: "$100 / 1M chars + $1.50 per voice", perM: 100, fixed: 3, notes: "Two voices (EN + ZH reference) assumed." },
+    { name: "MiniMax Speech 2.8 Turbo", basis: "$60 / 1M chars + $1.50 per voice", perM: 60, fixed: 3, notes: "" },
+    { name: "Fish Audio S2.1-Pro API", basis: "$15 / 1M UTF-8 bytes", perMBytes: 15, notes: "Chinese characters count 3 bytes." },
+    { name: "Cartesia Sonic 3.6", basis: "≈$39.2 / 1M chars (Startup plan)", perM: 39.2, notes: "Plan credits; trains on data unless you opt out." },
+    { name: "Inworld Realtime TTS-2", basis: "$25 / 1M chars", perM: 25, notes: "Terms not checked." },
+    { name: "Alibaba Qwen-Audio 3.0-plus (intl.)", basis: "$20 / 1M chars", perM: 20, notes: "" },
+    { name: "Volcengine Doubao clone 2.0", basis: "3 CNY / 10k chars + 138 CNY per voice", perM: 300 / CNY, fixed: 2 * 138 / CNY, notes: "China account; two voices assumed." },
+    { name: "Tencent one-sentence clone", basis: "8 CNY / 10k chars + 39 CNY per voice", perM: 800 / CNY, fixed: 2 * 39 / CNY, notes: "China account; two voices assumed." },
+    { name: "ElevenLabs Voice Changer (read it yourself)", basis: "$0.12 per audio minute", perHour: 7.2, notes: "You record every line; converts timbre only." },
+    { name: "Local model on a rented GPU", basis: "GPU hours × price", local: true, notes: "Excludes your time." }
+  ];
+  function v(id) { var x = parseFloat(document.getElementById(id).value); return isNaN(x) ? 0 : x; }
+  function money(x) { return x < 10 ? x.toFixed(2) : x < 1000 ? x.toFixed(0) : Math.round(x).toLocaleString("en-US"); }
+  function calc() {
+    var h = v("c-hours"), zh = Math.min(100, Math.max(0, v("c-zh"))) / 100, over = 1 + v("c-over") / 100;
+    var hEn = h * (1 - zh) * over, hZh = h * zh * over;
+    var chars = hEn * v("c-en-cph") + hZh * v("c-zh-cph");
+    var bytes = hEn * v("c-en-cph") + hZh * v("c-zh-cph") * 3;
+    var rows = OPTIONS.map(function (o) {
+      var t;
+      if (o.local) t = (h * over * v("c-rtf") + v("c-setup")) * v("c-gpu");
+      else if (o.perHour) t = h * over * o.perHour;
+      else if (o.perMBytes) t = bytes / 1e6 * o.perMBytes;
+      else t = chars / 1e6 * o.perM + (o.fixed || 0);
+      return { o: o, t: t };
+    });
+    var max = Math.max.apply(null, rows.map(function (r) { return r.t; })) || 1;
+    var tb = document.querySelector("#cost-table tbody");
+    tb.innerHTML = rows.map(function (r) {
+      return '<tr><td>' + r.o.name + '</td><td>' + r.o.basis + '</td><td data-v="' + r.t.toFixed(4) + '">$' + money(r.t) + '</td><td class="bar-cell"><div class="bar" style="width:' + Math.max(1, r.t / max * 100).toFixed(1) + '%"></div></td><td>' + r.o.notes + '</td></tr>';
+    }).join("");
+    var sorted = document.querySelector("#cost-table th[data-dir]");
+    if (sorted) { var d = sorted.getAttribute("data-dir"); sorted.setAttribute("data-dir", d === "asc" ? "desc" : "asc"); sorted.click(); }
+  }
+  ["c-hours", "c-zh", "c-en-cph", "c-zh-cph", "c-over", "c-rtf", "c-gpu", "c-setup"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+  });
+  calc();
+
+  /* ---------- decision helper ---------- */
+  function pick(name) { var el = document.querySelector('#helper-form input[name="' + name + '"]:checked'); return el ? el.value : ""; }
+  function li(s) { return "<li>" + s + "</li>"; }
+  function advise() {
+    var com = pick("com"), hw = pick("hw"), priv = pick("priv"), bud = pick("bud"), pri = pick("pri"), lang = pick("lang");
+    var gpu = hw === "8" || hw === "16" || hw === "rent";
+    var main = "", why = [], also = [], warn = [];
+    var goLocal = priv === "local" || (bud === "free" && com !== "no" && gpu) || (bud === "free" && com === "no");
+
+    if (priv === "notrain" && !goLocal) {
+      main = "Azure Personal Voice if Microsoft approves your use case; otherwise a local model";
+      why.push("Microsoft states customer voice data is not used to train its models; most other vendors take a broad licence.");
+      why.push("Personal Voice needs only 5–90 s plus a consent statement and speaks about 100 languages.");
+      also.push("Gemini voice replication on the <b>paid</b> tier (Google says paid-tier content is not used to improve products).");
+      also.push(gpu ? "Local fallback: VoxCPM2 or Fun-CosyVoice 3 (Apache-2.0)." : "Local fallback needs a GPU; consider renting one.");
+      warn.push("Personal Voice is Limited Access: approval for an individual educator is not guaranteed.");
+    } else if (goLocal) {
+      if (!gpu) {
+        main = "GPT-SoVITS in CPU mode to learn, then rent a GPU for real work";
+        why.push("Your PC has no NVIDIA GPU; GPT-SoVITS has an official CPU install option and a Windows package.");
+        why.push("Renting an RTX 3090 costs about $0.50/h, a few dollars for many hours of narration.");
+        also.push("MeanVC2 (CPU-only Windows .exe) if you prefer reading the script yourself and converting it to your clean voice.");
+        warn.push("CPU generation is far slower than real time for most models.");
+      } else if (com === "no") {
+        main = pri === "like" ? "Fish Audio S2-Pro or F5-TTS for quality, GPT-SoVITS fine-tune for likeness" : "F5-TTS or GPT-SoVITS";
+        why.push("Non-commercial use opens the strongest research-licensed weights (Fish S2-Pro, F5-TTS).");
+        also.push("VoxCPM2 and Fun-CosyVoice 3 if you might later go commercial: switching then is free.");
+        warn.push("Content made with non-commercial weights cannot later be monetised.");
+      } else {
+        if (pri === "easy") { main = "GPT-SoVITS (Windows one-click), compared with VoxCPM2"; }
+        else if (pri === "control") { main = "Fun-CosyVoice 3 0.5B, compared with VoxCPM2"; }
+        else { main = "VoxCPM2 zero-shot, compared with a GPT-SoVITS fine-tune on your recordings"; }
+        why.push("Apache-2.0 / MIT code and weights: commercial use is clean.");
+        if (lang !== "en") why.push("All three are Mandarin-strong; CosyVoice 3 adds pinyin overrides and 18+ dialects.");
+        if (hw === "8") warn.push("8 GB is tight for VoxCPM2 (~8 GB); Qwen3-TTS 1.7B (~5–6 GB, secondary report) is a lighter Apache-2.0 alternative.");
+        if (pri === "control") warn.push("CosyVoice 3 installs are Linux-first; expect WSL2 on Windows.");
+        also.push("IndexTTS-2.5 for the best cross-lingual similarity and duration control (email bilibili before commercial use).");
+      }
+    } else {
+      if (bud === "free") {
+        main = "A local model, or Gemini voice replication for a few cents per hour";
+        why.push("ElevenLabs' free plan is non-commercial and requires attribution in titles.");
+        why.push("Gemini 3.8 Flash TTS costs about $0.82 per audio hour on the paid tier until the end of 2026.");
+        if (!gpu) warn.push("Without a GPU, the local route means renting one or accepting very slow CPU generation.");
+      } else if (bud === "small") {
+        main = pri === "like" ? "ElevenLabs Creator ($22/mo) Professional Voice Clone on Eleven v4" : "ElevenLabs Starter ($6/mo) Instant Voice Clone on Eleven v4";
+        why.push("Top tier on the independent cloned-voice board; Mandarin and English; commercial on paid plans; best automation API.");
+        also.push("Gemini 3.8 Flash TTS voice replication as a cheaper comparison.");
+      } else {
+        main = "ElevenLabs Professional Voice Clone on Eleven v4, tested against MiniMax 2.8 HD and Alibaba Qwen-Audio for Mandarin";
+        why.push("Highest listener ratings among self-serve services; a professional clone uses 30 min–3 h of your audio.");
+        if (lang !== "en") why.push("Independent Mandarin rankings are only secondary reports, so a Mandarin A/B test is essential.");
+      }
+      if (pri === "control") also.push("Azure has the richest SSML and lexicon control if Personal Voice is approved for you.");
+      warn.push("Turn off training on day 1 (ElevenLabs: Settings → Data use); it is not retroactive.");
+    }
+    if (com === "maybe") warn.push("Commercial use is undecided: everything above was chosen to stay usable commercially, except where noted.");
+    if (lang !== "en") also.push("Record a clean reference in <b>each</b> language; cross-lingual similarity drops by roughly 10 points in benchmarks.");
+
+    document.getElementById("helper-result").innerHTML =
+      "<h4>Start with: " + main + "</h4>" +
+      (why.length ? "<p><b>Why</b></p><ul>" + why.map(li).join("") + "</ul>" : "") +
+      (also.length ? "<p><b>Also consider</b></p><ul>" + also.map(li).join("") + "</ul>" : "") +
+      (warn.length ? "<p><b>Watch out</b></p><ul>" + warn.map(li).join("") + "</ul>" : "") +
+      '<p class="small">Next: run the comparison on <a href="11-hands-on.html">page 11</a> with this pick and one alternative.</p>';
+  }
+  document.getElementById("helper-form").addEventListener("change", advise);
+  advise();
+};
+</script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>

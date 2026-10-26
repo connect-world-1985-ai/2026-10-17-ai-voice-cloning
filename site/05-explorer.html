@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tool explorer · Your Voice, Synthesised</title>
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+<main><div class="content">
+
+<div class="kicker">Page 5 · The landscape</div>
+<h1>Tool explorer</h1>
+<p class="lead">Every cloud service, open model and voice-conversion tool from pages 2–4 in one sortable, filterable table. Click a column header to sort; use the chips to narrow down. All values were read on 2026-10-17.</p>
+
+<div class="callout think"><span class="title">How to read the numbers</span>
+<ul>
+<li><b>Elo</b> = Artificial Analysis Controlled Voice Arena (blind listener votes on cloned <i>English</i> voices). Only some models are on it. Gaps under ~20 are within the confidence interval. <span class="ev v">Verified</span></li>
+<li><b>SIM EN / ZH</b> = Seed-TTS-eval speaker similarity ×100, <b>self-reported</b> by model authors (two real recordings of the same person score about 73 / 75). Comparable only within this column. <span class="ev v">Verified</span> (as published)</li>
+<li><b>$/h</b> = list price for one hour of finished narration (EN ≈ 50–60k characters, ZH ≈ 15k characters). Open models show 0: you pay with hardware or GPU rental instead; see the <a href="10-decide.html#cost-calculator">cost calculator</a>.</li>
+<li><b>Commercial</b>: <span class="lic-ok">yes</span> = code and weights (or paid plan) allow it; <span class="lic-cond">cond.</span> = allowed under conditions in the notes; <span class="lic-no">no</span> = non-commercial; <span class="lic-cond">unclear</span> = sources conflict or are silent. Not legal advice.</li>
+</ul></div>
+
+<div class="toolbar" id="chips-kind" role="group" aria-label="Type">
+<button class="chip" data-kind="all" aria-pressed="true">All types</button>
+<button class="chip" data-kind="cloud" aria-pressed="false">Cloud</button>
+<button class="chip" data-kind="open" aria-pressed="false">Open-source TTS</button>
+<button class="chip" data-kind="vc" aria-pressed="false">Voice conversion</button>
+</div>
+<div class="toolbar" id="chips-flags" role="group" aria-label="Filters">
+<button class="chip" data-flag="commercial" aria-pressed="false">Commercial OK</button>
+<button class="chip" data-flag="commercialCond" aria-pressed="false">Commercial OK or conditional</button>
+<button class="chip" data-flag="zh" aria-pressed="false">Mandarin</button>
+<button class="chip" data-flag="xling" aria-pressed="false">Cross-lingual</button>
+<button class="chip" data-flag="nogpu" aria-pressed="false">No NVIDIA GPU needed</button>
+<button class="chip" data-flag="live" aria-pressed="true">Hide discontinued / withdrawn</button>
+</div>
+<div class="toolbar">
+<input type="search" id="tool-search" placeholder="Search name, licence, notes…" aria-label="Search tools">
+<span class="count" id="tool-count"></span>
+</div>
+
+<div class="table-wrap">
+<table id="tools" data-sortable class="compact">
+<thead><tr>
+<th>Tool</th><th>Type</th><th>Commercial</th><th>Mandarin</th><th>Cross-lingual</th><th>Audio of you</th><th>Elo (cloned EN)</th><th>SIM EN</th><th>SIM ZH</th><th>EN $/h</th><th>ZH $/h</th><th>VRAM</th><th>Windows</th><th>Speed</th><th>API / CLI</th><th>Stars</th><th>Last push</th><th>Status</th><th data-nosort>Licence &amp; notes</th>
+</tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<p class="small muted">Sources: pages 2–4 and their research notes; GitHub figures via the GitHub API and Hugging Face licence tags via a mirror of the Hugging Face API, both on 2026-10-17. "-" means not applicable or not published. Row labels: <span class="ev v">V</span> verified, <span class="ev u">U</span> partly unverified, <span class="ev x">X</span> experimental or preview.</p>
+
+<h2>Shortcuts</h2>
+<div class="cards">
+<div class="card a"><h4>Commercial-safe, local, EN + ZH</h4><p>Press <b>Open-source TTS</b>, <b>Commercial OK</b>, <b>Mandarin</b>, then sort by <b>SIM ZH</b>.</p></div>
+<div class="card b"><h4>Best cloud quality</h4><p>Press <b>Cloud</b>, then sort by <b>Elo</b> (descending).</p></div>
+<div class="card c"><h4>Works on your current PC</h4><p>Press <b>No NVIDIA GPU needed</b>. Cloud services plus a handful of CPU-capable models remain.</p></div>
+</div>
+
+<p class="page-meta">Data file: assets/js/data-tools.js (one global array). Edit it to add tools; the table rebuilds itself.</p>
+</div></main>
+<script src="assets/js/data-tools.js"></script>
+<script>
+window.PAGE_INIT = function () {
+  var data = window.TOOLS_DATA || [];
+  var tbody = document.querySelector("#tools tbody");
+  var state = { kind: "all", flags: { live: true }, q: "" };
+  var KIND = { cloud: "Cloud", open: "Open TTS", vc: "Voice conv." };
+  var COM = { yes: ["lic-ok", "yes"], cond: ["lic-cond", "cond."], no: ["lic-no", "no"], unclear: ["lic-cond", "unclear"] };
+  var WIN = { native: "pip / native", oneclick: "one-click", wsl: "WSL2 likely", cloud: "browser / API", unverified: "unverified" };
+  var DEAD = { discontinued: 1, withdrawn: 1 };
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function num(v, digits) { return v == null ? "-" : (digits != null ? Number(v).toFixed(digits) : String(v)); }
+  function td(html, sortV) { return "<td" + (sortV != null ? ' data-v="' + esc(sortV) + '"' : "") + ">" + html + "</td>"; }
+
+  function rowHtml(t) {
+    var c = COM[t.commercial] || ["", t.commercial];
+    var ev = '<span class="ev ' + esc(t.ev) + '">' + esc(t.ev.toUpperCase()) + "</span>";
+    var dead = DEAD[t.status] || t.status === "archived";
+    return "<tr>" +
+      td('<a href="' + esc(t.url) + '"' + (dead ? ' class="status-dead"' : "") + ">" + esc(t.name) + "</a> " + ev) +
+      td(KIND[t.kind] || t.kind) +
+      td('<span class="' + c[0] + '">' + c[1] + "</span>", { yes: 1, cond: 2, unclear: 3, no: 4 }[t.commercial]) +
+      td(esc(t.zh)) + td(esc(t.xling)) + td(esc(t.audio)) +
+      td(num(t.elo), t.elo == null ? "" : t.elo) +
+      td(num(t.simEn), t.simEn == null ? "" : t.simEn) +
+      td(num(t.simZh), t.simZh == null ? "" : t.simZh) +
+      td(t.priceEn == null ? "-" : (t.priceEn === 0 ? "0*" : num(t.priceEn, 2)), t.priceEn == null ? "" : t.priceEn) +
+      td(t.priceZh == null ? "-" : (t.priceZh === 0 ? "0*" : num(t.priceZh, 2)), t.priceZh == null ? "" : t.priceZh) +
+      td(esc(t.vram), t.vramGb == null ? "" : t.vramGb) +
+      td(esc(WIN[t.windows] || t.windows)) +
+      td(esc(t.speed)) + td(esc(t.api)) +
+      td(t.stars == null ? "-" : Number(t.stars).toLocaleString("en-US"), t.stars == null ? "" : t.stars) +
+      td(esc(t.push || "-")) +
+      td(esc(t.status)) +
+      td("<b>" + esc(t.licence) + ".</b> " + esc(t.notes) + (t.price && t.priceEn !== 0 ? " <i>Price: " + esc(t.price) + "</i>" : "")) +
+      "</tr>";
+  }
+
+  function keep(t) {
+    if (state.kind !== "all" && t.kind !== state.kind) return false;
+    var f = state.flags;
+    if (f.commercial && t.commercial !== "yes") return false;
+    if (f.commercialCond && !(t.commercial === "yes" || t.commercial === "cond")) return false;
+    if (f.zh && t.zh !== "yes") return false;
+    if (f.xling && t.xling !== "yes") return false;
+    if (f.nogpu && !(t.cpu || t.windows === "cloud")) return false;
+    if (f.live && (DEAD[t.status])) return false;
+    if (state.q) {
+      var hay = (t.name + " " + t.licence + " " + t.notes + " " + t.api + " " + t.audio).toLowerCase();
+      if (hay.indexOf(state.q) < 0) return false;
+    }
+    return true;
+  }
+
+  function render() {
+    var rows = data.filter(keep);
+    tbody.innerHTML = rows.map(rowHtml).join("");
+    document.getElementById("tool-count").textContent = rows.length + " of " + data.length + " tools";
+    var sorted = document.querySelector("#tools th[data-dir]");
+    if (sorted) { var d = sorted.getAttribute("data-dir"); sorted.setAttribute("data-dir", d === "asc" ? "desc" : "asc"); sorted.click(); }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("#chips-kind .chip"), function (b) {
+    b.addEventListener("click", function () {
+      state.kind = b.getAttribute("data-kind");
+      Array.prototype.forEach.call(document.querySelectorAll("#chips-kind .chip"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      render();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#chips-flags .chip"), function (b) {
+    b.addEventListener("click", function () {
+      var k = b.getAttribute("data-flag");
+      state.flags[k] = !state.flags[k];
+      b.setAttribute("aria-pressed", state.flags[k] ? "true" : "false");
+      render();
+    });
+  });
+  document.getElementById("tool-search").addEventListener("input", function (e) { state.q = e.target.value.toLowerCase().trim(); render(); });
+  render();
+};
+</script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
